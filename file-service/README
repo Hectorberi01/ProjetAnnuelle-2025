@@ -1,0 +1,27 @@
+## Features
+
+- Upload files
+- Download files
+- Delete files
+- List files in a directory
+
+## Project Structure
+
+```plaintext
+defense-service/
+├── routes/
+│   └── defense.routes.ts # routes pour le service de défense
+├── controllers/
+│   └── defense.controller.ts # contrôleur pour le service de défense
+├── middlewares/
+│   └── defense.middleware.ts # middleware pour le service de défense
+├── services/
+│   └── defense.service.ts # service pour la logique métier de défense
+├── utils/
+│   └── defense.utils.ts # utils pour des fonctions spécifiques au service de défense
+├── index.ts # point d'entrée de l'application
+└── .env # fichier d'environnement
+```
+
+# Port à utliser
+PORT = 3002

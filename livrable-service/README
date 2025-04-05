@@ -1,0 +1,21 @@
+
+# Service de livrable des projets
+
+# Structure du service
+
+
+## Dossier `auth-service`
+
+Ce dossier contient le code source du service d'authentification. Il est structuré comme suit :
+
+- **routes/** : Contient les routes d'authentification, par exemple `auth.routes.ts`.
+- **controllers/** : Contient les contrôleurs d'authentification, par exemple `auth.controller.ts`.
+- **middlewares/** : Contient les middlewares d'authentification, par exemple `auth.middleware.ts`.
+- **services/** : Contient les services d'authentification, par exemple `auth.service.ts`.
+- **utils/** : Contient les utilitaires pour la gestion des tokens JWT, par exemple `jwt.utils.ts`.
+- **index.ts** : Point d'entrée de l'application.
+- **.env** : Fichier d'environnement pour les configurations sensibles.
+
+- **PORT = 3002**
+
+

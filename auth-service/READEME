@@ -1,0 +1,32 @@
+
+Structure
+
+auth-service/
+├── routes/
+│   └── auth.routes.ts # routes d'authentification
+├── controllers/
+│   └── auth.controller.ts # contrôleur d'authentification
+├── middlewares/
+│   └── auth.middleware.ts # middleware d'authentification
+├── services/
+|–─ auth.service.ts # service d'authentification
+├── utils/
+│   └── jwt.utils.ts # utils pour la gestion des tokens JWT
+├── index.ts # point d'entrée de l'application
+└── .env # fichier d'environnement
+
+#utilser le port 3000
+PORT = 3000
+
+# Les routes
+# Authentification
+# POST /api/auth/login
+# POST /api/auth/register
+# POST /api/auth/refresh-token
+# POST /api/auth/logout
+# POST /api/auth/forgot-password
+# POST /api/auth/reset-password
+
+# Authentification avec les servcies comme google , azure, etc
+# POST /api/auth/google
+# POST /api/auth/azure

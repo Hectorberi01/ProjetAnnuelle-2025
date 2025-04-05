@@ -1,0 +1,111 @@
+Structure du Projet
+
+```plaintext
+project-root/
+├── services/
+│   ├── auth-service/          # 🔒 Authentification et autorisation
+│   ├── user-service/          # 👤 Gestion des utilisateurs
+│   ├── promotion-service/     # 🎉 Gestion des promotions
+│   ├── project-service/       # 📂 Gestion des projets
+│   ├── group-service/         # 👥 Gestion des groupes
+│   ├── deliverable-service/   # 📦 Gestion des livrables
+│   ├── report-service/        # 📝 Gestion des rapports
+│   ├── defense-service/       # 🎓 Gestion des soutenances
+│   ├── grade-service/         # 🏆 Gestion des notes
+│   ├── notification-service/  # 🔔 Gestion des notifications
+│   └── file-service/          # 📁 Gestion des fichiers
+├── gateway/                   # 🌐 API Gateway
+├── docker-compose.yml         # 🐳 Conteneurisation des services
+└── README.md
+
+- 
+
+
+⚡ Commandes génériques
+# Démarrer un service
+ npm run dev
+
+# Exemple de script dans package.json
+"scripts": {
+  "dev": "nodemon index.js"
+}
+
+# Installer nodemon globalement (dev)
+"npm install -g nodemon"
+
+Détail des services
+
+Chaque service est un projet Node.js isolé, avec une API REST,une base de données propre (MySQL par défaut) et une communication par HTTP.
+
+auth-service
+
+cd services/auth-service
+"npm init -y"
+"npm install express jsonwebtoken dotenv axios cors"
+
+👨‍🎓 user-service
+Fonction : Gestion des comptes utilisateurs (roles, profils)
+cd services/user-service
+npm init -y
+npm install express mysql2 dotenv cors bcryptjs jsonwebtoken
+npm install --save-dev nodemon
+
+🏫 promotion-service
+Fonction : Gestion des promotions
+cd services/promotion-service
+npm init -y
+npm install express pg sequelize dotenv cors
+
+🎓 project-service
+Fonction : Gestion des projets
+cd services/project-service
+npm init -y
+npm install express pg sequelize dotenv cors
+
+👥 group-service
+Fonction : Gestion des groupes
+cd services/group-service
+npm init -y
+npm install express pg sequelize dotenv cors
+
+📄 deliverable-service
+Fonction : Gestion des livrables
+cd services/deliverable-service
+npm init -y
+npm install express pg sequelize dotenv cors
+
+📑 report-service
+Fonction : Gestion des rapports
+cd services/report-service
+npm init -y
+npm install express marked dotenv cors
+
+⏰ defense-service
+Fonction : Organisation des soutenances et export PDF
+cd services/defense-service
+npm init -y
+npm install express pdfkit dotenv cors
+
+🖋 grade-service
+Fonction : Grilles de notation, pondération, publication des notes
+cd services/grade-service
+npm init -y
+npm install express pg sequelize dotenv cors
+
+🔔 notification-service
+Fonction : Notifications par mail et SMS
+cd services/notification-service
+npm init -y
+npm install express nodemailer dotenv cors
+
+📁 file-service
+Fonction : Gestion des fichiers (upload, download)
+cd services/file-service
+npm init -y
+npm install express multer dotenv cors
+
+📦 gateway
+Fonction : API Gateway
+cd gateway
+npm init -y
+npm install express axios dotenv cors
