@@ -1,0 +1,329 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id            Int            @id @default(autoincrement())
+  firstName     String?
+  lastName      String?
+  email         String         @unique
+  password      String
+  isSuperAdmin  Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime?      @updatedAt
+  memberships   Members[]
+  refreshTokens RefreshToken[]
+  votes         Votes[]
+  organizations Organizations[] @relation("OrganizationOwner")
+  resetPasswordTokens ResetPasswordTokens[]
+  @@map("users")
+}
+
+
+model Organizations {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String?
+  type        String
+  address     String
+  phone       String
+  email       String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime?    @updatedAt
+  owner       Users     @relation(name: "OrganizationOwner", fields: [ownerId], references: [id])
+  ownerId     Int
+  members     Members[]
+  membershipTypes MembershipTypes[]
+  activities  Activities[]
+  ags         AGs[]
+  donations   Donations[]
+  documents   Documents[]
+  invitations Invitations[]
+  OrganizationInvitation OrganizationInvitation[]
+
+  @@map("organizations")
+}
+
+model OrganizationInvitation {
+  organization   Organizations @relation(fields: [organizationId], references: [id])
+  organizationId Int           @id
+  uuid           String
+
+  @@map("organization_invitation")
+}
+
+model Members {
+  id             Int           @id @default(autoincrement())
+  role           String        @default("member")
+  isAdmin        Boolean       @default(false)
+  user           Users         @relation(fields: [userId], references: [id])
+  userId         Int
+  startDate      DateTime      @default(now())
+  endDate        DateTime?
+  organization      Organizations  @relation(fields: [organizationId], references: [id])
+  organizationId    Int
+  status            MemberStatus   @default(VOLUNTEER)
+  subscriptions     Subscriptions[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  assignments    Assignments[]
+  AGAttendance   AGAttendance[]
+
+  ActivitiesAttendance ActivitiesAttendance[]
+
+  @@unique([userId, organizationId])
+  @@map("members")
+}
+
+
+model MembershipTypes {
+  id            Int            @id @default(autoincrement())
+  name          String
+  description   String
+  amount        Int
+  duration      Int
+  organization  Organizations   @relation(fields: [organizationId], references: [id])
+  organizationId Int
+  subscriptions  Subscriptions[]
+  stripeProductId String
+
+  @@map("membershiptypes")
+}
+
+model Subscriptions {
+  id                  Int            @id @default(autoincrement())
+  member              Members        @relation(fields: [memberId], references: [id])
+  memberId            Int
+  membershipType      MembershipTypes @relation(fields: [membershipTypeId], references: [id])
+  membershipTypeId    Int
+  startDate           DateTime       @default(now())
+  endDate             DateTime
+  paymentStatus       PaymentStatus
+  stripeSubscriptionId String
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@unique([memberId, membershipTypeId])
+  @@map("subscriptions")
+}
+
+
+enum MemberStatus {
+  VOLUNTEER
+  SUBSCRIBER
+  INTERN
+  EMPLOYEE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model Invitations {
+  id             Int      @id @default(autoincrement())
+  email          String
+  organizationId Int
+  token          String
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  organization   Organizations @relation(fields: [organizationId], references: [id])
+
+  @@map("invitations")
+}
+
+model ResetPasswordTokens {
+  userId    Int      @id
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      Users     @relation(fields: [userId], references: [id])
+
+  @@map("reset_password_tokens")
+}
+
+model Activities {
+  id                   Int                    @id @default(autoincrement())
+  title                String
+  description          String
+  date                 DateTime
+  organization         Organizations          @relation(fields: [organizationId], references: [id])
+  organizationId       Int
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  ActivitiesAttendance ActivitiesAttendance[]
+
+  @@map("activities")
+}
+
+model ActivitiesAttendance {
+  memberId   Int
+  members    Members    @relation(fields: [memberId], references: [id])
+  activityId Int
+  Activities Activities @relation(fields: [activityId], references: [id])
+
+  @@id([activityId, memberId])
+  @@map("activities_attendance")
+}
+
+model AGs {
+  id             Int            @id @default(autoincrement())
+  title          String
+  description    String
+  date           DateTime
+  type           AGType
+  quorum         Int
+  organization   Organizations  @relation(fields: [organizationId], references: [id])
+  organizationId Int
+  votes          Votes[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  AGAttendance   AGAttendance[]
+
+  @@map("ags")
+}
+
+enum AGType {
+  ORDINARY
+  EXTRAORDINARY
+}
+
+model AGAttendance {
+  memberId Int
+  members  Members @relation(fields: [memberId], references: [id])
+  agId     Int
+  AGs      AGs     @relation(fields: [agId], references: [id])
+
+  @@id([agId, memberId])
+  @@map("ag_attendance")
+}
+
+model Votes {
+  id        Int      @id @default(autoincrement())
+  choice    String
+  ag        AGs      @relation(fields: [agId], references: [id])
+  agId      Int
+  user      Users    @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+
+  @@map("votes")
+}
+
+model Donations {
+  id             Int           @id @default(autoincrement())
+  amount         Float
+  date           DateTime      @default(now())
+  donorName      String
+  donorEmail     String
+  organization   Organizations @relation(fields: [organizationId], references: [id])
+  organizationId Int
+  stripePaymentId String?
+  recurring      Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@map("donations")
+}
+
+model Documents {
+  id             Int           @id @default(autoincrement())
+  title          String
+  description    String
+  path           String        @default("/")
+  file           Bytes
+  organization   Organizations @relation(fields: [organizationId], references: [id])
+  organizationId Int
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@map("documents")
+}
+
+model RefreshToken {
+  id           String   @id @unique @default(uuid())
+  hashed_token String
+  user_id      Int
+  revoked      Boolean  @default(false)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  user         Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id], map: "refreshToken_userId_fkey")
+  @@map("refresh_token")
+}
+
+model ResourceTypes {
+  id        Int         @id @default(autoincrement())
+  type      String
+  Resources Resources[]
+
+  @@map("resource_types")
+}
+
+model Resources {
+  id             Int             @id @default(autoincrement())
+  name           String
+  resourceTypeId Int
+  resourceType   ResourceTypes   @relation(fields: [resourceTypeId], references: [id])
+  TaskResources  TaskResources[]
+
+  @@map("resources")
+}
+
+model Tasks {
+  id            Int             @id @default(autoincrement())
+  name          String
+  details       String
+  startsAt      DateTime
+  endsAt        DateTime
+  assignments   Assignments[]
+  taskResources TaskResources[]
+
+  @@map("tasks")
+}
+
+model Assignments {
+  id       Int     @id @default(autoincrement())
+  memberId Int
+  taskId   Int
+  member   Members @relation(fields: [memberId], references: [id])
+  task     Tasks   @relation(fields: [taskId], references: [id])
+
+  @@map("assignments")
+}
+
+model TaskResources {
+  id         Int       @id @default(autoincrement())
+  taskId     Int
+  resourceId Int
+  task       Tasks     @relation(fields: [taskId], references: [id])
+  resource   Resources @relation(fields: [resourceId], references: [id])
+
+  @@map("task_resources")
+}
+
+model JavaVersions {
+  id           Int      @id @default(autoincrement())
+  versionName  String   @unique
+  experimental Boolean
+  file         Bytes
+  uploadDate   DateTime @default(now())
+
+  @@map("java_versions")
+}
