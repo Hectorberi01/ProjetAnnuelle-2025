@@ -6,7 +6,7 @@ import projet from './routes/projet.route';
 
 const app  = express()
 
-const PORT = process.env.PORT || 3008
+const PORT = process.env.PORT || 3002
 
 const main = async () => {
 
