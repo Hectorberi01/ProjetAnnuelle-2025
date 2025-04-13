@@ -1,7 +1,9 @@
 import express from "express";
 import { AppDataSource } from "./config/database";
+import promotion from "./routes/promotion.route";
 import cors from 'cors';
-import promotionRoutes from './routes/promotion.routes';
+
+
 
 const app  = express()
 
@@ -19,7 +21,7 @@ const main = async () => {
         app.use(express.urlencoded({ extended: true }));
 
         // 3. Routes
-        app.use('/api/promotions', promotionRoutes);
+        app.use('/api/promotions', promotion);
 
         // 5. Lancement serveur
         app.listen(PORT, () => {
@@ -28,12 +30,12 @@ const main = async () => {
     }
     catch (error) {
         console.error('Error establishing database connection:', error);
+        //process.exit(1);
     }  
 }
 
 main()
 .catch((err) => {
     console.error('Error starting the server:', err);
-    process.exit(1);
 }
 )

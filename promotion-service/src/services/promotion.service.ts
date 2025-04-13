@@ -1,26 +1,28 @@
-import { AppDataSource } from '../config/database';
-import { Promotion } from '../entities/Promotion';
-import { PromotionDTO } from '../validation/validation';
-import { DataSource } from 'typeorm';
+import { AppDataSource } from "../config/database";
+import { Promotion } from "../entities/Promotion";
 
 export class PromotionService {
-  constructor(private dataSource: DataSource) {}
-  private repo = AppDataSource.getRepository(Promotion);
+  private promotionRepo = AppDataSource.getRepository(Promotion);
 
-  async create(data: PromotionDTO) {
-    const promotion = this.repo.create(data);
-    return this.repo.save(promotion);
+  async create(name: string, year: number) {
+    const promo = this.promotionRepo.create({ name, year });
+    return this.promotionRepo.save(promo);
   }
 
-  findAll() {
-    return this.repo.find();
+  async findAll() {
+    return this.promotionRepo.find();
   }
 
-  findOne(id: string) {
-    return this.repo.findOneBy({ id });
+  async findById(id: number) {
+    return this.promotionRepo.findOneBy({ id });
   }
 
-  delete(id: string) {
-    return this.repo.delete({ id });
+  async update(id: number, updateData: Partial<Promotion>) {
+    await this.promotionRepo.update(id, updateData);
+    return this.promotionRepo.findOneBy({ id });
+  }
+
+  async delete(id: number) {
+    return this.promotionRepo.delete(id);
   }
 }

@@ -1,21 +1,13 @@
-// src/entities/Promotion.ts
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
-import 'reflect-metadata';
-// Your existing imports
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+
 @Entity()
 export class Promotion {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
   @Column()
-  nom!: string;
+  name!: string;
 
-  @Column({ type: 'varchar' })
-  annee!: string;
-
-  @CreateDateColumn()
-  created_at!: Date;
+  @Column()
+  year!: number;
 }
-
-
-

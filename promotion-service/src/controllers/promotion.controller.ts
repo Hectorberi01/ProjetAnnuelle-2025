@@ -1,41 +1,39 @@
-import { Request, Response } from 'express';
-import { PromotionSchema } from '../validation/validation';
-import { PromotionService } from '../services/promotion.service';
-import { AppDataSource } from '../config/database'; // Make sure path is correct
+import { Request, Response } from "express";
+import { PromotionService } from "../services/promotion.service";
 
-const service = new PromotionService(AppDataSource);
+const service = new PromotionService();
 
 export class PromotionController {
- 
-    
-    // Remove "async" before the assignment - this is a syntax error
-    static async createPromotion(req: Request, res: Response) {
-        try {
-            const data = PromotionSchema.parse(req.body);
-            const promo = await service.create(data);
-            res.status(201).json(promo);
-        } catch (e: any) {
-            res.status(400).json({ error: e.message });
-        }
-    }
-    
-    // Remove "async" before the assignment - this is a syntax error
-    static async getPromotions(_: Request, res: Response) {
-        const promos = await service.findAll();
-        res.json(promos);
-    }
-    
-    // Renamed from getPromotion to getPromotionById for clarity
-    static async getPromotionById(req: Request, res: Response) : Promise<any> {
-        const promo = await service.findOne(req.params.id);
-        if (!promo) return res.status(404).json({ error: 'Non trouvé' });
-        res.json(promo);
-    }
-    
-    
-    // Remove "async" before the assignment - this is a syntax error
-    static async deletePromotion(req: Request, res: Response) {
-        await service.delete(req.params.id);
-        res.status(204).send();
-    }
+  static async create(req: Request, res: Response) {
+    const { name, year } = req.body;
+    const promotion = await service.create(name, year);
+    res.status(201).json(promotion);
+  }
+
+  static async getAll(req: Request, res: Response) {
+    const promotions = await service.findAll();
+    res.json(promotions);
+  }
+
+  static async getById(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    const promotion = await service.findById(id);
+    if (!promotion){
+       res.status(404).json({ message: "Not found" });
+       return
+    } 
+    res.json(promotion);
+  }
+
+  static async update(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    const updated = await service.update(id, req.body);
+    res.json(updated);
+  }
+
+  static async delete(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    await service.delete(id);
+    res.status(204).send();
+  }
 }
