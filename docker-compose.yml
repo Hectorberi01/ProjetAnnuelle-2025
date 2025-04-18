@@ -1,0 +1,104 @@
+
+services:
+  gateway:
+    build: ./gateway
+    ports:
+      - "3000:3000"
+    container_name: gateway
+    depends_on:
+      - auth
+      - projets
+      - user
+      - groupes
+      - grades
+      - reports
+      - promotions
+      - notations
+      - livrables
+      - soutenances
+    networks:
+      - backend
+
+  auth:
+    build: ./auth
+    ports:
+      - "3001:3000"
+    container_name: auth
+    networks:
+      - backend
+
+  projets:
+    build: ./projets
+    ports:
+      - "3002:3000"
+    container_name: projets
+    networks:
+      - backend
+
+  user:
+    build: ./user
+    ports:
+      - "3003:3000"
+    container_name: user
+    networks:
+      - backend
+
+  groupes:
+    build: ./groupes
+    ports:
+      - "3004:3000"
+    container_name: groupes
+    networks:
+      - backend
+
+  grades:
+    build: ./grades
+    ports:
+      - "3005:3000"
+    container_name: grades
+    networks:
+      - backend
+
+  reports:
+    build: ./reports
+    ports:
+      - "3006:3000"
+    container_name: reports
+    networks:
+      - backend
+
+  promotions:
+    build: ./promotions
+    ports:
+      - "3007:3000"
+    container_name: promotions
+    networks:
+      - backend
+
+  notations:
+    build: ./notations
+    ports:
+      - "3008:3000"
+    container_name: notations
+    networks:
+      - backend
+
+  livrables:
+    build: ./livrables
+    ports:
+      - "3009:3000"
+    container_name: livrables
+    networks:
+      - backend
+
+  soutenances:
+    build: ./soutenances
+    ports:
+      - "3010:3000"
+    container_name: soutenances
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
