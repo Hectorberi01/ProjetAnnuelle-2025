@@ -1,0 +1,77 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserService = void 0;
+const database_1 = require("../database/database");
+const User_1 = require("../database/entities/User");
+const Role_1 = require("../database/entities/Role");
+const bcrypt_1 = __importDefault(require("bcrypt"));
+class UserService {
+    constructor() {
+        this.userRepo = database_1.AppDataSource.getRepository(User_1.User);
+        this.roleRepo = database_1.AppDataSource.getRepository(Role_1.Role);
+    }
+    // Create
+    create(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const role = yield this.roleRepo.findOneBy({ id: data.roleId });
+            if (!role)
+                throw new Error("Rôle non trouvé");
+            const username = data.prenom.trim().charAt(0).toLowerCase() +
+                data.nom.trim().substring(0, 7).toLowerCase();
+            const password = username;
+            // Hasher le mot de passe
+            const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+            const user = this.userRepo.create({
+                username,
+                nom: data.nom,
+                prenom: data.prenom,
+                email: data.email,
+                role,
+                password: hashedPassword,
+            });
+            return this.userRepo.save(user);
+        });
+    }
+    // UserList
+    findAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.userRepo.find({ relations: ["role"] });
+        });
+    }
+    // UserById
+    findById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.userRepo.findOne({ where: { id }, relations: ["role"] });
+        });
+    }
+    // UserUpdate
+    update(id, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.userRepo.findOneBy({ id });
+            if (!user)
+                return null;
+            Object.assign(user, data);
+            return this.userRepo.save(user);
+        });
+    }
+    // UserDelete
+    delete(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.userRepo.delete(id);
+            return result.affected !== 0;
+        });
+    }
+}
+exports.UserService = UserService;

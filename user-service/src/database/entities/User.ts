@@ -5,22 +5,22 @@ import { Role } from "./Role";
 export class User {
 
     @PrimaryGeneratedColumn()
-    id: number;
+    id!: number;
 
     @Column()
-    username: string;
+    username!: string;
 
     @Column()
-    nom: string;
+    nom!: string;
 
     @Column()
-    prenom: string;
+    prenom!: string;
+
+    @Column( { unique: true })
+    email!: string;
 
     @Column()
-    email: string;
-
-    @Column()
-    password: string;
+    password!: string;
 
     @ManyToOne(() => Role, role => role.user, { eager: true })
     role: Role;

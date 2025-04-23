@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import { RoleService } from "../services/role.service";
+import { console } from "inspector";
 
 export class RoleController {
   private roleService: RoleService;
@@ -17,7 +18,10 @@ export class RoleController {
     }
   };
 
+
   getAll: RequestHandler = async (req, res) => {
+    console.log("getAll called");
+  
     const roles = await this.roleService.findAll();
     res.json(roles);
   };

@@ -1,6 +1,8 @@
 import { AppDataSource } from "../database/database";
 import { User } from "../database/entities/User";
 import { Role } from "../database/entities/Role";
+import bcrypt from "bcrypt";
+
 
 export class UserService {
     private userRepo = AppDataSource.getRepository(User);
@@ -16,12 +18,18 @@ export class UserService {
             data.prenom.trim().charAt(0).toLowerCase() +
             data.nom.trim().substring(0, 7).toLowerCase();
 
+        const password = username
+
+        // Hasher le mot de passe
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         const user = this.userRepo.create({
             username,
             nom: data.nom,
             prenom: data.prenom,
             email: data.email,
             role,
+            password: hashedPassword,
         });
 
         return this.userRepo.save(user);

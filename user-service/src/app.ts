@@ -16,8 +16,8 @@ AppDataSource.initialize()
   .then(() => {
     console.log("📦 Base de données connectée !");
   })
-  .catch((err) => {
-    console.error("❌ Erreur de connexion à la base :", err);
+  .catch((error: any) => {
+    console.error("❌ Erreur de connexion à la base :", error);
     process.exit(1);
   });
 
@@ -25,7 +25,7 @@ AppDataSource.initialize()
 initRoutes(app);
 
 // Port
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
 app.listen(PORT, () => {
   console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
 });

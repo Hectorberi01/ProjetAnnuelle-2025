@@ -12,7 +12,7 @@ export class RoleService {
 
   // RoleList
   async findAll(): Promise<Role[]> {
-    return this.roleRepo.find({ relations: ["users"] });
+    return this.roleRepo.find();
   }
 
   // RoleUpdate
