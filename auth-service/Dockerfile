@@ -1,7 +1,6 @@
+# Dockerfile
 
-# Étape 1 : build
-
-FROM node:23-alpine AS build
+FROM node:23-slim
 
 # Définir le répertoire de travail
 WORKDIR /app
@@ -19,7 +18,7 @@ COPY . .
 RUN npm run build
 
 # Exposer le port (modifie selon le service)
-EXPOSE 3000
+EXPOSE 3001
 
 # Lancer le service
 CMD ["npm", "run", "start"]

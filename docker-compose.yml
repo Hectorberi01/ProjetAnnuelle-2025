@@ -1,103 +1,181 @@
+version: "3.8"
 
 services:
+  # MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_container
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - backend
+
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin_container
+    depends_on:
+      - mysql
+    restart: always
+    ports:
+      - "8090:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+    networks:
+      - backend
+
   gateway:
-    build: ./gateway
+    build: ./api-gateway
     ports:
       - "3000:3000"
     container_name: gateway
     depends_on:
-      - auth
+      # - auth
       - projets
-      - user
+      # - user
       - groupes
       - grades
       - reports
       - promotions
-      - notations
+      # - notations
       - livrables
-      - soutenances
+      # - soutenances
     networks:
       - backend
 
-  auth:
-    build: ./auth
-    ports:
-      - "3001:3000"
-    container_name: auth
-    networks:
-      - backend
+  # auth:
+  #   build: ./auth-service
+  #   ports:
+  #     - "3001:3000"
+  #   container_name: auth
+  #   networks:
+  #     - backend
 
   projets:
-    build: ./projets
+    build: ./project-service
     ports:
-      - "3002:3000"
+      - "3002:3002"
     container_name: projets
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: projetService
     networks:
       - backend
 
-  user:
-    build: ./user
-    ports:
-      - "3003:3000"
-    container_name: user
-    networks:
-      - backend
+  # user:
+  #   build: ./user-service
+  #   ports:
+  #     - "3003:3000"
+  #   container_name: user
+  #   networks:
+  #     - backend
 
   groupes:
-    build: ./groupes
+    build: ./group-service
     ports:
-      - "3004:3000"
+      - "3004:3004"
     container_name: groupes
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: groupService
     networks:
       - backend
 
   grades:
-    build: ./grades
+    build: ./grade-service
     ports:
-      - "3005:3000"
+      - "3005:3005"
     container_name: grades
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: gradeService
     networks:
       - backend
 
   reports:
-    build: ./reports
+    build: ./report-service
     ports:
-      - "3006:3000"
+      - "3006:3006"
     container_name: reports
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: reportService
     networks:
       - backend
 
   promotions:
-    build: ./promotions
+    build: ./promotion-service
     ports:
-      - "3007:3000"
+      - "3007:3007"
     container_name: promotions
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: promotionService
     networks:
       - backend
 
-  notations:
-    build: ./notations
-    ports:
-      - "3008:3000"
-    container_name: notations
-    networks:
-      - backend
+  # notations:
+  #   build: ./notation-service
+  #   ports:
+  #     - "3008:3000"
+  #   container_name: notations
+  #   networks:
+  #     - backend
 
   livrables:
-    build: ./livrables
+    build: ./livrable-service
     ports:
-      - "3009:3000"
+      - "3009:3009"
     container_name: livrables
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: livrableService
     networks:
       - backend
 
-  soutenances:
-    build: ./soutenances
-    ports:
-      - "3010:3000"
-    container_name: soutenances
-    networks:
-      - backend
+  # soutenances:
+  #   build: ./soutenance-service
+  #   ports:
+  #     - "3010:3000"
+  #   container_name: soutenances
+  #   networks:
+  #     - backend
+
+  # notifications:
+  #   build: ./notification-service
+  #   ports:
+  #     - "3011:3000"
+  #   container_name: notifications
+  #   networks:
+  #     - backend
+
+volumes:
+  mysql_data:
 
 networks:
   backend:

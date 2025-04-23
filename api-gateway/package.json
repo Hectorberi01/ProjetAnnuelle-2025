@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nest start",
+    "start:d": "nest start",
+    "start": "node dist/main.js",
+    "build": "tsc",
     "start:dev": "nest start --watch"
   },
   "keywords": [],

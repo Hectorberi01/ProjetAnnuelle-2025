@@ -9,16 +9,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GatewayModule = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
-const project_controller_1 = require("../contollers/project.controller");
-const gateway_project_service_1 = require("./gateway.project.service");
+const gateway_project_service_1 = require("./projets/gateway.project.service");
+const project_controller_1 = require("../controllers/project.controller");
+const promotion_controller_1 = require("../controllers/promotion.controller");
+const gateway_promotion_service_1 = require("./promotion/gateway.promotion.service");
 let GatewayModule = class GatewayModule {
 };
 exports.GatewayModule = GatewayModule;
 exports.GatewayModule = GatewayModule = __decorate([
     (0, common_1.Module)({
         imports: [axios_1.HttpModule],
-        controllers: [project_controller_1.ProjectController],
-        providers: [gateway_project_service_1.GatewayProjectService],
+        controllers: [project_controller_1.ProjectController, promotion_controller_1.PromotionController],
+        providers: [gateway_project_service_1.GatewayProjectService, gateway_promotion_service_1.GatewayPromotionService]
     })
 ], GatewayModule);
 //# sourceMappingURL=gateway.module.js.map

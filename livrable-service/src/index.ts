@@ -8,7 +8,7 @@ import submissionRoutes from "./routes/submission.routes";
 
 const app  = express()
 
-const PORT = process.env.PORT || 3004
+const PORT = process.env.PORT || 3009
 
 const main = async () => {
   

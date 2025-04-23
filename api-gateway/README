@@ -1,0 +1,86 @@
+📡 API Gateway – Gestionnaire de projets étudiants
+
+API Gateway est un point d''entrée unique pour accéder à plusieurs microservices. Il gère les requêtes entrantes et les redirige vers le service approprié.
+Il permet également de centraliser la gestion des erreurs, l'authentification et d'autres
+
+Projet
+🔹 Créer un projet
+fonctionnalités transversales.
+	•	Méthode : POST
+	•	URL : 'http://localhost:3000/projects/create'
+	🧾 Body (JSON)
+	{
+	"name": "createProject",
+	"description": "Create a new project",
+	"status": "draft", // ou "visible"
+	"promotionId": 1
+	}
+
+🔹 Récupérer tous les projets
+	•	Méthode : GET
+	•	URL : 'http://localhost:3000/projects/all'
+
+⸻
+
+🔹 Récupérer un projet par ID
+	•	Méthode : GET
+	•	URL : 'http://localhost:3000/projects/:id/get'
+
+⸻
+
+🔹 Mettre à jour un projet
+	•	Méthode : PUT
+	•	URL : 'http://localhost:3000/projects/:id/update'
+
+	🧾 Body (JSON)
+	{
+	"name": "Projet mis à jour",
+	"description": "Nouvelle description",
+	"status": "visible"
+	}
+
+🔹 Supprimer un projet
+	•	Méthode : DELETE
+	•	URL : 'http://localhost:3000/projects/:id/delete'
+
+🔹 Récupérer un projet par la promotion
+	•	Méthode : GET
+	•	URL : 'http://localhost:3000/projects/:id/promotion'
+
+
+Promotion
+
+🔹 Récupérer tous les promotion
+	•	Méthode : GET
+	•	URL : 'http://localhost:3000/promotions/all'
+
+🔹 Créer tous une promotion
+	•	Méthode : POST
+	•	URL : 'http://localhost:3000/promotions/create'
+	🧾 Body (JSON)
+	{
+	"name": "Promotion mise à jour",
+	"year": 2024
+	}
+
+
+🔹 Récupérer une promotion par ID
+	•	Méthode : GET
+	•	URL : 'http://localhost:3000/promotions/:id/get'
+
+🔹 Mettre à jour une promotion
+	•	Méthode : PUT
+	•	URL : 'http://localhost:3000/promotions/:id/update'
+	🧾 Body (JSON)
+	{
+	"name": "Promotion mise à jour",
+	"year": 2024
+	}
+🔹 Supprimer une promotion
+	•	Méthode : DELETE
+	•	URL : 'http://localhost:3000/promotions/:id/delete'
+
+🔹 Récupérer une promotion par le projet
+	•	Méthode : GET
+	•	URL : 'http://localhost:3000/promotions/:id/project'
+

@@ -11,7 +11,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
     networks:
-      - mysql-phpmyadmin
+      - backend
 
   # phpMyAdmin
   phpmyadmin:
@@ -27,10 +27,11 @@ services:
       PMA_USER: root
       PMA_PASSWORD: root
     networks:
-      - mysql-phpmyadmin
+      - backend
 
 networks:
-  mysql-phpmyadmin:
+  backend:
+    driver: bridge
 
 volumes:
   mysql_data:
