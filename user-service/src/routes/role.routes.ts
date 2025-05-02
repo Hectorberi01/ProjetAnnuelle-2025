@@ -7,6 +7,7 @@ const router = Router();
 
 router.post("/", validateBody(createRoleSchema), roleControllerInstance.create.bind(roleControllerInstance));
 router.get("/", roleControllerInstance.getAll.bind(roleControllerInstance)); 
+router.get("/:name", roleControllerInstance.getByName.bind(roleControllerInstance));
 router.put("/:id", validateBody(updateRoleSchema), roleControllerInstance.update.bind(roleControllerInstance));
 router.delete("/:id", roleControllerInstance.delete.bind(roleControllerInstance));
 

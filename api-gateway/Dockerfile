@@ -5,6 +5,10 @@ FROM node:23-slim
 # Définir le répertoire de travail
 WORKDIR /app
 
+# Pour compiler bcrypt
+RUN apt-get update && apt-get install -y build-essential python3 && rm -rf /var/lib/apt/lists/*
+
+
 # Copier les fichiers de dépendances
 COPY package*.json ./
 

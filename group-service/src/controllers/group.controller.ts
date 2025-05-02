@@ -5,6 +5,13 @@ import { manualGroupSchema, groupConfigSchema } from '../validation/validation';
 
 const service = new GroupService(AppDataSource);
 export class GroupController {
+
+    static async getAllGroups(req: Request, res: Response) {
+        const groups = await service.getAllGroups();
+        console.log(groups);
+        res.status(200).json(groups);
+    }
+
     static async createManualGroup(req: Request, res: Response) {
         console.log('Creating manual group');
         console.log(req.body);
@@ -27,15 +34,10 @@ export class GroupController {
   
     static async createRandomGroups(req: Request, res: Response) {
       const projectId = parseInt(req.params.projectId);
-      const { studentIds } = req.body;
-  
-      if (!Array.isArray(studentIds) || studentIds.length === 0) {
-        res.status(400).json({ error: 'Invalid request body' });
-        return;
-      }
+      const { name } = req.body;
   
       try {
-        const result = await service.createRandomGroups(projectId, studentIds);
+        const result = await service.createRandomGroups(projectId, name);
         res.status(201).json(result);
       } catch (e) {
         res.status(400).json({ error: e });
@@ -64,6 +66,16 @@ export class GroupController {
       const config = await service.getGroupConfig(parseInt(req.params.projectId));
       if (!config)  res.status(404).json({ error: 'Config not found' });
       res.status(200).json(config);
+    }
+
+    static async addStudentToGroup(req: Request, res: Response) {
+      const { groupId, studentId } = req.body;
+      try {
+        const result = await service.addStudentToGroup(groupId, studentId);
+        res.status(201).json(result);
+      } catch (e) {
+        res.status(400).json({ error: e });
+      }
     }
   }
   

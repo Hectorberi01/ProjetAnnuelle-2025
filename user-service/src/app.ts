@@ -3,29 +3,40 @@ import dotenv from "dotenv";
 import "reflect-metadata";
 import { AppDataSource } from "./database/database";
 import { initRoutes } from "./routes/initRoutes";
-
-// Charger les variables d'environnement
 dotenv.config();
 
-// Init express
 const app = express();
-app.use(express.json());
-
-// Connexion à la base de données
-AppDataSource.initialize()
-  .then(() => {
-    console.log("📦 Base de données connectée !");
-  })
-  .catch((error: any) => {
-    console.error("❌ Erreur de connexion à la base :", error);
-    process.exit(1);
-  });
-
-// Initialiser les routes
-initRoutes(app);
-
 // Port
 const PORT = process.env.PORT || 3003;
-app.listen(PORT, () => {
-  console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
-});
+
+const main = async () => {
+  try {
+    // Initialiser la connexion à la base de données
+    await AppDataSource.initialize();
+    console.log("📦 Base de données connectée !");
+    app.use(express.json());
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+
+    initRoutes(app);
+
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
+    });
+
+  } catch (error) {
+    console.error("❌ Erreur de connexion à la base :", error);
+  }
+};
+main()
+  .catch((err) => {
+    console.error("❌ Erreur lors du démarrage de l'application :", err);
+  })
+  .finally(() => {
+    console.log("🚀 Application démarrée !");
+  }
+  );
+
+
+

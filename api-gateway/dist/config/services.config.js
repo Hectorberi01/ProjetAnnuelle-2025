@@ -13,7 +13,7 @@ exports.SERVICES = {
         ? 'http://groupes:3000/api/groups'
         : process.env.GROUPES || 'http://localhost:3004/api/groups',
     users: isDocker
-        ? 'http://user:3000/api/users'
+        ? 'http://users:3000/api/users'
         : process.env.USER || 'http://localhost:3003/api/users',
     promotions: isDocker
         ? 'http://promotions:3000/api/promotions'

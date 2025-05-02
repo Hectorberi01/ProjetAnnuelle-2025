@@ -4,13 +4,16 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { RegisterDTO } from '../models/auth.model';
 import { registerSchema } from '../validations/auth.validation';
+import Mailjet from 'node-mailjet';
+
 dotenv.config();
 
+const mailjet = Mailjet.apiConnect(
+  process.env.MJ_APIKEY_PUBLIC!,
+  process.env.MJ_APIKEY_PRIVATE!
+);
 const USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
 const JWT_SECRET = process.env.JWT_SECRET!;
-const JWT_REFRESH_EXPIRES = process.env.JWT_REFRESH_EXPIRES || '7d';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
-
 
 if (!USER_SERVICE_URL) {
     console.error("❌ ERREUR: USER_SERVICE_URL n'est pas défini !");
@@ -19,12 +22,16 @@ if (!USER_SERVICE_URL) {
 
 export const register = async (data: RegisterDTO) => {
 
-  const requiredFields = ['firstName', 'lastName', 'username', 'email', 'password'];
-  for (const field of requiredFields) {
+  const requiredTextFields = ['nom', 'prenom', 'email'];
+  for (const field of requiredTextFields) {
     const value = (data as any)[field];
     if (!value || value.trim() === "") {
       return { status: 400, data: { error: `Le champ '${field}' est requis.` } };
     }
+  }
+
+  if (typeof data.roleId !== "number") {
+    return { status: 400, data: { error: "Le champ 'roleId' est requis et doit être un nombre." } };
   }
 
   const { error } = registerSchema.validate(data);
@@ -36,17 +43,21 @@ export const register = async (data: RegisterDTO) => {
   }
 
   try {
-        const response = await axios.post(`${USER_SERVICE_URL}/create`,data);
-      console.log("response", response);
-      return { status: 201, data: response.data };
+    const response = await axios.post(`${USER_SERVICE_URL}`,data);
+    console.log("response", response);
+    return { status: 201, data: response.data };
   } catch (error: any) {
-        return { status: 400, data: { error: error.message } };
+    return { status: 400, data: { error: error.message } };
   }
 };
 
 export const login = async ({ email, password }: { email: string; password: string }) => {
+  console.log("email", email);
+  console.log("password", password);
+  console.log(`${USER_SERVICE_URL}/email/${email}`);
     try {
-        const response = await fetch(`${USER_SERVICE_URL}/find-by-email?email=${email}`);
+        const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
+        console.log("response", response);
         const data = await response.json();
         const user = data;
         if (!user) {
@@ -54,11 +65,15 @@ export const login = async ({ email, password }: { email: string; password: stri
         }
 
         const isValid = await bcrypt.compare(password, user.password);
+        console.log("isValid", isValid);
         if (!isValid) {
             return { status: 401, data: { error: 'Mot de passe incorrect' } };
         }
-  
-      const token = jwt.sign({ id: user.userId, email: user.email }, JWT_SECRET, {expiresIn: '1h',});
+        // Supprimer le champ password
+      delete user.password;
+      const encodedId = Buffer.from(user.id.toString()).toString('base64');
+      user.id = encodedId;
+      const token = jwt.sign({ user: user }, JWT_SECRET, {expiresIn: '1h',});
   
       return { status: 200, data: { token, user } };
     } catch (err: any) {
@@ -67,15 +82,13 @@ export const login = async ({ email, password }: { email: string; password: stri
 };
 
 export const forgotPassword = async (email: string) => {
-  console.log("email", email);
   if (!email) {
     return { status: 400, data: { error: 'Email requis' } };
   }
 
   try {
     // 1. Vérifie que l'utilisateur existe
-    const response = await fetch(`${USER_SERVICE_URL}/find-by-email?email=${email}`);
-    console.log("response", response);
+    const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
     const user = await response.json();
     if (!user) {
       return { status: 404, data: { error: 'Entrer un mail correct' } };
@@ -89,13 +102,17 @@ export const forgotPassword = async (email: string) => {
     );
 
     // 3. [À faire] Envoie par email (non implémenté ici)
-    console.log(`Lien de réinitialisation : http://localhost:3000/reset-password?token=${resetToken}`);
+    const emailSent = await sendResetEmail(user.email, resetToken);
+
+    if (!emailSent) {
+      return { status: 500, data: { error: "Erreur lors de l'envoi de l'email" } };
+    }
 
     return {
       status: 200,
       data: {
         message: 'Email de réinitialisation envoyé',
-        token: resetToken // pour test uniquement
+        token: resetToken 
       }
     };
   } catch (error: any) {
@@ -106,29 +123,6 @@ export const forgotPassword = async (email: string) => {
   }
 };
 
-export const resetPassword = async (token: string, newPassword: string) => {
-  if (!token || !newPassword) {
-    return { status: 400, data: { error: 'Token et mot de passe requis' } };
-  }
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
-    const userId = decoded.id;
-
-    // Appel vers le service utilisateur pour mettre à jour le mot de passe
-    const response = await axios.put(`${USER_SERVICE_URL}/reset-password`, {
-      userId,
-      newPassword
-    });
-
-    return {
-      status: 200,
-      data: { message: 'Mot de passe réinitialisé avec succès' }
-    };
-  } catch (err: any) {
-    return { status: 403, data: { error: 'Token invalide ou expiré' } };
-  }
-};
 
 export const logout = async () => {
   // Stateless, rien à faire côté serveur
@@ -170,72 +164,34 @@ export const verifyRoleMiddleware = (role: string) => {
   }
 }
 
-
-export const refreshToken = async (refreshToken: string) => {
-  if (!refreshToken) {
-    return { status: 400, data: { error: 'Refresh token manquant' } };
-  }
-
-  try {
-    const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as any;
-
-    // On peut ici vérifier l'utilisateur dans la base si tu veux plus tard
-    const newAccessToken = jwt.sign(
-      { id: decoded.id, email: decoded.email },
-      JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-
-    return { status: 200, data: { token: newAccessToken } };
-  } catch (err: any) {
-    return { status: 403, data: { error: 'Refresh token invalide ou expiré' } };
-  }
-};
-
-export const verifyEmail = async (token: string) => {
-  if (!token) {
-    return { status: 400, data: { error: 'Token manquant' } };
-  }
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
-    const userId = decoded.id;
-
-    // Appel au service utilisateur pour activer l'email
-    const response = await axios.put(`${USER_SERVICE_URL}/verify-email`, {
-      userId
-    });
-
-    return {
-      status: 200,
-      data: { message: 'Email vérifié avec succès' }
-    };
-  } catch (err) {
-    return { status: 403, data: { error: 'Token invalide ou expiré' } };
-  }
-};
-
-export const changePassword = async (userId: number, oldPassword: string, newPassword: string) => {
+export const changePassword = async (userId: string, oldPassword: string, newPassword: string) => {
   if (!oldPassword || !newPassword) {
     return { status: 400, data: { error: 'Champs requis' } };
   }
-
+  const decodedId = parseInt(Buffer.from(userId, 'base64').toString());
+  console.log("decodedId", decodedId);
   try {
     // 1. Récupère l’utilisateur
-    const response = await axios.get(`${USER_SERVICE_URL}/${userId}`);
+    const response = await axios.get(`${USER_SERVICE_URL}/${decodedId}`);
     const user = response.data;
-
+    console.log("user", user);
     // 2. Vérifie le mot de passe actuel
     const isValid = await bcrypt.compare(oldPassword, user.password);
     if (!isValid) {
       return { status: 403, data: { error: 'Ancien mot de passe incorrect' } };
     }
 
+    console.log("avatar");
     // 3. Mise à jour via le service utilisateur
-    await axios.put(`${USER_SERVICE_URL}/change-password`, {
-      userId,
-      newPassword
-    });
+    console.log(`${USER_SERVICE_URL}/${userId}`);
+    try {
+      const res = await axios.put(`${USER_SERVICE_URL}/${decodedId}`, {
+        password: newPassword
+      });
+      console.log("✅ Mot de passe mis à jour :", res.data);
+    } catch (err: any) {
+      console.error("❌ Erreur lors de la mise à jour :", err.message);
+    }
 
     return { status: 200, data: { message: 'Mot de passe changé avec succès' } };
   } catch (err: any) {
@@ -243,27 +199,38 @@ export const changePassword = async (userId: number, oldPassword: string, newPas
   }
 };
 
-export const checkToken = (token: string) => {
-  if (!token) {
-    return { status: 400, data: { error: 'Token requis' } };
-  }
+export const sendResetEmail = async (to: string, token: string) => {
+  const resetLink = `http://localhost:3000/reset-password?token=${token}`;
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    return {
-      status: 200,
-      data: {
-        valid: true,
-        decoded,
-      },
-    };
+    const result = await mailjet.post('send', { version: 'v3.1' }).request({
+      Messages: [
+        {
+          From: {
+            Email: process.env.MAIL_FROM!,
+            Name: "Support Calmeo"
+          },
+          To: [
+            {
+              Email: to,
+            }
+          ],
+          Subject: "Réinitialisation de votre mot de passe",
+          HTMLPart: `
+            <h3>Bonjour,</h3>
+            <p>Vous avez demandé à réinitialiser votre mot de passe.</p>
+            <p>Cliquez sur le lien ci-dessous pour créer un nouveau mot de passe :</p>
+            <a href="${resetLink}">${resetLink}</a>
+            <p>Ce lien expirera dans 15 minutes.</p>
+          `
+        }
+      ]
+    });
+
+    console.log("📧 Email envoyé :", result.body);
+    return true;
   } catch (err) {
-    return {
-      status: 403,
-      data: {
-        valid: false,
-        error: 'Token invalide ou expiré',
-      },
-    };
+    console.error("❌ Erreur lors de l’envoi de l’email :", err);
+    return false;
   }
 };

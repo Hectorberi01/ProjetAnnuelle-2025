@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { lastValueFrom } from 'rxjs';
 import { SERVICES } from '../../config/services.config'
+import { GatewayGroupService } from '../groupe/gatewaye.groupe.service';
+
 
 @Injectable()
 export class GatewayProjectService {
@@ -10,6 +11,7 @@ export class GatewayProjectService {
         private readonly httpService: HttpService,
     ) {}
 
+    private readonly GroupService = new GatewayGroupService(this.httpService);
     // Create a new project
     public async createProject(project: any): Promise<any> {
         try {
@@ -33,9 +35,19 @@ export class GatewayProjectService {
         try {
             const response = await fetch((`${SERVICES.projects}`));
             if (!response) {
-            throw new Error("Failed to fetch projects dans le service");
+                throw new Error("Failed to fetch projects dans le service");
             }
-            return await response.json();
+            const projects = await response.json();
+            // On récupère tous les groupes 
+            const groupes = await this.GroupService.getAllGroups();
+            // Tu peux maintenant enrichir les projets si besoin, exemple :
+            const enrichedProjects = projects.map((project: any) => {
+                return {
+                    ...project,
+                    groups: groupes.filter((g: any) => g.projectId === project.id),
+                };
+            });
+            return  enrichedProjects ;
         }catch (error) {
             throw new Error("Failed to fetch projects");
         }

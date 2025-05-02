@@ -1,5 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors, Req } from "@nestjs/common";
 import { GatewayPromotionService } from "../services/promotion/gateway.promotion.service";
+import { CreatePromotion, Promotion } from "src/types/types";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller('promotions')
 export class PromotionController {
@@ -11,8 +13,16 @@ export class PromotionController {
     }
     // Create a new promotion
     @Post('/create')
-    public async createPromotion(@Body() promotion: any){
-        return this.promotionService.createPromotion(promotion);
+    @UseInterceptors(FileInterceptor('file'))
+    public async createPromotion(@UploadedFile() file : Express.Multer.File, @Body("promotion") promotion: string){
+        const promotionData = JSON.parse(promotion);
+        return this.promotionService.createPromotion(promotionData, file);
+    }
+
+    // Add a student to a promotion
+    @Post('/:id/addStudent')
+    public async addStudentToPromotion(@Param('id') id: string, @Body() student: any): Promise<any> {
+        return this.promotionService.addStudentToPromotion(parseInt(id, 10), student);
     }
     // GET a promotion by ID
     @Get('/:id/get')
@@ -29,5 +39,7 @@ export class PromotionController {
     public async deletePromotion(@Param('id') id: string): Promise<void> {
         return this.promotionService.deletePromotion(parseInt(id, 10));
     }
+
+    
 
 }

@@ -40,6 +40,20 @@ class UserController {
             }
             res.status(200).json(user);
         });
+        this.getByEmail = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const email = (_a = req.params) === null || _a === void 0 ? void 0 : _a.email;
+            if (!email) {
+                res.status(400).json({ message: "Email invalide" });
+                return;
+            }
+            const user = yield this.userService.findByEmail(email);
+            if (!user) {
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
+            }
+            res.status(200).json(user);
+        });
         this.update = (req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             const id = Number((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);

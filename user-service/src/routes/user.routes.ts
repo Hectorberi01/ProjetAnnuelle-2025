@@ -8,6 +8,7 @@ const router = Router();
 router.post("/", validateBody(createUserSchema), userControllerInstance.create.bind(userControllerInstance));
 router.get("/", userControllerInstance.getAll.bind(userControllerInstance));
 router.get("/:id", userControllerInstance.getById.bind(userControllerInstance));
+router.get("/email/:email", userControllerInstance.getByEmail.bind(userControllerInstance));
 router.put("/:id", validateBody(updateUserSchema), userControllerInstance.update.bind(userControllerInstance));
 router.delete("/:id", userControllerInstance.delete.bind(userControllerInstance));
 

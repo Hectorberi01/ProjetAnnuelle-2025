@@ -14,6 +14,12 @@ export class RoleService {
   async findAll(): Promise<Role[]> {
     return this.roleRepo.find();
   }
+  async findById(id: number): Promise<Role | null> {
+    return this.roleRepo.findOneBy({ id });
+  }
+  async findByName(name: string): Promise<Role | null> {
+    return this.roleRepo.findOneBy({ name });
+  }
 
   // RoleUpdate
   async update(id: number, data: Partial<Role>): Promise<Role | null> {

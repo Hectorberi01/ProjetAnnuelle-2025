@@ -13,14 +13,16 @@ const gateway_project_service_1 = require("./projets/gateway.project.service");
 const project_controller_1 = require("../controllers/project.controller");
 const promotion_controller_1 = require("../controllers/promotion.controller");
 const gateway_promotion_service_1 = require("./promotion/gateway.promotion.service");
+const auth_controller_1 = require("../controllers/auth.controller");
+const gateway_auth_service_1 = require("./auth/gateway.auth.service");
 let GatewayModule = class GatewayModule {
 };
 exports.GatewayModule = GatewayModule;
 exports.GatewayModule = GatewayModule = __decorate([
     (0, common_1.Module)({
         imports: [axios_1.HttpModule],
-        controllers: [project_controller_1.ProjectController, promotion_controller_1.PromotionController],
-        providers: [gateway_project_service_1.GatewayProjectService, gateway_promotion_service_1.GatewayPromotionService]
+        controllers: [project_controller_1.ProjectController, promotion_controller_1.PromotionController, auth_controller_1.AuthController],
+        providers: [gateway_project_service_1.GatewayProjectService, gateway_promotion_service_1.GatewayPromotionService, gateway_auth_service_1.GatewayAuthService]
     })
 ], GatewayModule);
 //# sourceMappingURL=gateway.module.js.map

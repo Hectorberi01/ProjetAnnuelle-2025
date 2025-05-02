@@ -7,6 +7,7 @@ export class ProjectController {
     // GET all projects
     @Get('/all')
     public async getAllProjects() {
+        console.log('getAllProjects');
         return await this.projectService.getAllProjects();
     }
     // Create a new project

@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -12,20 +21,30 @@ const initRoutes_1 = require("./routes/initRoutes");
 dotenv_1.default.config();
 // Init express
 const app = (0, express_1.default)();
-app.use(express_1.default.json());
-// Connexion à la base de données
-database_1.AppDataSource.initialize()
-    .then(() => {
-    console.log("📦 Base de données connectée !");
-})
-    .catch((error) => {
-    console.error("❌ Erreur de connexion à la base :", error);
-    process.exit(1);
-});
-// Initialiser les routes
-(0, initRoutes_1.initRoutes)(app);
 // Port
 const PORT = process.env.PORT || 3003;
-app.listen(PORT, () => {
-    console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
+const main = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Initialiser la connexion à la base de données
+        yield database_1.AppDataSource.initialize();
+        console.log("📦 Base de données connectée !");
+        app.use(express_1.default.json());
+        app.use(express_1.default.json());
+        app.use(express_1.default.urlencoded({ extended: true }));
+        (0, initRoutes_1.initRoutes)(app);
+        app.listen(PORT, () => {
+            console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
+        });
+    }
+    catch (error) {
+        console.error("❌ Erreur de connexion à la base :", error);
+        process.exit(1);
+    }
+});
+main()
+    .catch((err) => {
+    console.error("❌ Erreur lors du démarrage de l'application :", err);
+})
+    .finally(() => {
+    console.log("🚀 Application démarrée !");
 });

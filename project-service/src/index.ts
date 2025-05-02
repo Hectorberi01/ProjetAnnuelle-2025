@@ -2,8 +2,9 @@ import express from "express";
 import { AppDataSource } from "./config/database";
 import cors from 'cors';
 import projet from './routes/projet.route';
+import * as dotenv from 'dotenv';
 
-
+dotenv.config();
 const app  = express()
 
 const PORT = process.env.PORT || 3002

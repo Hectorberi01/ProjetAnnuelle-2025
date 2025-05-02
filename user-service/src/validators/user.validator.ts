@@ -8,8 +8,9 @@ export const createUserSchema = Joi.object({
 });
 
 export const updateUserSchema = Joi.object({
-  nom: Joi.string(),
-  prenom: Joi.string(),
-  email: Joi.string().email(),
-  roleId: Joi.number().integer(),
+  nom: Joi.string().optional(),
+  prenom: Joi.string().optional(),
+  email: Joi.string().email().optional(),
+  roleId: Joi.number().integer().optional(),
+  password: Joi.string().optional(),
 });

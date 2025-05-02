@@ -5,9 +5,18 @@ const service = new PromotionService();
 
 export class PromotionController {
   static async create(req: Request, res: Response) {
-    const { name, year } = req.body;
-    const promotion = await service.create(name, year);
+    const { name, startYear,endYear} = req.body;
+    const promotion = await service.create(name, startYear, endYear);
     res.status(201).json(promotion);
+  }
+
+  static async addStudentToPromotion(req: Request, res: Response) {
+    const promotionId = Number(req.params.id);
+    console.log("promotionId", promotionId);
+    const studentId = Number(req.body.studentId);
+    console.log("studentId", studentId);
+    const promotionStudent = await service.addStudentToPromotion(promotionId, studentId);
+    res.status(201).json(promotionStudent);
   }
 
   static async getAll(req: Request, res: Response) {

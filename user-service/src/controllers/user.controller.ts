@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import { UserService } from "../services/user.service";
+import { console } from "inspector";
 
 export class UserController {
   private userService: UserService;
@@ -30,6 +31,22 @@ export class UserController {
     }
 
     const user = await this.userService.findById(id);
+    if (!user) {
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
+    }
+
+    res.status(200).json(user);
+  };
+
+  getByEmail: RequestHandler = async (req, res) => {
+    const email = req.params?.email;
+    if (!email) {
+      res.status(400).json({ message: "Email invalide" });
+      return;
+    }
+
+    const user = await this.userService.findByEmail(email);
     if (!user) {
       res.status(404).json({ message: "Utilisateur non trouvé" });
       return;

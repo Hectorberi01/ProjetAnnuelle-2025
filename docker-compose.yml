@@ -1,35 +1,5 @@
-version: "3.8"
 
 services:
-  # MySQL
-  mysql:
-    image: mysql:8.0
-    container_name: mysql_container
-    restart: always
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-    networks:
-      - backend
-
-  # phpMyAdmin
-  phpmyadmin:
-    image: phpmyadmin
-    container_name: phpmyadmin_container
-    depends_on:
-      - mysql
-    restart: always
-    ports:
-      - "8090:80"
-    environment:
-      PMA_HOST: mysql
-      PMA_USER: root
-      PMA_PASSWORD: root
-    networks:
-      - backend
 
   gateway:
     build: ./api-gateway
@@ -37,9 +7,9 @@ services:
       - "3000:3000"
     container_name: gateway
     depends_on:
-      # - auth
+      - auth
       - projets
-      # - user
+      - user
       - groupes
       - grades
       - reports
@@ -50,47 +20,41 @@ services:
     networks:
       - backend
 
-  # auth:
-  #   build: ./auth-service
-  #   ports:
-  #     - "3001:3000"
-  #   container_name: auth
-  #   networks:
-  #     - backend
+  auth:
+    build: ./auth-service
+    ports:
+      - "3001:3001"
+    container_name: auth
+    networks:
+      - backend
 
   projets:
     build: ./project-service
     ports:
       - "3002:3002"
     container_name: projets
-    environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: projetService
+    env_file:
+      - ./project-service/.env
     networks:
       - backend
 
-  # user:
-  #   build: ./user-service
-  #   ports:
-  #     - "3003:3000"
-  #   container_name: user
-  #   networks:
-  #     - backend
+  user:
+    build: ./user-service
+    ports:
+      - "3003:3003"
+    container_name: users
+    env_file:
+      - ./user-service/.env
+    networks:
+       - backend
 
   groupes:
     build: ./group-service
     ports:
       - "3004:3004"
     container_name: groupes
-    environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: groupService
+    env_file:
+      - ./group-service/.env
     networks:
       - backend
 
@@ -99,12 +63,8 @@ services:
     ports:
       - "3005:3005"
     container_name: grades
-    environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: gradeService
+    env_file:
+      - ./grade-service/.env
     networks:
       - backend
 
@@ -113,12 +73,8 @@ services:
     ports:
       - "3006:3006"
     container_name: reports
-    environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: reportService
+    env_file:
+      - ./report-service/.env
     networks:
       - backend
 
@@ -127,12 +83,8 @@ services:
     ports:
       - "3007:3007"
     container_name: promotions
-    environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: promotionService
+    env_file:
+      - ./promotion-service/.env
     networks:
       - backend
 
@@ -149,12 +101,8 @@ services:
     ports:
       - "3009:3009"
     container_name: livrables
-    environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: livrableService
+    env_file:
+      - ./livrable-service/.env
     networks:
       - backend
 

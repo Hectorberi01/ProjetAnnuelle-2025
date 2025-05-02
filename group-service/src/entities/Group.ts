@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { GroupStudent } from "./groupeStudent";
 
 @Entity()
 export class Group {
@@ -8,9 +9,12 @@ export class Group {
   @Column()
   projectId!: number;
 
-  @Column({ type: 'json' })
-  studentIds!: number[];
+  @Column()
+  name!: string;
 
-  @CreateDateColumn()
+  @Column()
   createdAt!: Date;
+
+  @OneToMany(() => GroupStudent, (groupStudent) => groupStudent.groupStudent)
+  groupStudent!: GroupStudent[];
 }

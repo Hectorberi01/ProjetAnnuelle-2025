@@ -9,9 +9,7 @@ export class UserService {
     private roleRepo = AppDataSource.getRepository(Role);
 
     // Create
-    async create(data: {
-        nom: string; prenom: string; email: string; roleId: number;
-    }): Promise<User> {
+    async create(data: {nom: string; prenom: string; email: string; roleId: number;}): Promise<User> {
         const role = await this.roleRepo.findOneBy({ id: data.roleId });
         if (!role) throw new Error("Rôle non trouvé");
         const username =
@@ -45,10 +43,21 @@ export class UserService {
         return this.userRepo.findOne({ where: { id }, relations: ["role"] });
     }
 
+    // UserByEmail
+    async findByEmail(email: string): Promise<User | null> {
+        return this.userRepo.findOne({ where: { email }, relations: ["role"] });
+    }
+
     // UserUpdate
     async update(id: number, data: Partial<User>): Promise<User | null> {
         const user = await this.userRepo.findOneBy({ id });
         if (!user) return null;
+
+        // Hash the password if it is provided
+        if (data.password) {
+            const hashedPassword = await bcrypt.hash(data.password, 10);
+            data.password = hashedPassword;
+        }
 
         Object.assign(user, data);
         return this.userRepo.save(user);

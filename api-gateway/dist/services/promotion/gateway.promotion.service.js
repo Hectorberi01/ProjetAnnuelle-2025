@@ -2,9 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GatewayPromotionService = void 0;
 const services_config_1 = require("../../config/services.config");
+const gateway_project_service_1 = require("../projets/gateway.project.service");
 class GatewayPromotionService {
     constructor(httpService) {
         this.httpService = httpService;
+        this.gatewayProjectService = new gateway_project_service_1.GatewayProjectService(this.httpService);
     }
     async createPromotion(promotion) {
         try {

@@ -18,12 +18,40 @@ export class RoleController {
     }
   };
 
-
   getAll: RequestHandler = async (req, res) => {
     console.log("getAll called");
   
     const roles = await this.roleService.findAll();
     res.json(roles);
+  };
+  getById: RequestHandler = async (req, res) => {
+    const id = Number(req.params?.id);
+    if (isNaN(id)) {
+      res.status(400).json({ message: "ID invalide" });
+      return;
+    }
+
+    const role = await this.roleService.findById(id);
+    if (!role) {
+      res.status(404).json({ message: "Rôle non trouvé" });
+      return;
+    }
+
+    res.json(role);
+  };
+  
+  getByName: RequestHandler = async (req, res) => {
+    const name = req.params?.name;
+    if (!name) {
+      res.status(400).json({ message: "Nom invalide" });
+      return;
+    }
+    const role = await this.roleService.findByName(name);
+    if (!role) {
+      res.status(404).json({ message: "Rôle non trouvé" });
+      return;
+    }
+    res.json(role);
   };
 
   update: RequestHandler = async (req, res) => {

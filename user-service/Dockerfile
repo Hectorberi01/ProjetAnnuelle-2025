@@ -9,7 +9,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Installer les dépendances
-RUN npm install
+RUN npm install --force
 
 # Copier tout le code source
 COPY . .

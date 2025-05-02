@@ -2,7 +2,7 @@ import Joi from "joi";
 
 export const manualGroupSchema = Joi.object({
   projectId: Joi.number().required(),
-  studentIds: Joi.array().items(Joi.number()).min(1).required(),
+  name: Joi.string().required(),
 });
 
 export const groupConfigSchema = Joi.object({

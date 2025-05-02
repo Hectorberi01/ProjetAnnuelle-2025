@@ -17,26 +17,34 @@ let GatewayAuthService = class GatewayAuthService {
     constructor(httpService) {
         this.httpService = httpService;
     }
-    async login(user) {
+    async login(loginData) {
         try {
-            const response = await (0, rxjs_1.lastValueFrom)(this.httpService.post(`${process.env.AUTH}/login`, user));
-            if (response.status !== 200) {
+            const res = await fetch(`${process.env.AUTH}/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify(loginData),
+            });
+            if (res.status !== 200) {
                 throw new Error('Login failed');
             }
-            return response.data;
+            return res.json();
         }
         catch (error) {
             console.error('Error during login:', error);
             throw new Error('Login failed');
         }
     }
-    async register(user) {
+    async register(registerData) {
         try {
-            const response = await (0, rxjs_1.lastValueFrom)(this.httpService.post(`${process.env.AUTH}/register`, user));
-            if (response.status !== 201) {
+            const res = await fetch(`${process.env.AUTH}/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify(registerData),
+            });
+            if (res.status !== 201) {
                 throw new Error('Registration failed');
             }
-            return response.data;
+            return res.json();
         }
         catch (error) {
             console.error('Error during registration:', error);
@@ -56,30 +64,38 @@ let GatewayAuthService = class GatewayAuthService {
             throw new Error('Logout failed');
         }
     }
-    async getUserInfo(userId) {
+    async forgotPassword(email) {
         try {
-            const response = await (0, rxjs_1.lastValueFrom)(this.httpService.get(`${process.env.AUTH}/user/${userId}`));
-            if (response.status !== 200) {
-                throw new Error('Failed to fetch user info');
+            const res = await fetch(`${process.env.AUTH}/forgot-password`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify({ email }),
+            });
+            if (res.status !== 200) {
+                throw new Error('Failed to send password reset email');
             }
-            return response.data;
+            return await res.json();
         }
         catch (error) {
-            console.error('Error fetching user info:', error);
-            throw new Error('Failed to fetch user info');
+            console.error('Error sending password reset email:', error);
+            throw new Error('Failed to send password reset email');
         }
     }
-    async updateUser(userId, userData) {
+    async changePassword(userId, oldPassword, newPassword) {
         try {
-            const response = await (0, rxjs_1.lastValueFrom)(this.httpService.put(`${process.env.AUTH}/user/${userId}`, userData));
-            if (response.status !== 200) {
-                throw new Error('Failed to update user');
+            const res = await fetch(`${process.env.AUTH}/change-password`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify({ userId, oldPassword, newPassword }),
+            });
+            if (res.status !== 200) {
+                throw new Error('Failed to change password');
             }
-            return response.data;
+            return await res.json();
         }
         catch (error) {
-            console.error('Error updating user:', error);
-            throw new Error('Failed to update user');
+            console.error('Error changing password:', error);
+            throw new Error('Failed to change password');
         }
     }
     async deleteUser(userId) {
@@ -93,32 +109,6 @@ let GatewayAuthService = class GatewayAuthService {
         catch (error) {
             console.error('Error deleting user:', error);
             throw new Error('Failed to delete user');
-        }
-    }
-    async getAllUsers() {
-        try {
-            const response = await (0, rxjs_1.lastValueFrom)(this.httpService.get(`${process.env.AUTH}/users`));
-            if (response.status !== 200) {
-                throw new Error('Failed to fetch users');
-            }
-            return response.data;
-        }
-        catch (error) {
-            console.error('Error fetching users:', error);
-            throw new Error('Failed to fetch users');
-        }
-    }
-    async getUserById(userId) {
-        try {
-            const response = await (0, rxjs_1.lastValueFrom)(this.httpService.get(`${process.env.AUTH}/user/${userId}`));
-            if (response.status !== 200) {
-                throw new Error('Failed to fetch user');
-            }
-            return response.data;
-        }
-        catch (error) {
-            console.error('Error fetching user:', error);
-            throw new Error('Failed to fetch user');
         }
     }
 };

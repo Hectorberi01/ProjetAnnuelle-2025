@@ -4,6 +4,7 @@ import { PromotionController } from "../controllers/promotion.controller";
 const router = Router();
 
 router.post("/", PromotionController.create);
+router.post("/:id/students", PromotionController.addStudentToPromotion);
 router.get("/", PromotionController.getAll);
 router.get("/:id", PromotionController.getById);
 router.put("/:id", PromotionController.update);

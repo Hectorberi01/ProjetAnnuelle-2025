@@ -56,6 +56,12 @@ class UserService {
             return this.userRepo.findOne({ where: { id }, relations: ["role"] });
         });
     }
+    // UserByEmail
+    findByEmail(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.userRepo.findOne({ where: { email }, relations: ["role"] });
+        });
+    }
     // UserUpdate
     update(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
