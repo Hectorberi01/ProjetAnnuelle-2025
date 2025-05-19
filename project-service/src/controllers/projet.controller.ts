@@ -20,10 +20,14 @@ export class ProjectController {
     }
 
     static async createProject(req: Request, res: Response) {
-        const { name, description, promotionId } = req.body;
-    
-        const project = await projetService.createProject(name, description, promotionId);
-        res.status(201).json(project);
+        try{
+            const project = await projetService.createProject(req.body);
+            res.status(201).json(project);
+        }catch (error) {
+            console.error('Error creating project:', error);
+            res.status(500).json({ message: 'Failed to create project' });
+        }
+        
     }
     
     static async getProjectById(req: Request, res: Response) {
@@ -34,9 +38,9 @@ export class ProjectController {
     
     static async updateProject(req: Request, res: Response) {
         const { id } = req.params;
-        const { name, description } = req.body;
+        const projectData = req.body;
     
-        const project = await projetService.updateProject(+id, name, description);
+        const project = await projetService.updateProject(+id, projectData);
         res.status(200).json(project);
     }
 }

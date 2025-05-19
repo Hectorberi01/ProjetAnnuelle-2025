@@ -1,38 +1,31 @@
 {
   "name": "api-gateway",
   "version": "1.0.0",
+  "description": "📡 API Gateway – Gestionnaire de projets étudiants",
   "main": "index.js",
   "scripts": {
-    "start:d": "nest start",
-    "start": "node dist/main.js",
-    "build": "tsc",
-    "start:dev": "nest start --watch"
+    "start": "tsc && node dist/server.js",
+    "dev": "ts-node-dev --respawn src/server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "description": "",
   "dependencies": {
-    "@nestjs/axios": "^4.0.0",
-    "@nestjs/common": "^11.0.16",
-    "@nestjs/config": "^4.0.2",
-    "@nestjs/core": "^11.0.16",
-    "@nestjs/platform-express": "^11.0.16",
-    "axios": "^1.8.4",
+    "axios": "^1.9.0",
     "cors": "^2.8.5",
     "csv-parser": "^3.2.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "morgan": "^1.10.0"
+    "joi": "^17.13.3",
+    "multer": "^1.4.5-lts.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
-    "@types/morgan": "^1.9.9",
     "@types/multer": "^1.4.12",
-    "@types/node": "^22.14.0",
-    "ts-node": "^10.9.2",
+    "@types/node": "^22.15.3",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   }
 }

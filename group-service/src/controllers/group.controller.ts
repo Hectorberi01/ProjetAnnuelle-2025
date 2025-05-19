@@ -11,6 +11,15 @@ export class GroupController {
         console.log(groups);
         res.status(200).json(groups);
     }
+    static async getGroupById(req: Request, res: Response) {
+        const groupId = parseInt(req.params.id);
+        const group = await service.getGroupById(groupId);
+        if (!group) {
+            res.status(404).json({ message: 'Group not found' });
+            return;
+        }
+        res.status(200).json(group);
+    }
 
     static async createManualGroup(req: Request, res: Response) {
         console.log('Creating manual group');
@@ -43,30 +52,18 @@ export class GroupController {
         res.status(400).json({ error: e });
       }
     }
+    static async createFreeGroups(req: Request, res: Response) {
+      const projectId = parseInt(req.params.projectId);
+      const { name } = req.body;
   
-    static async setGroupConfig(req: Request, res: Response) {
-        console.log('Setting group config');
-        const { error, value } = groupConfigSchema.validate(req.body);
-        if (error)  res.status(400).json({ error: error.details });
-    
-        const config = await service.setGroupConfig(value);
-        res.status(201).json(config);
+      try {
+        const result = await service.createFreeGroups(projectId, name);
+        res.status(201).json(result);
+      } catch (e) {
+        res.status(400).json({ error: e });
+      }
     }
 
-    static async updateGroupConfig(req: Request, res: Response) {
-      const { error, value } = groupConfigSchema.validate(req.body);
-      if (error)  res.status(400).json({ error: error.details });
-  
-      const config = await service.updateGroupConfig(parseInt(req.params.projectId), value);
-      if (!config)  res.status(404).json({ error: 'Config not found' });
-      res.status(200).json(config);
-    }
-  
-    static async getGroupConfig(req: Request, res: Response) {
-      const config = await service.getGroupConfig(parseInt(req.params.projectId));
-      if (!config)  res.status(404).json({ error: 'Config not found' });
-      res.status(200).json(config);
-    }
 
     static async addStudentToGroup(req: Request, res: Response) {
       const { groupId, studentId } = req.body;

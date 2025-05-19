@@ -1,0 +1,16 @@
+
+services:
+  promotions:
+    build: .
+    container_name: users-service
+    restart: always
+    ports:
+      - "3003:3003"
+    env_file:
+      - .env
+    networks:
+      - backend
+      
+networks:
+  backend:
+    external: true

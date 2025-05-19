@@ -1,0 +1,16 @@
+
+services:
+  promotions:
+    build: .
+    container_name: soutenance-service
+    restart: always
+    ports:
+      - "3010:3010"
+    env_file:
+      - .env
+    networks:
+      - backend
+      
+networks:
+  backend:
+    external: true

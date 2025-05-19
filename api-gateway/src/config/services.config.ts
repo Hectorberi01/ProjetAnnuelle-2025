@@ -1,8 +1,17 @@
 
 import * as dotenv from 'dotenv';
-dotenv.config();
+import path from 'path';
+//dotenv.config();
   
 const isDocker = process.env.DOCKER === 'true';
+
+// Charge .local.env si on n'est PAS en docker
+if (!isDocker) {
+  dotenv.config({ path: path.resolve(__dirname, '../../.local.env') });
+} else {
+  dotenv.config(); // par défaut, charge .env
+}
+
 export const SERVICES = {
   projects: isDocker
     ? 'http://projets:3002/api/projects'
@@ -18,7 +27,7 @@ export const SERVICES = {
 
   users: isDocker
     ? 'http://users:3003/users'
-    : process.env.USER || 'http://localhost:3003/users',
+    : process.env.USERS || 'http://localhost:3003/users',
 
   roles : isDocker
     ? 'http://users:3003/roles'

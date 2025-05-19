@@ -11,3 +11,25 @@ export interface CreatePromotion {
     startYear: Date;
     endYear: Date;
 }
+
+export interface User {
+    id: number;
+    username: string;
+    nom: string;
+    prenom: string;
+    email: string;
+    password: string;
+    role: Role;
+}
+
+export interface CreateUser {
+    nom: string;
+    prenom: string;
+    email: string;
+    roleId: number;
+}
+
+export interface Role {
+    id: number;
+    name: string;
+}

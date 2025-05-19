@@ -18,11 +18,15 @@ export class GroupService {
     });
   }
 
+  async getGroupById(id: number) {
+    return await this.groupRepo.findOne({
+      where: { id },
+      relations: {
+        groupStudent: true,
+      },
+    });
+  }
   async createManualGroup(projectId: number, name:string) {
-    // on récupère la config du projet
-    const config = await this.configRepo.findOneBy({ projectId });
-
-    if (!config) throw new Error('GroupConfig not found');
 
     // on vérifie si le nom du groupe est unique
     const existingGroup = await this.groupRepo.findOneBy({ name, projectId });
@@ -37,29 +41,13 @@ export class GroupService {
   }
 
   async createRandomGroups(projectId: number, name: string) {
-    const config = await this.configRepo.findOneBy({ projectId });
-    if (!config) throw new Error('GroupConfig not found');
 
     const group = this.groupRepo.create({ projectId, name });
     return await this.groupRepo.save(group);
   }
-
-  async setGroupConfig(config: Partial<GroupConfig>) {
-    const existing = await this.configRepo.findOneBy({ projectId: config.projectId });
-    if (existing) {
-      return this.configRepo.save({ ...existing, ...config });
-    }
-    return this.configRepo.save(this.configRepo.create(config));
-  }
-
-  async updateGroupConfig(projectId: number, config: Partial<GroupConfig>) {
-    const existing = await this.configRepo.findOneBy({ projectId });
-    if (!existing) throw new Error('GroupConfig not found');
-    return this.configRepo.save({ ...existing, ...config });
-  }
-
-  async getGroupConfig(projectId: number) {
-    return this.configRepo.findOneBy({ projectId });
+  async createFreeGroups(projectId: number, name: string) {
+    const group = this.groupRepo.create({ projectId, name });
+    return await this.groupRepo.save(group);
   }
 
   async addStudentToGroup(groupId: number, studentId: number) {

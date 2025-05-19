@@ -12,7 +12,7 @@ export class Group {
   @Column()
   name!: string;
 
-  @Column()
+  @Column( {default: () => "CURRENT_TIMESTAMP"})
   createdAt!: Date;
 
   @OneToMany(() => GroupStudent, (groupStudent) => groupStudent.groupStudent)

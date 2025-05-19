@@ -1,0 +1,16 @@
+
+services:
+  promotions:
+    build: .
+    container_name: auths-services
+    restart: always
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    networks:
+      - backend
+      
+networks:
+  backend:
+    external: true

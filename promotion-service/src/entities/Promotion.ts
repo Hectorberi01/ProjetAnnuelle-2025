@@ -17,6 +17,9 @@ export class Promotion {
 
   @Column( { default: () => "CURRENT_TIMESTAMP" })
   createdAt!: Date;
+
+  @Column( { default: () => "CURRENT_TIMESTAMP" })
+  updatedAt!: Date;
   
   @OneToMany(() => PromotionStudent, (ps) => ps.promotion)
   promotionStudents!: PromotionStudent[];
