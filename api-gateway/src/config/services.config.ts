@@ -20,7 +20,7 @@ export const SERVICES = {
     : process.env.PROJETS || 'http://localhost:3002/api/projects',
 
   grades: isDocker
-    ? 'http://grades:3000/api/grades'
+    ? 'http://grades:3005/api/grades'
     : process.env.GRADES || 'http://localhost:3005/api/grades',
 
   groups: isDocker
