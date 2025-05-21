@@ -1,24 +1,17 @@
-# Dockerfile
-
+# Image légère pour exécuter du code Node.js
 FROM node:23-slim
 
-# Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers de dépendances
+# Copier uniquement les fichiers nécessaires à l'exécution
 COPY package*.json ./
+RUN npm install --omit=dev --force
 
-# Installer les dépendances
-RUN npm install --force
+# Copier uniquement les fichiers compilés
+COPY dist ./dist
 
-# Copier tout le code source
-COPY . .
-
-# Compiler le code TypeScript
-RUN npm run build
-
-# Exposer le port (modifie selon le service)
+# Exposer le port (à adapter si nécessaire)
 EXPOSE 3003
 
-# Lancer le service
-CMD ["npm", "run", "start"]
+# Lancer le code compilé
+CMD ["node", "dist/app.js"]

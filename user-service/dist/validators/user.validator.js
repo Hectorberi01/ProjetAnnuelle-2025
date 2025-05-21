@@ -12,8 +12,9 @@ exports.createUserSchema = joi_1.default.object({
     roleId: joi_1.default.number().integer().required(),
 });
 exports.updateUserSchema = joi_1.default.object({
-    nom: joi_1.default.string(),
-    prenom: joi_1.default.string(),
-    email: joi_1.default.string().email(),
-    roleId: joi_1.default.number().integer(),
+    nom: joi_1.default.string().optional(),
+    prenom: joi_1.default.string().optional(),
+    email: joi_1.default.string().email().optional(),
+    roleId: joi_1.default.number().integer().optional(),
+    password: joi_1.default.string().optional(),
 });

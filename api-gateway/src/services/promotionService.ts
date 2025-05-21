@@ -128,19 +128,36 @@ export async function getAllPromotions(): Promise<any[]> {
         // on récupère les étudiants de la promotion
         const students =  await getStudents()
 
-        // Pour chaque promotion, on remplace promotionStudents par students
+        // on récupère le nombre de projets de chaque promotion
+        const projects = await apiClient.get<any[]>(`${SERVICES.projects}`);
+        if (projects.status !== 200) {
+            throw new Error('Failed to fetch projects');
+        }
+        
+        // Regroupement des projets par ID de promotion
+        const projectsByPromotionId = projects.data.reduce((acc: any, project: any) => {
+            if (!acc[project.promotionId]) {
+                acc[project.promotionId] = 0;
+            }
+            acc[project.promotionId]++;
+            return acc;
+        }, {});
+
+
+        // Enrichir les promotions avec les étudiants et le nombre de projets
         const promotionsWithStudents = response.data.map(promotion => {
-            const studentList = promotion.promotionStudents.map((ps:any) => {
-                return students.find(student => student.id === ps.studentId);
-            }).filter(Boolean); // retire les étudiants non trouvés (sécurité)
-            return {
-                ...promotion,
-                students: studentList, // nouveau champ students
-                promotionStudents: undefined // optionnel : tu peux supprimer promotionStudents si tu veux
-            };
+        const studentList = promotion.promotionStudents?.map((ps: any) => {
+            return students.find(student => student.id === ps.studentId);
+        }).filter(Boolean) || [];
+
+        return {
+            ...promotion,
+            students: studentList, // Liste réelle des étudiants
+            numberOfProjects: projectsByPromotionId[promotion.id] || 0,
+            promotionStudents: undefined // Nettoyage éventuel
+        };
         });
-  
-        console.log("response", response.data);
+
         return promotionsWithStudents;
     } catch (error) {
         console.error('Error fetching promotions:', error);

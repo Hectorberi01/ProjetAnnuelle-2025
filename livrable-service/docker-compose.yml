@@ -1,0 +1,16 @@
+
+services:
+  promotions:
+    build: .
+    container_name: livrable-service
+    restart: always
+    ports:
+      - "3009:3009"
+    env_file:
+      - .env
+    networks:
+      - backend
+      
+networks:
+  backend:
+    external: true

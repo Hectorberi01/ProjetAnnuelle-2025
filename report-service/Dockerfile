@@ -1,24 +1,25 @@
-# Dockerfile
+# Étape 1 : Build du TypeScript
+FROM node:23-slim AS builder
 
-FROM node:23-slim
-
-# Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers de dépendances
 COPY package*.json ./
+RUN npm install --force
 
-# Installer les dépendances
-RUN npm install
-
-# Copier tout le code source
 COPY . .
-
-# Compiler le code TypeScript
 RUN npm run build
 
-# Exposer le port (modifie selon le service)
-EXPOSE 3006
+# Étape 2 : Runtime propre (production)
+FROM node:23-slim
 
-# Lancer le service
-CMD ["npm", "run", "start"]
+WORKDIR /app
+
+# Copier seulement les fichiers nécessaires
+COPY package*.json ./
+RUN npm install --omit=dev --force
+
+# Copier les fichiers compilés depuis le builder
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 3006
+CMD ["node", "dist/index.js"]

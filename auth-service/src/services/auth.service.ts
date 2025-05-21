@@ -6,19 +6,39 @@ import { RegisterDTO } from '../models/auth.model';
 import { registerSchema } from '../validations/auth.validation';
 import Mailjet from 'node-mailjet';
 
+import { Buffer } from 'buffer';
+import e from 'express';
+
 dotenv.config();
 
 const mailjet = Mailjet.apiConnect(
   process.env.MJ_APIKEY_PUBLIC!,
   process.env.MJ_APIKEY_PRIVATE!
 );
-const USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
+
+let USER_SERVICE_URL = null;
+const isDocker = process.env.IS_DOKER === 'true';
+
+if (!isDocker) {
+  USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
+}else {
+  USER_SERVICE_URL = "http://users:3003/users";
+}
+
+ //USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 if (!USER_SERVICE_URL) {
     console.error("❌ ERREUR: USER_SERVICE_URL n'est pas défini !");
     process.exit(1);
 }
+
+interface GoogleUserInfo {
+  email: string;
+  name: string;
+  sub: string; // ID Google
+}
+
 
 export const register = async (data: RegisterDTO) => {
 
@@ -52,12 +72,8 @@ export const register = async (data: RegisterDTO) => {
 };
 
 export const login = async ({ email, password }: { email: string; password: string }) => {
-  console.log("email", email);
-  console.log("password", password);
-  console.log(`${USER_SERVICE_URL}/email/${email}`);
     try {
         const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
-        console.log("response", response);
         const data = await response.json();
         const user = data;
         if (!user) {
@@ -65,10 +81,31 @@ export const login = async ({ email, password }: { email: string; password: stri
         }
 
         const isValid = await bcrypt.compare(password, user.password);
-        console.log("isValid", isValid);
         if (!isValid) {
             return { status: 401, data: { error: 'Mot de passe incorrect' } };
         }
+        // Supprimer le champ password
+      delete user.password;
+      const encodedId = Buffer.from(user.id.toString()).toString('base64');
+      user.id = encodedId;
+      const token = jwt.sign({ user: user }, JWT_SECRET, {expiresIn: '1h',});
+  
+      return { status: 200, data: { token, user } };
+    } catch (err: any) {
+      return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+    }
+};
+
+export const loginWithGoogleOrAzure = async (email: string) => {
+    try {
+        const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
+        console.log("url", `${USER_SERVICE_URL}/email/${email}`);
+        const data = await response.json();
+        const user = data;
+        if (!user) {
+          return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+        }
+
         // Supprimer le champ password
       delete user.password;
       const encodedId = Buffer.from(user.id.toString()).toString('base64');

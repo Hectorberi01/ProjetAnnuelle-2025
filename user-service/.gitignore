@@ -36,3 +36,7 @@ Thumbs.db
 # JetBrains IDE config
 .idea/
 *.iml
+
+node_modules
+dist
+.env

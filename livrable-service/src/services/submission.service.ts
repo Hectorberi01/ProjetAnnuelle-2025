@@ -12,9 +12,6 @@ export class SubmissionService {
   public async handleUpload(req: Request) {
     const { groupId, githubUrl, submittedAt } = req.body;
     const deliverableId = parseInt(req.params.deliverableId);
-    console.log("deliverableId", deliverableId);
-    console.log("req.body", req.body);
-    console.log("req.file", req.file);
     const file = req.file;
 
     const deliverable = await this.deliverableRepo.findOneBy({ id: deliverableId });

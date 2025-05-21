@@ -27,6 +27,30 @@ __decorate([
     __metadata("design:type", String)
 ], Project.prototype, "description", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", Date)
+], Project.prototype, "soutenanceDate", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 1 }),
+    __metadata("design:type", Number)
+], Project.prototype, "minStudents", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 1 }),
+    __metadata("design:type", Number)
+], Project.prototype, "maxStudents", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'enum', enum: ['manual', 'random', 'free'] }),
+    __metadata("design:type", String)
+], Project.prototype, "mode", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: () => "CURRENT_TIMESTAMP" }),
+    __metadata("design:type", Date)
+], Project.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: () => "CURRENT_TIMESTAMP" }),
+    __metadata("design:type", Date)
+], Project.prototype, "updatedAt", void 0);
+__decorate([
     (0, typeorm_1.Column)({ default: 'draft' }),
     __metadata("design:type", String)
 ], Project.prototype, "status", void 0);

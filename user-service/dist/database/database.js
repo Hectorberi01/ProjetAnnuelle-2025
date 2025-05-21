@@ -39,6 +39,7 @@ const dotenv = __importStar(require("dotenv"));
 const User_1 = require("./entities/User");
 const Role_1 = require("./entities/Role");
 dotenv.config();
+// Créer une instance de DataSource
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "mysql",
     host: process.env.DB_HOST,
@@ -48,7 +49,5 @@ exports.AppDataSource = new typeorm_1.DataSource({
     database: process.env.DB_NAME || "user-Service",
     logging: false,
     synchronize: true,
-    entities: [
-        User_1.User, Role_1.Role
-    ],
+    entities: [User_1.User, Role_1.Role],
 });

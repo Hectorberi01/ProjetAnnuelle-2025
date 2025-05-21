@@ -20,6 +20,8 @@ services:
     networks:
       - backend
 
+    environment:
+      - DOCKER=true
   auth:
     build: ./auth-service
     ports:

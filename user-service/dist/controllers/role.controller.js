@@ -28,6 +28,34 @@ class RoleController {
             const roles = yield this.roleService.findAll();
             res.json(roles);
         });
+        this.getById = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const id = Number((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);
+            if (isNaN(id)) {
+                res.status(400).json({ message: "ID invalide" });
+                return;
+            }
+            const role = yield this.roleService.findById(id);
+            if (!role) {
+                res.status(404).json({ message: "Rôle non trouvé" });
+                return;
+            }
+            res.json(role);
+        });
+        this.getByName = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const name = (_a = req.params) === null || _a === void 0 ? void 0 : _a.name;
+            if (!name) {
+                res.status(400).json({ message: "Nom invalide" });
+                return;
+            }
+            const role = yield this.roleService.findByName(name);
+            if (!role) {
+                res.status(404).json({ message: "Rôle non trouvé" });
+                return;
+            }
+            res.json(role);
+        });
         this.update = (req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             const id = Number((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);

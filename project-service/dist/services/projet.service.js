@@ -31,22 +31,27 @@ class ProjetService {
             return yield projetRepo.findOneByOrFail({ id });
         });
     }
-    createProject(name, description, promotionId) {
+    createProject(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const project = projetRepo.create({ name, description, promotionId });
+            var _a;
+            const preparedData = Object.assign(Object.assign({}, data), { soutenanceDate: (_a = data.soutenanceDate) !== null && _a !== void 0 ? _a : undefined // Remplace null par undefined
+             });
+            const project = projetRepo.create(preparedData);
             return yield projetRepo.save(project);
         });
     }
-    updateProject(id, name, description) {
+    updateProject(id, updateData) {
         return __awaiter(this, void 0, void 0, function* () {
-            const project = yield projetRepo.findOneByOrFail({ id });
-            if (!project)
-                throw new Error('Project not found');
-            if (name)
-                project.name = name;
-            if (description)
-                project.description = description;
-            return yield projetRepo.save(project);
+            try {
+                const project = yield projetRepo.findOneByOrFail({ id });
+                Object.assign(project, updateData);
+                const updatedProject = yield projetRepo.save(project);
+                return updatedProject;
+            }
+            catch (error) {
+                console.error('Error updating project:', error);
+                throw new Error('Failed to update project');
+            }
         });
     }
     deleteProject(id) {

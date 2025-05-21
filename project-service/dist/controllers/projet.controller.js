@@ -35,9 +35,14 @@ class ProjectController {
     }
     static createProject(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { name, description, promotionId } = req.body;
-            const project = yield projetService.createProject(name, description, promotionId);
-            res.status(201).json(project);
+            try {
+                const project = yield projetService.createProject(req.body);
+                res.status(201).json(project);
+            }
+            catch (error) {
+                console.error('Error creating project:', error);
+                res.status(500).json({ message: 'Failed to create project' });
+            }
         });
     }
     static getProjectById(req, res) {
@@ -50,8 +55,8 @@ class ProjectController {
     static updateProject(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const { name, description } = req.body;
-            const project = yield projetService.updateProject(+id, name, description);
+            const projectData = req.body;
+            const project = yield projetService.updateProject(+id, projectData);
             res.status(200).json(project);
         });
     }

@@ -12,8 +12,8 @@ export class ReportSection {
   @Column({ type: 'text' })
   content!: string;
 
-  @ManyToOne(() => Report, report => report.sections, { onDelete: 'CASCADE' })
-  report!: Report;
+  //@ManyToOne(() => Report, report => report.sections, { onDelete: 'CASCADE' })
+  //report!: Report;
 
   @Column()
   order!: number;

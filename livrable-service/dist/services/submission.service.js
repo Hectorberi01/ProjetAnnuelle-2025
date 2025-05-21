@@ -27,9 +27,6 @@ class SubmissionService {
         return __awaiter(this, void 0, void 0, function* () {
             const { groupId, githubUrl, submittedAt } = req.body;
             const deliverableId = parseInt(req.params.deliverableId);
-            console.log("deliverableId", deliverableId);
-            console.log("req.body", req.body);
-            console.log("req.file", req.file);
             const file = req.file;
             const deliverable = yield this.deliverableRepo.findOneBy({ id: deliverableId });
             if (!deliverable)

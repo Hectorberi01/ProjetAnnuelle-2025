@@ -17,9 +17,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 require("reflect-metadata");
 const database_1 = require("./database/database");
 const initRoutes_1 = require("./routes/initRoutes");
-// Charger les variables d'environnement
 dotenv_1.default.config();
-// Init express
 const app = (0, express_1.default)();
 // Port
 const PORT = process.env.PORT || 3003;
@@ -38,7 +36,6 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (error) {
         console.error("❌ Erreur de connexion à la base :", error);
-        process.exit(1);
     }
 });
 main()

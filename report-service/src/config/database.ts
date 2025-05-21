@@ -16,7 +16,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || 'report-Service',
   synchronize: true,
   logging: false,
-  entities: [ReportSection, Report],
+  entities: [Report],
   migrations: [],
   subscribers: [],
 });

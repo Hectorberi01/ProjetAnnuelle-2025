@@ -1,15 +1,25 @@
 import { Router } from "express";
-import { create, getReportById, getReports } from "../controllers/report.controller";
-import { createSection, getSections, updateSection } from "../controllers/report-section.controller";
+import { create, deleteReport, getAll, getById, getByProject, update } from "../controllers/report.controller";
+//import { createSection, getSections, updateSection } from "../controllers/report-section.controller";
 
 const router = Router();
 
+// Créer un rapport
 router.post('/', create);
-router.get('/project/:projectId',getReports);
-router.get('/:id', getReportById);
 
-router.post('/sections', createSection);
-router.put('/sections/:id', updateSection);
-router.get('/sections/:id', getSections);
+// mettre à jour un rapport
+router.put('/:id', update);
+
+// Récupérer tous les rapports
+router.get('/', getAll);
+
+// Récupérer un rapport par son ID
+router.get('/:id', getById);
+
+// Récupérer tous les rapports d'un projet
+router.get('/projects/:projectId', getByProject);
+
+// suppression d'un rapport
+router.delete('/:id', deleteReport);
 
 export default router;

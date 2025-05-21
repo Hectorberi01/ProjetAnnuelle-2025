@@ -29,6 +29,16 @@ class RoleService {
             return this.roleRepo.find();
         });
     }
+    findById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.roleRepo.findOneBy({ id });
+        });
+    }
+    findByName(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.roleRepo.findOneBy({ name });
+        });
+    }
     // RoleUpdate
     update(id, data) {
         return __awaiter(this, void 0, void 0, function* () {

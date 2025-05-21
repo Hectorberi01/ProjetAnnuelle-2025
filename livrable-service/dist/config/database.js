@@ -40,14 +40,14 @@ const Deliverable_1 = require("../entities/Deliverable");
 const Submission_1 = require("../entities/Submission");
 const ValidationRule_1 = require("../entities/ValidationRule");
 // Spécifiez le chemin vers le fichier .env
-dotenv.config({ path: '../../src/.env' });
+dotenv.config();
 exports.AppDataSource = new typeorm_1.DataSource({
     type: 'mysql',
-    host: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT || '3306'),
-    username: process.env.DB_USERNAME || 'root',
-    password: process.env.DB_PASSWORD || 'root',
-    database: process.env.DB_NAME || 'livrableService',
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME || 'livrable-Service',
     synchronize: true,
     logging: false,
     entities: [Deliverable_1.Deliverable, Submission_1.Submission, ValidationRule_1.ValidationRule],

@@ -8,23 +8,23 @@ const reportRepo = AppDataSource.getRepository(Report);
 export class ReportSectionService {
   constructor() {}
 
-  public async createSection(reportId: number, title: string, content: string, order: number) {
-    console.log('Creating section');
+  // public async createSection(reportId: number, title: string, content: string, order: number) {
+  //   console.log('Creating section');
 
-    const report = await reportRepo.findOneBy({ id: reportId });
-    if (!report) throw new Error('Report not found');
+  //   const report = await reportRepo.findOneBy({ id: reportId });
+  //   if (!report) throw new Error('Report not found');
 
-    console.log('✔️ Report loaded:', report);
+  //   console.log('✔️ Report loaded:', report);
 
-    const section = sectionRepo.create({ report, title, content, order });
-    return await sectionRepo.save(section);
-  }
+  //   const section = sectionRepo.create({ report, title, content, order });
+  //   return await sectionRepo.save(section);
+  // }
 
-  public async updateSection(id: number, content: string) {
-    return await sectionRepo.update({ id }, { content });
-  }
+  // public async updateSection(id: number, content: string) {
+  //   return await sectionRepo.update({ id }, { content });
+  // }
 
-  public async getSection(id: number) {
-    return await sectionRepo.findOne({ where: { id }, relations: ['report'] });
-  }
+  // public async getSection(id: number) {
+  //   return await sectionRepo.findOne({ where: { id }, relations: ['report'] });
+  // }
 }

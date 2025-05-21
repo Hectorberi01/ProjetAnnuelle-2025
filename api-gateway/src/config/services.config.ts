@@ -5,8 +5,10 @@ import path from 'path';
   
 const isDocker = process.env.DOCKER === 'true';
 
+console.log('isDocker:', isDocker);
 // Charge .local.env si on n'est PAS en docker
 if (!isDocker) {
+  console.log('Loading local environment variables');
   dotenv.config({ path: path.resolve(__dirname, '../../.local.env') });
 } else {
   dotenv.config(); // par défaut, charge .env
@@ -44,4 +46,8 @@ export const SERVICES = {
   livrables: isDocker
     ? 'http://livrables:3000/api/livrables'
     : process.env.LIVRABLES || 'http://localhost:3009/api/livrables',
+
+  reports: isDocker
+    ? 'http://reports:3006/api/reports'
+    : process.env.REPORTS || 'http://localhost:3006/api/reports',
 };

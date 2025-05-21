@@ -12,8 +12,14 @@ export class Report {
   @Column()
   groupId!: number;
 
-  @OneToMany(() => ReportSection, section => section.report, { cascade: true })
-  sections!: ReportSection[];
+  @Column()
+  title!: string;
+
+  @Column({ type: 'text' })
+  content!: string;
+
+  //@OneToMany(() => ReportSection, section => section.report, { cascade: true })
+  //sections!: ReportSection[];
 
   @CreateDateColumn()
   createdAt!: Date;

@@ -37,15 +37,14 @@ exports.AppDataSource = void 0;
 const typeorm_1 = require("typeorm");
 const dotenv = __importStar(require("dotenv"));
 const Project_1 = require("../entities/Project");
-// Spécifiez le chemin vers le fichier .env
-dotenv.config({ path: '../../src/.env' });
+dotenv.config();
 exports.AppDataSource = new typeorm_1.DataSource({
     type: 'mysql',
-    host: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT || '3306'),
-    username: process.env.DB_USERNAME || 'root',
-    password: process.env.DB_PASSWORD || 'root',
-    database: process.env.DB_NAME || 'projetService',
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME || 'projet-Service',
     synchronize: true,
     logging: false,
     entities: [Project_1.Project],

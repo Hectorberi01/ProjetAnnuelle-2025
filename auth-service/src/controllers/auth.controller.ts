@@ -13,6 +13,7 @@ export const login = async (req: Request, res: Response) => {
     res.status(result.status).json(result.data);
 };
 
+
 export const logout = async (_: Request, res: Response) => {
   res.status(200).json({ message: 'Logged out successfully' });
 };

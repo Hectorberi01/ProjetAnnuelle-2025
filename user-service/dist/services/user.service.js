@@ -68,6 +68,11 @@ class UserService {
             const user = yield this.userRepo.findOneBy({ id });
             if (!user)
                 return null;
+            // Hash the password if it is provided
+            if (data.password) {
+                const hashedPassword = yield bcrypt_1.default.hash(data.password, 10);
+                data.password = hashedPassword;
+            }
             Object.assign(user, data);
             return this.userRepo.save(user);
         });

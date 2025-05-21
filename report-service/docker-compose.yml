@@ -5,7 +5,7 @@ services:
     container_name: report-service
     restart: always
     ports:
-      - "300§:300§"
+      - "3005:3005"
     env_file:
       - .env
     networks:
