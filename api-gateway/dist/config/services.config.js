@@ -41,8 +41,10 @@ const dotenv = __importStar(require("dotenv"));
 const path_1 = __importDefault(require("path"));
 //dotenv.config();
 const isDocker = process.env.DOCKER === 'true';
+console.log('isDocker:', isDocker);
 // Charge .local.env si on n'est PAS en docker
 if (!isDocker) {
+    console.log('Loading local environment variables');
     dotenv.config({ path: path_1.default.resolve(__dirname, '../../.local.env') });
 }
 else {
@@ -53,7 +55,7 @@ exports.SERVICES = {
         ? 'http://projets:3002/api/projects'
         : process.env.PROJETS || 'http://localhost:3002/api/projects',
     grades: isDocker
-        ? 'http://grades:3000/api/grades'
+        ? 'http://grades:3005/api/grades'
         : process.env.GRADES || 'http://localhost:3005/api/grades',
     groups: isDocker
         ? 'http://groupes:3004/api/groups'
@@ -73,4 +75,7 @@ exports.SERVICES = {
     livrables: isDocker
         ? 'http://livrables:3000/api/livrables'
         : process.env.LIVRABLES || 'http://localhost:3009/api/livrables',
+    reports: isDocker
+        ? 'http://reports:3006/api/reports'
+        : process.env.REPORTS || 'http://localhost:3006/api/reports',
 };
