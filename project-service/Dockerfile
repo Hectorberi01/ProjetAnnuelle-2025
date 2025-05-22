@@ -4,7 +4,8 @@ WORKDIR /app
 
 # Copier uniquement les fichiers nécessaires à l'exécution
 COPY package*.json ./
-RUN npm install --omit=dev --force
+RUN npm install --omit=dev 
+##--force
 
 # Copier uniquement les fichiers compilés
 COPY dist ./dist

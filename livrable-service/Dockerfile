@@ -18,7 +18,8 @@ FROM node:23-slim
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --omit=dev --force
+RUN npm install --omit=dev 
+##--force
 
 COPY --from=builder /app/dist ./dist
 

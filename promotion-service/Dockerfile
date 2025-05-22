@@ -1,5 +1,5 @@
 # Étape 1 : Build du TypeScript
-FROM node:23-slim as builder
+FROM node:23-slim AS builder
 
 WORKDIR /app
 
@@ -16,7 +16,8 @@ WORKDIR /app
 
 # Copier seulement les fichiers nécessaires
 COPY package*.json ./
-RUN npm install --omit=dev --force
+RUN npm install --omit=dev 
+## --force
 
 # Copier les fichiers compilés depuis le builder
 COPY --from=builder /app/dist ./dist
