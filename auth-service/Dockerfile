@@ -13,7 +13,7 @@ RUN npm install --omit=dev
 COPY dist ./dist
 
 # Exposer le port (à adapter si nécessaire)
-EXPOSE 3001
+EXPOSE 3000
 
 # Lancer le code compilé
 CMD ["node", "dist/index.js"]
