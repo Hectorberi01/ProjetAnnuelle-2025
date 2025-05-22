@@ -2,7 +2,7 @@
 services:
   promotions:
     build: .
-    container_name: users-service
+    container_name: service-users
     restart: always
     ports:
       - "3003:3003"

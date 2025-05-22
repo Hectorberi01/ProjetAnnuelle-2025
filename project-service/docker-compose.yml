@@ -2,7 +2,7 @@
 services:
   promotions:
     build: .
-    container_name: projects-service
+    container_name: service-projects
     restart: always
     ports:
       - "3002:3002"
