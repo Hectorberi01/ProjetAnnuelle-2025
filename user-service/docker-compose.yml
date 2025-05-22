@@ -1,6 +1,6 @@
 
 services:
-  promotions:
+  users:
     build: .
     container_name: service-users
     restart: always

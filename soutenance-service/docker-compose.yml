@@ -1,8 +1,8 @@
 
 services:
-  promotions:
+  soutenance:
     build: .
-    container_name: soutenance-service
+    container_name: service-soutenance
     restart: always
     ports:
       - "3010:3010"

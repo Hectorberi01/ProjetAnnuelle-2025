@@ -1,6 +1,6 @@
 
 services:
-  promotions:
+  livrable:
     build: .
     container_name: livrable-service
     restart: always

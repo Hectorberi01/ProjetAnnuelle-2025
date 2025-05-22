@@ -1,8 +1,8 @@
 
 services:
-  promotions:
+  groups:
     build: .
-    container_name: groups-service
+    container_name: service-groups
     restart: always
     ports:
       - "3004:3004"

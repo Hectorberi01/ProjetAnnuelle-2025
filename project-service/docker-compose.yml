@@ -1,6 +1,6 @@
 
 services:
-  promotions:
+  projects:
     build: .
     container_name: service-projects
     restart: always
