@@ -29,6 +29,9 @@ services:
     container_name: auth
     networks:
       - backend
+    
+    environment:
+      - IS_DOCKER=true
 
   projets:
     build: ./project-service

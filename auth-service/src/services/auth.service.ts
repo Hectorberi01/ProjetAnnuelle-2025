@@ -8,6 +8,7 @@ import Mailjet from 'node-mailjet';
 
 import { Buffer } from 'buffer';
 import e from 'express';
+import { console } from 'inspector';
 
 dotenv.config();
 
@@ -16,13 +17,21 @@ const mailjet = Mailjet.apiConnect(
   process.env.MJ_APIKEY_PRIVATE!
 );
 
+
 let USER_SERVICE_URL = null;
-const isDocker = process.env.IS_DOKER === 'true';
+
+const isDocker = process.env.IS_DOCKER === 'true';
+
+
 
 if (!isDocker) {
+  console.log("isDocker", isDocker);
   USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
+  console.log("USER_SERVICE_URL", USER_SERVICE_URL);
 }else {
+  console.log("isDocker", isDocker);
   USER_SERVICE_URL = "http://users:3003/users";
+  console.log("USER_SERVICE_URL", USER_SERVICE_URL);
 }
 
  //USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
