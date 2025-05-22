@@ -24,6 +24,7 @@ services:
       - DOCKER=true
     env_file:
       - ./api-gateway/.env
+
   auth:
     build: ./auth-service
     ports:
@@ -38,6 +39,7 @@ services:
     env_file:
       - ./auth-service/.env
 
+
   projets:
     build: ./project-service
     ports:
@@ -47,6 +49,7 @@ services:
       - ./project-service/.env
     networks:
       - backend
+
 
   user:
     build: ./user-service
