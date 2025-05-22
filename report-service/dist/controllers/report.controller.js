@@ -12,13 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getById = exports.getByProject = exports.getAll = exports.deleteReport = exports.update = exports.create = void 0;
 const report_service_1 = require("../services/report.service");
 const reportService = new report_service_1.ReportService();
+// Create a new report
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Creating report');
     console.log(req.body);
     const response = yield reportService.createReport(req.body);
+    if (!response) {
+        res.status(404).json({ message: 'Report not created' });
+        return;
+    }
     res.status(201).json({
         message: 'Report created successfully',
-        report: response
     });
 });
 exports.create = create;
@@ -26,6 +30,7 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Updating report');
     console.log(req.body);
     const reportId = parseInt(req.params.id);
+    console.log('Report ID:', reportId);
     const response = yield reportService.updateReport(reportId, req.body);
     if (!response) {
         res.status(404).json({ message: 'Report not found' });
@@ -33,7 +38,6 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     res.status(200).json({
         message: 'Report updated successfully',
-        report: response
     });
 });
 exports.update = update;

@@ -20,22 +20,21 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const auth_validation_1 = require("../validations/auth.validation");
 const node_mailjet_1 = __importDefault(require("node-mailjet"));
 const buffer_1 = require("buffer");
+const inspector_1 = require("inspector");
 dotenv_1.default.config();
 const mailjet = node_mailjet_1.default.apiConnect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
 let USER_SERVICE_URL = null;
 const isDocker = process.env.IS_DOCKER === 'true';
 if (!isDocker) {
     USER_SERVICE_URL = process.env.USER_SERVICE_URL;
-    console.log("USER_SERVICE_URL", USER_SERVICE_URL);
 }
 else {
     USER_SERVICE_URL = "http://users:3003/users";
-    console.log("USER_SERVICE_URL", USER_SERVICE_URL);
 }
 //USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!USER_SERVICE_URL) {
-    console.error("❌ ERREUR: USER_SERVICE_URL n'est pas défini !");
+    inspector_1.console.error("❌ ERREUR: USER_SERVICE_URL n'est pas défini !");
     process.exit(1);
 }
 const register = (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -58,7 +57,7 @@ const register = (data) => __awaiter(void 0, void 0, void 0, function* () {
     }
     try {
         const response = yield axios_1.default.post(`${USER_SERVICE_URL}`, data);
-        console.log("response", response);
+        inspector_1.console.log("response", response);
         return { status: 201, data: response.data };
     }
     catch (error) {
@@ -93,7 +92,7 @@ exports.login = login;
 const loginWithGoogleOrAzure = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield fetch(`${USER_SERVICE_URL}/email/${email}`);
-        console.log("url", `${USER_SERVICE_URL}/email/${email}`);
+        inspector_1.console.log("url", `${USER_SERVICE_URL}/email/${email}`);
         const data = yield response.json();
         const user = data;
         if (!user) {
@@ -192,28 +191,28 @@ const changePassword = (userId, oldPassword, newPassword) => __awaiter(void 0, v
         return { status: 400, data: { error: 'Champs requis' } };
     }
     const decodedId = parseInt(buffer_1.Buffer.from(userId, 'base64').toString());
-    console.log("decodedId", decodedId);
+    inspector_1.console.log("decodedId", decodedId);
     try {
         // 1. Récupère l’utilisateur
         const response = yield axios_1.default.get(`${USER_SERVICE_URL}/${decodedId}`);
         const user = response.data;
-        console.log("user", user);
+        inspector_1.console.log("user", user);
         // 2. Vérifie le mot de passe actuel
         const isValid = yield bcrypt_1.default.compare(oldPassword, user.password);
         if (!isValid) {
             return { status: 403, data: { error: 'Ancien mot de passe incorrect' } };
         }
-        console.log("avatar");
+        inspector_1.console.log("avatar");
         // 3. Mise à jour via le service utilisateur
-        console.log(`${USER_SERVICE_URL}/${userId}`);
+        inspector_1.console.log(`${USER_SERVICE_URL}/${userId}`);
         try {
             const res = yield axios_1.default.put(`${USER_SERVICE_URL}/${decodedId}`, {
                 password: newPassword
             });
-            console.log("✅ Mot de passe mis à jour :", res.data);
+            inspector_1.console.log("✅ Mot de passe mis à jour :", res.data);
         }
         catch (err) {
-            console.error("❌ Erreur lors de la mise à jour :", err.message);
+            inspector_1.console.error("❌ Erreur lors de la mise à jour :", err.message);
         }
         return { status: 200, data: { message: 'Mot de passe changé avec succès' } };
     }
@@ -248,11 +247,11 @@ const sendResetEmail = (to, token) => __awaiter(void 0, void 0, void 0, function
                 }
             ]
         });
-        console.log("📧 Email envoyé :", result.body);
+        inspector_1.console.log("📧 Email envoyé :", result.body);
         return true;
     }
     catch (err) {
-        console.error("❌ Erreur lors de l’envoi de l’email :", err);
+        inspector_1.console.error("❌ Erreur lors de l’envoi de l’email :", err);
         return false;
     }
 });

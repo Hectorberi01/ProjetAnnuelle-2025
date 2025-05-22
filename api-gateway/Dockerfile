@@ -1,6 +1,20 @@
 
-# Dockerfile
+# Étape 1 : Builder le projet
+FROM node:23-slim AS builder
 
+WORKDIR /app
+
+# Copier fichiers nécessaires au build
+COPY package*.json tsconfig.json ./
+RUN npm install --force
+
+# Copier le reste du code (src, etc.)
+COPY . .
+
+# Compiler TypeScript → dist/
+RUN npm run build
+
+# Étape 2 : Créer l'image finale
 # Image légère pour exécuter du code Node.js
 FROM node:23-slim
 

@@ -36,18 +36,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppDataSource = void 0;
 const typeorm_1 = require("typeorm");
 const dotenv = __importStar(require("dotenv"));
-const User_1 = require("./entities/User");
-const Role_1 = require("./entities/Role");
+const Promotion_1 = require("../entities/Promotion");
+const PromotionStudent_1 = require("../entities/PromotionStudent");
+// Spécifiez le chemin vers le fichier .env
 dotenv.config();
-// Créer une instance de DataSource
 exports.AppDataSource = new typeorm_1.DataSource({
-    type: "mysql",
-    host: process.env.DB_HOST || 'localhost',
+    type: 'mysql',
+    host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT || '3306'),
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME || "user-Service",
-    logging: false,
+    username: process.env.DB_USERNAME || 'hector',
+    password: process.env.DB_PASSWORD || 'SupertStart2024!',
+    database: process.env.DB_NAME || 'promotion-Service',
     synchronize: true,
-    entities: [User_1.User, Role_1.Role],
+    logging: false,
+    entities: [Promotion_1.Promotion, PromotionStudent_1.PromotionStudent],
+    migrations: [],
+    subscribers: [],
 });

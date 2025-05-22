@@ -30,7 +30,7 @@ class ReportService {
     updateReport(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const report = yield repo.findBy({ where: { id } });
+                const report = yield repo.findOneBy({ id });
                 if (!report)
                     throw new Error('Report not found');
                 return yield repo.update({ id }, data);
