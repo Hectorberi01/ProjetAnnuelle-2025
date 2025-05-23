@@ -9,7 +9,7 @@ services:
     depends_on:
       - auth
       - projets
-      - user
+      - users
       - groupes
       - grades
       - reports
@@ -51,7 +51,7 @@ services:
       - backend
 
 
-  user:
+  users:
     build: ./user-service
     ports:
       - "3003:3003"
