@@ -18,6 +18,17 @@ export class UserController {
     }
   };
 
+  createAdmin: RequestHandler = async (req, res) => {
+    console.log("req.body");
+    console.log(req.body);
+    try {
+      const user = await this.userService.createAdmin(req.body);
+      res.status(201).json(user);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  };
+
   getAll: RequestHandler = async (req, res) => {
     const users = await this.userService.findAll();
     res.status(200).json(users);

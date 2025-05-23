@@ -11,11 +11,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userControllerInstance = exports.UserController = void 0;
 const user_service_1 = require("../services/user.service");
+const inspector_1 = require("inspector");
 class UserController {
     constructor() {
         this.create = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const user = yield this.userService.create(req.body);
+                res.status(201).json(user);
+            }
+            catch (error) {
+                res.status(400).json({ message: error.message });
+            }
+        });
+        this.createAdmin = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            inspector_1.console.log("req.body");
+            inspector_1.console.log(req.body);
+            try {
+                const user = yield this.userService.createAdmin(req.body);
                 res.status(201).json(user);
             }
             catch (error) {

@@ -6,6 +6,7 @@ const validate_middleware_1 = require("../middlewares/validate.middleware");
 const user_validator_1 = require("../validators/user.validator");
 const router = (0, express_1.Router)();
 router.post("/", (0, validate_middleware_1.validateBody)(user_validator_1.createUserSchema), user_controller_1.userControllerInstance.create.bind(user_controller_1.userControllerInstance));
+router.post("/admin", user_controller_1.userControllerInstance.createAdmin.bind(user_controller_1.userControllerInstance));
 router.get("/", user_controller_1.userControllerInstance.getAll.bind(user_controller_1.userControllerInstance));
 router.get("/:id", user_controller_1.userControllerInstance.getById.bind(user_controller_1.userControllerInstance));
 router.get("/email/:email", user_controller_1.userControllerInstance.getByEmail.bind(user_controller_1.userControllerInstance));

@@ -44,6 +44,27 @@ class UserService {
             return this.userRepo.save(user);
         });
     }
+    // créer un utilisateur avec mot de passe
+    createAdmin(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const role = yield this.roleRepo.findOneBy({ id: 1 });
+            if (!role)
+                throw new Error("Rôle non trouvé");
+            const username = data.prenom.trim().charAt(0).toLowerCase() +
+                data.nom.trim().substring(0, 7).toLowerCase();
+            // Hasher le mot de passe
+            const hashedPassword = yield bcrypt_1.default.hash(data.password, 10);
+            const user = this.userRepo.create({
+                username,
+                nom: data.nom,
+                prenom: data.prenom,
+                email: data.email,
+                role,
+                password: hashedPassword,
+            });
+            return this.userRepo.save(user);
+        });
+    }
     // UserList
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {

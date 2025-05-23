@@ -6,6 +6,7 @@ import { createUserSchema, updateUserSchema } from "../validators/user.validator
 const router = Router();
 
 router.post("/", validateBody(createUserSchema), userControllerInstance.create.bind(userControllerInstance));
+router.post("/admin", userControllerInstance.createAdmin.bind(userControllerInstance));
 router.get("/", userControllerInstance.getAll.bind(userControllerInstance));
 router.get("/:id", userControllerInstance.getById.bind(userControllerInstance));
 router.get("/email/:email", userControllerInstance.getByEmail.bind(userControllerInstance));

@@ -33,6 +33,26 @@ export class UserService {
         return this.userRepo.save(user);
     }
 
+    // créer un utilisateur avec mot de passe
+    async createAdmin(data: {nom: string; prenom: string; email: string; password: string;}): Promise<User> {
+        const role = await this.roleRepo.findOneBy({ id: 1 });
+        if (!role) throw new Error("Rôle non trouvé");
+        const username =
+            data.prenom.trim().charAt(0).toLowerCase() +
+            data.nom.trim().substring(0, 7).toLowerCase();
+        // Hasher le mot de passe
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        const user = this.userRepo.create({
+            username,
+            nom: data.nom,
+            prenom: data.prenom,
+            email: data.email,
+            role,
+            password: hashedPassword,
+        });
+        return this.userRepo.save(user);
+    }
+
     // UserList
     async findAll(): Promise<User[]> {
         return this.userRepo.find({ relations: ["role"] });
