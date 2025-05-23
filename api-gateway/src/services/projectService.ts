@@ -3,11 +3,12 @@ import { apiClient } from "../utils/apiClient";
 import { SERVICES } from "../config/services.config";
 import { response } from "express";
 
+const URL_PROJECTS = SERVICES.projects || "http://localhost:3002/api/projects";
 
 export async function createProject(projectData: any) {
     let response : any = {}
     try {
-        response = await apiClient.post(`${SERVICES.projects}`, projectData);
+        response = await apiClient.post(`${URL_PROJECTS}`, projectData);
         console.log("response", response);
         if (response.status !== 201) {
             return response;
@@ -22,7 +23,7 @@ export async function createProject(projectData: any) {
 export async function getAllProjects() {
     let response : any = {}
     try {
-        response = await apiClient.get(`${SERVICES.projects}`);
+        response = await apiClient.get(`${URL_PROJECTS}`);
         if (response.status !== 200) {
             return response;
         }
@@ -35,7 +36,7 @@ export async function getAllProjects() {
 
 export async function getProjectById(projectId: number) {
     try {
-        const response = await apiClient.get<Project>(`${SERVICES.projects}/${projectId}`);
+        const response = await apiClient.get<Project>(`${URL_PROJECTS}/${projectId}`);
         if (response.status !== 200) {
             //throw new Error('Failed to fetch project');
             return response;
@@ -50,7 +51,7 @@ export async function getProjectById(projectId: number) {
 export async function updateProject(projectId: number, projectData: any) {
     let response : any = {}
     try {
-        response = await apiClient.put(`${SERVICES.projects}/${projectId}`, projectData);
+        response = await apiClient.put(`${URL_PROJECTS}/${projectId}`, projectData);
         if (response.status !== 200) {
             return response;
         }
@@ -64,7 +65,7 @@ export async function updateProject(projectId: number, projectData: any) {
 export async function deleteProject(projectId: number) {
     let response : any = {}
     try {
-        response = await apiClient.delete(`${SERVICES.projects}/${projectId}`);
+        response = await apiClient.delete(`${URL_PROJECTS}/${projectId}`);
         if (response.status !== 200) {
             return response;
         }
@@ -78,7 +79,7 @@ export async function deleteProject(projectId: number) {
 export async function getProjectsByPromotionId(promotionId: number) {
     let response : any = {}
     try {
-        response = await apiClient.get(`${SERVICES.projects}/promotion/${promotionId}`);
+        response = await apiClient.get(`${URL_PROJECTS}/promotion/${promotionId}`);
         if (response.status !== 200) {
             return response;
         }

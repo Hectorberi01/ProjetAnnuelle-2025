@@ -4,9 +4,12 @@ import { apiClient } from "../utils/apiClient";
 import * as env from "dotenv"
 env.config();
 
+const URL_USERS = SERVICES.users || "http://localhost:3003/users";
+const URL_ROLES = SERVICES.roles || "http://localhost:3003/roles";
+
 export async function getUserById(userId: string): Promise<any> {
     try {
-        const response = await apiClient.get<User>(`${SERVICES.users}/${userId}`);
+        const response = await apiClient.get<User>(`${URL_USERS}/${userId}`);
         if (response.status !== 200) {
             throw new Error('Failed to fetch user');
         }
@@ -19,9 +22,9 @@ export async function getUserById(userId: string): Promise<any> {
 export async function getAllUsers(): Promise<any[]> {
     try {
         console.log("avant le get all users");
-        console.log(`${SERVICES.users}`);
+        console.log(`${URL_USERS}`);
         console.log("après le get all users");
-        const response = await apiClient.get<User[]>(`${SERVICES.users}`);
+        const response = await apiClient.get<User[]>(`${URL_USERS}`);
         if (response.status !== 200) {
             throw new Error('Failed to fetch users');
         }
@@ -33,7 +36,7 @@ export async function getAllUsers(): Promise<any[]> {
 }
 export async function getUserByEmail(email: string): Promise<User | null> {
     try {
-        const user = await apiClient.get<User>(`${SERVICES.users}/email/${email}`);
+        const user = await apiClient.get<User>(`${URL_USERS}/email/${email}`);
         if (user.status !== 200) {
            return null;
         }
@@ -46,7 +49,7 @@ export async function getUserByEmail(email: string): Promise<User | null> {
 
 export async function createUser(userData: CreateUser): Promise<User> {
     try {
-        const response = await apiClient.post<User>(`${SERVICES.users}`, userData);
+        const response = await apiClient.post<User>(`${URL_USERS}`, userData);
         if (response.status !== 201) {
             throw new Error('Failed to create user');
         }
@@ -59,7 +62,7 @@ export async function createUser(userData: CreateUser): Promise<User> {
 
 export async function updateUser(userId: string, userData: any): Promise<any> {
     try {
-        const response = await apiClient.put(`${SERVICES.users}/${userId}`, userData);
+        const response = await apiClient.put(`${URL_USERS}/${userId}`, userData);
         if (response.status !== 200) {
             throw new Error('Failed to update user');
         }
@@ -72,7 +75,7 @@ export async function updateUser(userId: string, userData: any): Promise<any> {
 
 export async function deleteUser(userId: string): Promise<any> {
     try {
-        const response = await apiClient.delete(`${SERVICES.users}/${userId}`);
+        const response = await apiClient.delete(`${URL_USERS}/${userId}`);
         if (response.status !== 200) {
             throw new Error('Failed to delete user');
         }
@@ -140,7 +143,7 @@ export async function getAdmins(): Promise<any[]> {
 
 export async function getRoleIdByName(roleName: string): Promise<Role> {
     try {
-        const response = await apiClient.get<Role>(`${SERVICES.roles}/${roleName}`);
+        const response = await apiClient.get<Role>(`${URL_ROLES}/${roleName}`);
         if (response.status !== 200) {
             throw new Error('Failed to fetch role ID by name');
         }

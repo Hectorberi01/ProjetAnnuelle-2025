@@ -7,6 +7,9 @@ import { SERVICES } from "../config/services.config";
 env.config();
 
 
+const URL_PROMOTIONS = SERVICES.promotions || "http://localhost:3007/api/promotions";
+const URL_PROJECTS = SERVICES.projects || "http://localhost:3002/api/projects";
+
 export async function parseCSV(file: Express.Multer.File): Promise<any[]> {
     return new Promise((resolve, reject) => {
         const results: any[] = [];
@@ -68,7 +71,7 @@ export async function  createPromotion(promotion:any, file:Express.Multer.File |
             linkedUsers.push(user.id);
         }
 
-        const response = await apiClient.post<any>(`${SERVICES.promotions}`, promotion);
+        const response = await apiClient.post<any>(`${URL_PROMOTIONS}`, promotion);
        
         if (response.status !== 201) {
             throw new Error("Failed to create promotion");
@@ -93,9 +96,9 @@ export async function  createPromotion(promotion:any, file:Express.Multer.File |
 
 //     // Add a student to a promotion
  export async function  addStudentToPromotion(promotionId: number, studentId: number): Promise<any> {
-    console.log(`${SERVICES.promotions}/${promotionId}/students`)
+    console.log(`${URL_PROMOTIONS}/${promotionId}/students`)
     try {
-        const response = await apiClient.post(`${SERVICES.promotions}/${promotionId}/students`, { studentId });
+        const response = await apiClient.post(`${URL_PROMOTIONS}/${promotionId}/students`, { studentId });
         if (response.status !== 201) {
             throw new Error('Failed to add student to promotion');
         }
@@ -109,7 +112,7 @@ export async function  createPromotion(promotion:any, file:Express.Multer.File |
 export async function getPromotionById(promotionId: number): Promise<any> {
     let response : any = {}
     try {
-        response = await apiClient.get(`${SERVICES.promotions}/${promotionId}`);
+        response = await apiClient.get(`${URL_PROMOTIONS}/${promotionId}`);
         if (response.status !== 200) {
             return response;
         }
@@ -120,8 +123,8 @@ export async function getPromotionById(promotionId: number): Promise<any> {
 }
 export async function getAllPromotions(): Promise<any[]> {
     try {
-        console.log("SERVICES.promotions", SERVICES.promotions);
-        const response = await apiClient.get<any[]>(`${SERVICES.promotions}`);
+        console.log("SERVICES.promotions", URL_PROMOTIONS);
+        const response = await apiClient.get<any[]>(`${URL_PROMOTIONS}`);
         if (response.status !== 200) {
             throw new Error('Failed to fetch promotions');
         }
@@ -129,7 +132,7 @@ export async function getAllPromotions(): Promise<any[]> {
         const students =  await getStudents()
 
         // on récupère le nombre de projets de chaque promotion
-        const projects = await apiClient.get<any[]>(`${SERVICES.projects}`);
+        const projects = await apiClient.get<any[]>(`${URL_PROJECTS}`);
         if (projects.status !== 200) {
             throw new Error('Failed to fetch projects');
         }
@@ -167,7 +170,7 @@ export async function getAllPromotions(): Promise<any[]> {
 
 export async function updatePromotion(promotionId: number, promotionData: any): Promise<any> {
     try {
-        const response = await apiClient.put(`${SERVICES.promotions}/${promotionId}`, promotionData);
+        const response = await apiClient.put(`${URL_PROMOTIONS}/${promotionId}`, promotionData);
         if (response.status !== 200) {
             throw new Error('Failed to update promotion');
         }
@@ -180,7 +183,7 @@ export async function updatePromotion(promotionId: number, promotionData: any): 
 
 export async function deletePromotion(promotionId: number): Promise<any> {
     try {
-        const response = await apiClient.delete(`${SERVICES.promotions}/${promotionId}`);
+        const response = await apiClient.delete(`${URL_PROMOTIONS}/${promotionId}`);
         if (response.status !== 200) {
             throw new Error('Failed to delete promotion');
         }

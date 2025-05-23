@@ -12,10 +12,12 @@ interface register{
     roleId: number;
 }
 
+const URL_AUTH = SERVICES.auth || "http://localhost:3001/api/auth";
+
 export async function LoginUser(loginData: login) {
     const { email, password } = loginData;
     try {
-        const response = await apiClient.post(`${SERVICES.auth}/login`, {email,password});
+        const response = await apiClient.post(`${URL_AUTH}/login`, {email,password});
 
         if (response.status !== 200) {
             throw new Error('Login failed');
@@ -30,7 +32,7 @@ export async function LoginUser(loginData: login) {
 
 export async function LogoutUser(user: any) {
     try {
-        const response = await apiClient.post(`${SERVICES.auth}/logout`, user);
+        const response = await apiClient.post(`${URL_AUTH}/logout`, user);
         if (response.status !== 200) {
             throw new Error('Logout failed');
         }
@@ -45,7 +47,7 @@ export async function LogoutUser(user: any) {
 export async function RegisterUser(registerData: register) {
     const { nom, prenom, email, roleId } = registerData;
     try {
-        const response = await apiClient.post(`${SERVICES.auth}/register`, {
+        const response = await apiClient.post(`${URL_AUTH}/register`, {
             nom,
             prenom,
             email,
@@ -63,7 +65,7 @@ export async function RegisterUser(registerData: register) {
 
 export async function forgotPassword(email: string) {
     try {
-        const response = await apiClient.post(`${SERVICES.auth}/forgot-password`, { email });
+        const response = await apiClient.post(`${URL_AUTH}/forgot-password`, { email });
         if (response.status !== 200) {
             throw new Error('Forgot password failed');
         }
@@ -76,7 +78,7 @@ export async function forgotPassword(email: string) {
 
 export async function changePassword(userId: string, oldPassword: string, newPassword: string) {
     try {
-        const response = await apiClient.post(`${SERVICES.auth}/change-password`, { userId, oldPassword, newPassword });
+        const response = await apiClient.post(`${URL_AUTH}/change-password`, { userId, oldPassword, newPassword });
         if (response.status !== 200) {
             throw new Error('Change password failed');
         }

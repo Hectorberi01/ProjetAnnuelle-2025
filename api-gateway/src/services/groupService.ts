@@ -4,10 +4,11 @@ import { getProjectById } from "./projectService";
 import * as env from "dotenv"
 env.config();
 
+const URL_GROUPS = SERVICES.groups || "http://localhost:3004/api/groups";
 
 export async function getGroupById(groupId: number) {
     try {
-        const response = await apiClient.get(`${SERVICES.groups}/${groupId}`);
+        const response = await apiClient.get(`${URL_GROUPS}/${groupId}`);
         if (response.status !== 200) {
             throw new Error('Failed to fetch group');
         }
@@ -21,7 +22,7 @@ export async function getGroupById(groupId: number) {
 
 export async function getAllGroups() {
     try {
-        const response = await apiClient.get(`${SERVICES.groups}`);
+        const response = await apiClient.get(`${URL_GROUPS}`);
         if (response.status !== 200) {
             throw new Error('Failed to fetch groups');
         }
@@ -64,7 +65,7 @@ export async function createManualGroup(groupData: any, projectId: number) {
         if (project.status !== 200) {
             throw new Error('Project not found');
         }
-        const response = await apiClient.post(`${SERVICES.groups}/manual`, groupData);
+        const response = await apiClient.post(`${URL_GROUPS}/manual`, groupData);
         if (response.status !== 201) {
             throw new Error('Failed to create manual group');
         }
@@ -81,7 +82,7 @@ export async function createFreeGroup(groupData: any, projectId: number) {
         if (project.status !== 200) {
             throw new Error('Project not found');
         }
-        const response = await apiClient.post(`${SERVICES.groups}/free/${projectId}`, groupData);
+        const response = await apiClient.post(`${URL_GROUPS}/free/${projectId}`, groupData);
         if (response.status !== 201) {
             throw new Error('Failed to create free group');
         }
@@ -99,7 +100,7 @@ export async function createRandomGroup(groupData: any, projectId: number) {
         if (project.status !== 200) {
             throw new Error('Project not found');
         }
-        const response = await apiClient.post(`${SERVICES.groups}/random/${projectId}`, groupData);
+        const response = await apiClient.post(`${URL_GROUPS}/random/${projectId}`, groupData);
         if (response.status !== 201) {
             throw new Error('Failed to create random group');
         }
@@ -122,19 +123,19 @@ export async function createGroup(name: string,projectId: number) {
         const project = (projectResponse as any).data;
 
         if (project.mode == 'manual') {
-            response = await apiClient.post(`${SERVICES.groups}/${projectId}/manual`, name);
+            response = await apiClient.post(`${URL_GROUPS}/${projectId}/manual`, name);
         }
 
         if (project.mode == 'random') {
-            console.log("Creating random group",`${SERVICES.groups}/random/${projectId}`);
+            console.log("Creating random group",`${URL_GROUPS}/random/${projectId}`);
             const data = {
                 name: name
             }
             console.log("Data",data);
-            response = await apiClient.post(`${SERVICES.groups}/random/${projectId}`, data);
+            response = await apiClient.post(`${URL_GROUPS}/random/${projectId}`, data);
         }
         if (project.mode == 'free') {
-            response = await apiClient.post(`${SERVICES.groups}/free/${projectId}`, name);
+            response = await apiClient.post(`${URL_GROUPS}/free/${projectId}`, name);
         }
 
         return response;
@@ -147,7 +148,7 @@ export async function createGroup(name: string,projectId: number) {
 
 export async function updateGroup(groupId: string, groupData: any) {
     try {
-        const response = await apiClient.put(`${SERVICES.groups}/${groupId}`, groupData);
+        const response = await apiClient.put(`${URL_GROUPS}/${groupId}`, groupData);
         if (response.status !== 200) {
             throw new Error('Failed to update group');
         }
@@ -160,7 +161,7 @@ export async function updateGroup(groupId: string, groupData: any) {
 
 export async function deleteGroup(groupId: string) {
     try {
-        const response = await apiClient.delete(`${SERVICES.groups}/${groupId}`);
+        const response = await apiClient.delete(`${URL_GROUPS}/${groupId}`);
         if (response.status !== 200) {
             throw new Error('Failed to delete group');
         }
@@ -178,8 +179,8 @@ export async function addStudentToGroup(groupId: number, studentId: number) {
             studentId: studentId
         }
         console.log("Adding student to group",data);
-        const response = await apiClient.post(`${SERVICES.groups}/addStudent`,data);
-        
+        const response = await apiClient.post(`${URL_GROUPS}/addStudent`,data);
+
         return response;
     } catch (error) {
         throw new Error('Failed to add student to group');

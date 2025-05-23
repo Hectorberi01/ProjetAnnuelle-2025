@@ -4,9 +4,11 @@
 import { SERVICES } from "../config/services.config";
 import { apiClient } from "../utils/apiClient";
 
+const URL_REPORTS = SERVICES.reports || "http://localhost:3005/api/reports";
+
 export async function getAllReports(): Promise<any[]> {
     try {
-        const response = await apiClient.get<any[]>(`${SERVICES.reports}`);
+        const response = await apiClient.get<any[]>(`${URL_REPORTS}`);
         if (response.status !== 200) {
             throw new Error('Failed to fetch reports');
         }
@@ -19,7 +21,7 @@ export async function getAllReports(): Promise<any[]> {
 
 export async function createReport(report: any): Promise<any> {
     try {
-        const response = await apiClient.post<any>(`${SERVICES.reports}`, report);
+        const response = await apiClient.post<any>(`${URL_REPORTS}`, report);
         if (response.status !== 201) {
             throw new Error('Failed to create report');
         }
@@ -33,7 +35,7 @@ export async function createReport(report: any): Promise<any> {
 
 export async function getReportByProject(projectId: number): Promise<any[]> {
     try {
-        const response = await apiClient.get<any[]>(`${SERVICES.reports}/projects/${projectId}`);
+        const response = await apiClient.get<any[]>(`${URL_REPORTS}/projects/${projectId}`);
         if (response.status !== 200) {
             throw new Error('Failed to fetch reports');
         }
@@ -46,7 +48,7 @@ export async function getReportByProject(projectId: number): Promise<any[]> {
 
 export async function getReportById(reportId: number): Promise<any> {
     try {
-        const response = await apiClient.get<any>(`${SERVICES.reports}/${reportId}`);
+        const response = await apiClient.get<any>(`${URL_REPORTS}/${reportId}`);
         if (response.status !== 200) {
             throw new Error('Failed to fetch report');
         }
@@ -59,7 +61,7 @@ export async function getReportById(reportId: number): Promise<any> {
 
 export async function updateReport(reportId: number, report: any): Promise<any> {
     try {
-        const response = await apiClient.put<any>(`${SERVICES.reports}/${reportId}`, report);
+        const response = await apiClient.put<any>(`${URL_REPORTS}/${reportId}`, report);
         if (response.status !== 200) {
             throw new Error('Failed to update report');
         }
@@ -71,7 +73,7 @@ export async function updateReport(reportId: number, report: any): Promise<any> 
 }
 export async function deleteReport(reportId: number): Promise<any> {
     try {
-        const response = await apiClient.delete<any>(`${SERVICES.reports}/${reportId}`);
+        const response = await apiClient.delete<any>(`${URL_REPORTS}/${reportId}`);
         if (response.status !== 200) {
             throw new Error('Failed to delete report');
         }
