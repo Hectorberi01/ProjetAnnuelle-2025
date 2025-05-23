@@ -18,11 +18,12 @@ exports.getProjectsByPromotionId = getProjectsByPromotionId;
 const apiClient_1 = require("../utils/apiClient");
 const services_config_1 = require("../config/services.config");
 const express_1 = require("express");
+const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/api/projects";
 function createProject(projectData) {
     return __awaiter(this, void 0, void 0, function* () {
         let response = {};
         try {
-            response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.projects}`, projectData);
+            response = yield apiClient_1.apiClient.post(`${URL_PROJECTS}`, projectData);
             console.log("response", response);
             if (response.status !== 201) {
                 return response;
@@ -39,7 +40,7 @@ function getAllProjects() {
     return __awaiter(this, void 0, void 0, function* () {
         let response = {};
         try {
-            response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.projects}`);
+            response = yield apiClient_1.apiClient.get(`${URL_PROJECTS}`);
             if (response.status !== 200) {
                 return response;
             }
@@ -54,7 +55,7 @@ function getAllProjects() {
 function getProjectById(projectId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.projects}/${projectId}`);
+            const response = yield apiClient_1.apiClient.get(`${URL_PROJECTS}/${projectId}`);
             if (response.status !== 200) {
                 //throw new Error('Failed to fetch project');
                 return response;
@@ -72,7 +73,7 @@ function updateProject(projectId, projectData) {
     return __awaiter(this, void 0, void 0, function* () {
         let response = {};
         try {
-            response = yield apiClient_1.apiClient.put(`${services_config_1.SERVICES.projects}/${projectId}`, projectData);
+            response = yield apiClient_1.apiClient.put(`${URL_PROJECTS}/${projectId}`, projectData);
             if (response.status !== 200) {
                 return response;
             }
@@ -88,7 +89,7 @@ function deleteProject(projectId) {
     return __awaiter(this, void 0, void 0, function* () {
         let response = {};
         try {
-            response = yield apiClient_1.apiClient.delete(`${services_config_1.SERVICES.projects}/${projectId}`);
+            response = yield apiClient_1.apiClient.delete(`${URL_PROJECTS}/${projectId}`);
             if (response.status !== 200) {
                 return response;
             }
@@ -104,7 +105,7 @@ function getProjectsByPromotionId(promotionId) {
     return __awaiter(this, void 0, void 0, function* () {
         let response = {};
         try {
-            response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.projects}/promotion/${promotionId}`);
+            response = yield apiClient_1.apiClient.get(`${URL_PROJECTS}/promotion/${promotionId}`);
             if (response.status !== 200) {
                 return response;
             }

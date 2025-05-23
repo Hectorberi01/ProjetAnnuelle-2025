@@ -18,10 +18,11 @@ exports.updateReport = updateReport;
 exports.deleteReport = deleteReport;
 const services_config_1 = require("../config/services.config");
 const apiClient_1 = require("../utils/apiClient");
+const URL_REPORTS = services_config_1.SERVICES.reports || "http://localhost:3005/api/reports";
 function getAllReports() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.reports}`);
+            const response = yield apiClient_1.apiClient.get(`${URL_REPORTS}`);
             if (response.status !== 200) {
                 throw new Error('Failed to fetch reports');
             }
@@ -36,7 +37,7 @@ function getAllReports() {
 function createReport(report) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.reports}`, report);
+            const response = yield apiClient_1.apiClient.post(`${URL_REPORTS}`, report);
             if (response.status !== 201) {
                 throw new Error('Failed to create report');
             }
@@ -51,7 +52,7 @@ function createReport(report) {
 function getReportByProject(projectId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.reports}/projects/${projectId}`);
+            const response = yield apiClient_1.apiClient.get(`${URL_REPORTS}/projects/${projectId}`);
             if (response.status !== 200) {
                 throw new Error('Failed to fetch reports');
             }
@@ -66,7 +67,7 @@ function getReportByProject(projectId) {
 function getReportById(reportId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.reports}/${reportId}`);
+            const response = yield apiClient_1.apiClient.get(`${URL_REPORTS}/${reportId}`);
             if (response.status !== 200) {
                 throw new Error('Failed to fetch report');
             }
@@ -81,7 +82,7 @@ function getReportById(reportId) {
 function updateReport(reportId, report) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.put(`${services_config_1.SERVICES.reports}/${reportId}`, report);
+            const response = yield apiClient_1.apiClient.put(`${URL_REPORTS}/${reportId}`, report);
             if (response.status !== 200) {
                 throw new Error('Failed to update report');
             }
@@ -96,7 +97,7 @@ function updateReport(reportId, report) {
 function deleteReport(reportId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.delete(`${services_config_1.SERVICES.reports}/${reportId}`);
+            const response = yield apiClient_1.apiClient.delete(`${URL_REPORTS}/${reportId}`);
             if (response.status !== 200) {
                 throw new Error('Failed to delete report');
             }

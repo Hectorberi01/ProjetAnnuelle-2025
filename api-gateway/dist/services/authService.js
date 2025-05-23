@@ -16,11 +16,12 @@ exports.forgotPassword = forgotPassword;
 exports.changePassword = changePassword;
 const services_config_1 = require("../config/services.config");
 const apiClient_1 = require("../utils/apiClient");
+const URL_AUTH = services_config_1.SERVICES.auth || "http://localhost:3001/api/auth";
 function LoginUser(loginData) {
     return __awaiter(this, void 0, void 0, function* () {
         const { email, password } = loginData;
         try {
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.auth}/login`, { email, password });
+            const response = yield apiClient_1.apiClient.post(`${URL_AUTH}/login`, { email, password });
             if (response.status !== 200) {
                 throw new Error('Login failed');
             }
@@ -35,7 +36,7 @@ function LoginUser(loginData) {
 function LogoutUser(user) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.auth}/logout`, user);
+            const response = yield apiClient_1.apiClient.post(`${URL_AUTH}/logout`, user);
             if (response.status !== 200) {
                 throw new Error('Logout failed');
             }
@@ -51,7 +52,7 @@ function RegisterUser(registerData) {
     return __awaiter(this, void 0, void 0, function* () {
         const { nom, prenom, email, roleId } = registerData;
         try {
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.auth}/register`, {
+            const response = yield apiClient_1.apiClient.post(`${URL_AUTH}/register`, {
                 nom,
                 prenom,
                 email,
@@ -71,7 +72,7 @@ function RegisterUser(registerData) {
 function forgotPassword(email) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.auth}/forgot-password`, { email });
+            const response = yield apiClient_1.apiClient.post(`${URL_AUTH}/forgot-password`, { email });
             if (response.status !== 200) {
                 throw new Error('Forgot password failed');
             }
@@ -86,7 +87,7 @@ function forgotPassword(email) {
 function changePassword(userId, oldPassword, newPassword) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.auth}/change-password`, { userId, oldPassword, newPassword });
+            const response = yield apiClient_1.apiClient.post(`${URL_AUTH}/change-password`, { userId, oldPassword, newPassword });
             if (response.status !== 200) {
                 throw new Error('Change password failed');
             }

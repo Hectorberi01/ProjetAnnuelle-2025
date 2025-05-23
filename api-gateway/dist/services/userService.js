@@ -56,10 +56,12 @@ const services_config_1 = require("../config/services.config");
 const apiClient_1 = require("../utils/apiClient");
 const env = __importStar(require("dotenv"));
 env.config();
+const URL_USERS = services_config_1.SERVICES.users || "http://localhost:3003/users";
+const URL_ROLES = services_config_1.SERVICES.roles || "http://localhost:3003/roles";
 function getUserById(userId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.users}/${userId}`);
+            const response = yield apiClient_1.apiClient.get(`${URL_USERS}/${userId}`);
             if (response.status !== 200) {
                 throw new Error('Failed to fetch user');
             }
@@ -75,9 +77,9 @@ function getAllUsers() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             console.log("avant le get all users");
-            console.log(`${services_config_1.SERVICES.users}`);
+            console.log(`${URL_USERS}`);
             console.log("après le get all users");
-            const response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.users}`);
+            const response = yield apiClient_1.apiClient.get(`${URL_USERS}`);
             if (response.status !== 200) {
                 throw new Error('Failed to fetch users');
             }
@@ -92,7 +94,7 @@ function getAllUsers() {
 function getUserByEmail(email) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const user = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.users}/email/${email}`);
+            const user = yield apiClient_1.apiClient.get(`${URL_USERS}/email/${email}`);
             if (user.status !== 200) {
                 return null;
             }
@@ -106,7 +108,7 @@ function getUserByEmail(email) {
 function createUser(userData) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.users}`, userData);
+            const response = yield apiClient_1.apiClient.post(`${URL_USERS}`, userData);
             if (response.status !== 201) {
                 throw new Error('Failed to create user');
             }
@@ -121,7 +123,7 @@ function createUser(userData) {
 function updateUser(userId, userData) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.put(`${services_config_1.SERVICES.users}/${userId}`, userData);
+            const response = yield apiClient_1.apiClient.put(`${URL_USERS}/${userId}`, userData);
             if (response.status !== 200) {
                 throw new Error('Failed to update user');
             }
@@ -136,7 +138,7 @@ function updateUser(userId, userData) {
 function deleteUser(userId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.delete(`${services_config_1.SERVICES.users}/${userId}`);
+            const response = yield apiClient_1.apiClient.delete(`${URL_USERS}/${userId}`);
             if (response.status !== 200) {
                 throw new Error('Failed to delete user');
             }
@@ -212,7 +214,7 @@ function getAdmins() {
 function getRoleIdByName(roleName) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.roles}/${roleName}`);
+            const response = yield apiClient_1.apiClient.get(`${URL_ROLES}/${roleName}`);
             if (response.status !== 200) {
                 throw new Error('Failed to fetch role ID by name');
             }

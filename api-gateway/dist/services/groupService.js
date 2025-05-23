@@ -57,10 +57,11 @@ const apiClient_1 = require("../utils/apiClient");
 const projectService_1 = require("./projectService");
 const env = __importStar(require("dotenv"));
 env.config();
+const URL_GROUPS = services_config_1.SERVICES.groups || "http://localhost:3004/api/groups";
 function getGroupById(groupId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.groups}/${groupId}`);
+            const response = yield apiClient_1.apiClient.get(`${URL_GROUPS}/${groupId}`);
             if (response.status !== 200) {
                 throw new Error('Failed to fetch group');
             }
@@ -75,7 +76,7 @@ function getGroupById(groupId) {
 function getAllGroups() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.groups}`);
+            const response = yield apiClient_1.apiClient.get(`${URL_GROUPS}`);
             if (response.status !== 200) {
                 throw new Error('Failed to fetch groups');
             }
@@ -121,7 +122,7 @@ function createManualGroup(groupData, projectId) {
             if (project.status !== 200) {
                 throw new Error('Project not found');
             }
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.groups}/manual`, groupData);
+            const response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/manual`, groupData);
             if (response.status !== 201) {
                 throw new Error('Failed to create manual group');
             }
@@ -140,7 +141,7 @@ function createFreeGroup(groupData, projectId) {
             if (project.status !== 200) {
                 throw new Error('Project not found');
             }
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.groups}/free/${projectId}`, groupData);
+            const response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/free/${projectId}`, groupData);
             if (response.status !== 201) {
                 throw new Error('Failed to create free group');
             }
@@ -159,7 +160,7 @@ function createRandomGroup(groupData, projectId) {
             if (project.status !== 200) {
                 throw new Error('Project not found');
             }
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.groups}/random/${projectId}`, groupData);
+            const response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/random/${projectId}`, groupData);
             if (response.status !== 201) {
                 throw new Error('Failed to create random group');
             }
@@ -181,18 +182,18 @@ function createGroup(name, projectId) {
             }
             const project = projectResponse.data;
             if (project.mode == 'manual') {
-                response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.groups}/${projectId}/manual`, name);
+                response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/${projectId}/manual`, name);
             }
             if (project.mode == 'random') {
-                console.log("Creating random group", `${services_config_1.SERVICES.groups}/random/${projectId}`);
+                console.log("Creating random group", `${URL_GROUPS}/random/${projectId}`);
                 const data = {
                     name: name
                 };
                 console.log("Data", data);
-                response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.groups}/random/${projectId}`, data);
+                response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/random/${projectId}`, data);
             }
             if (project.mode == 'free') {
-                response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.groups}/free/${projectId}`, name);
+                response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/free/${projectId}`, name);
             }
             return response;
         }
@@ -205,7 +206,7 @@ function createGroup(name, projectId) {
 function updateGroup(groupId, groupData) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.put(`${services_config_1.SERVICES.groups}/${groupId}`, groupData);
+            const response = yield apiClient_1.apiClient.put(`${URL_GROUPS}/${groupId}`, groupData);
             if (response.status !== 200) {
                 throw new Error('Failed to update group');
             }
@@ -220,7 +221,7 @@ function updateGroup(groupId, groupData) {
 function deleteGroup(groupId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.delete(`${services_config_1.SERVICES.groups}/${groupId}`);
+            const response = yield apiClient_1.apiClient.delete(`${URL_GROUPS}/${groupId}`);
             if (response.status !== 200) {
                 throw new Error('Failed to delete group');
             }
@@ -240,7 +241,7 @@ function addStudentToGroup(groupId, studentId) {
                 studentId: studentId
             };
             console.log("Adding student to group", data);
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.groups}/addStudent`, data);
+            const response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/addStudent`, data);
             return response;
         }
         catch (error) {

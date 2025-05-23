@@ -59,6 +59,8 @@ const userService_1 = require("./userService");
 const env = __importStar(require("dotenv"));
 const services_config_1 = require("../config/services.config");
 env.config();
+const URL_PROMOTIONS = services_config_1.SERVICES.promotions || "http://localhost:3007/api/promotions";
+const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/api/projects";
 function parseCSV(file) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
@@ -113,7 +115,7 @@ function createPromotion(promotion, file) {
                 }
                 linkedUsers.push(user.id);
             }
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.promotions}`, promotion);
+            const response = yield apiClient_1.apiClient.post(`${URL_PROMOTIONS}`, promotion);
             if (response.status !== 201) {
                 throw new Error("Failed to create promotion");
             }
@@ -136,9 +138,9 @@ function createPromotion(promotion, file) {
 //     // Add a student to a promotion
 function addStudentToPromotion(promotionId, studentId) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(`${services_config_1.SERVICES.promotions}/${promotionId}/students`);
+        console.log(`${URL_PROMOTIONS}/${promotionId}/students`);
         try {
-            const response = yield apiClient_1.apiClient.post(`${services_config_1.SERVICES.promotions}/${promotionId}/students`, { studentId });
+            const response = yield apiClient_1.apiClient.post(`${URL_PROMOTIONS}/${promotionId}/students`, { studentId });
             if (response.status !== 201) {
                 throw new Error('Failed to add student to promotion');
             }
@@ -154,7 +156,7 @@ function getPromotionById(promotionId) {
     return __awaiter(this, void 0, void 0, function* () {
         let response = {};
         try {
-            response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.promotions}/${promotionId}`);
+            response = yield apiClient_1.apiClient.get(`${URL_PROMOTIONS}/${promotionId}`);
             if (response.status !== 200) {
                 return response;
             }
@@ -168,15 +170,15 @@ function getPromotionById(promotionId) {
 function getAllPromotions() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log("SERVICES.promotions", services_config_1.SERVICES.promotions);
-            const response = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.promotions}`);
+            console.log("SERVICES.promotions", URL_PROMOTIONS);
+            const response = yield apiClient_1.apiClient.get(`${URL_PROMOTIONS}`);
             if (response.status !== 200) {
                 throw new Error('Failed to fetch promotions');
             }
             // on récupère les étudiants de la promotion
             const students = yield (0, userService_1.getStudents)();
             // on récupère le nombre de projets de chaque promotion
-            const projects = yield apiClient_1.apiClient.get(`${services_config_1.SERVICES.projects}`);
+            const projects = yield apiClient_1.apiClient.get(`${URL_PROJECTS}`);
             if (projects.status !== 200) {
                 throw new Error('Failed to fetch projects');
             }
@@ -208,7 +210,7 @@ function getAllPromotions() {
 function updatePromotion(promotionId, promotionData) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.put(`${services_config_1.SERVICES.promotions}/${promotionId}`, promotionData);
+            const response = yield apiClient_1.apiClient.put(`${URL_PROMOTIONS}/${promotionId}`, promotionData);
             if (response.status !== 200) {
                 throw new Error('Failed to update promotion');
             }
@@ -223,7 +225,7 @@ function updatePromotion(promotionId, promotionData) {
 function deletePromotion(promotionId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.delete(`${services_config_1.SERVICES.promotions}/${promotionId}`);
+            const response = yield apiClient_1.apiClient.delete(`${URL_PROMOTIONS}/${promotionId}`);
             if (response.status !== 200) {
                 throw new Error('Failed to delete promotion');
             }
