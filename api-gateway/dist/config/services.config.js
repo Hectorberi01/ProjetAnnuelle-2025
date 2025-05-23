@@ -41,14 +41,13 @@ const dotenv = __importStar(require("dotenv"));
 const path_1 = __importDefault(require("path"));
 //dotenv.config();
 const isDocker = process.env.DOCKER === 'true';
-console.log('isDocker:', isDocker);
-// Charge .local.env si on n'est PAS en docker
 if (!isDocker) {
     console.log('Loading local environment variables');
     dotenv.config({ path: path_1.default.resolve(__dirname, '../../.local.env') });
 }
 else {
-    dotenv.config(); // par défaut, charge .env
+    console.log('port', process.env.PORT);
+    dotenv.config();
 }
 exports.SERVICES = {
     projects: isDocker

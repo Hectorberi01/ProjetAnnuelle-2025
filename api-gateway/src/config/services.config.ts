@@ -5,13 +5,12 @@ import path from 'path';
   
 const isDocker = process.env.DOCKER === 'true';
 
-console.log('isDocker:', isDocker);
-// Charge .local.env si on n'est PAS en docker
 if (!isDocker) {
   console.log('Loading local environment variables');
   dotenv.config({ path: path.resolve(__dirname, '../../.local.env') });
 } else {
-  dotenv.config(); // par défaut, charge .env
+  console.log('port', process.env.PORT);
+  dotenv.config();
 }
 
 export const SERVICES = {
