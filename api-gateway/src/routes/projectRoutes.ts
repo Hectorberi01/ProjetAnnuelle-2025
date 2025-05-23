@@ -20,13 +20,14 @@ router.get("/list", async (req, res) => {
 router.get("/:id", async (req, res) => {
     const projectId =parseInt(req.params.id);
     try {
-        const response = await getProjectById(projectId);
-        if(response.status !== 200) {
-            res.status(404).json({ message: "Project not found" });
-            return;
+        const result = await getProjectById(projectId);
+
+        if ('error' in result) {
+        res.status(result.status || 500).json({ message: result.error });
+        return;
         }
-        const project = (response as AxiosResponse<any>).data;
-        res.status(200).send(project);
+
+        res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ message: "Failed to fetch project" });
         return;

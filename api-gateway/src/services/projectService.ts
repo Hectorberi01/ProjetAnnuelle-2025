@@ -2,8 +2,11 @@ import { Project } from "../types/project";
 import { apiClient } from "../utils/apiClient";
 import { SERVICES } from "../config/services.config";
 import { response } from "express";
+import { getGroupByProjectId } from "./groupService";
 
 const URL_PROJECTS = SERVICES.projects || "http://localhost:3002/api/projects";
+const URL_PROMOTIONS = SERVICES.promotions || "http://localhost:3007/api/promotions";
+const URL_GROUPS = SERVICES.groups || "http://localhost:3004/api/groups";
 
 export async function createProject(projectData: any) {
     let response : any = {}
@@ -36,14 +39,39 @@ export async function getAllProjects() {
 
 export async function getProjectById(projectId: number) {
     try {
+        console.log('projectId', projectId);
+        // recuperer le projet par son ID
         const response = await apiClient.get<Project>(`${URL_PROJECTS}/${projectId}`);
         if (response.status !== 200) {
-            //throw new Error('Failed to fetch project');
-            return response;
-        }else{}
-        return response;
+            return { error: "Échec de récupération du projet", status: response.status };
+        }
+
+
+
+        console.log('response', response);
+
+        // récupérer la promotion par son ID
+        const promotionId = response.data.promotionId;
+        const promotionResponse = await apiClient.get(`${URL_PROMOTIONS}/${promotionId}`);
+        if(promotionResponse.status !== 200) {
+            return { error: "Échec de récupération de la promotion", status: promotionResponse.status };
+        }
+
+        // on récupère les groupes rattachés au projet
+        const groupsResponse = await getGroupByProjectId(projectId);
+        
+
+        console.log('groupsResponse', groupsResponse);
+        console.log('promotionResponse', promotionResponse);
+        const result = {
+            ...response.data,
+            promotion: promotionResponse.data,
+            groups: groupsResponse
+        };
+
+        return result;
     } catch (error) {
-        return response;
+        return { error: "Échec de récupération du projet", status: 500 };
         //throw new Error('Failed to fetch project');
     }
 }

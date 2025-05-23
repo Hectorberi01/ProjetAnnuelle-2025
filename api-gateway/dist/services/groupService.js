@@ -45,6 +45,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getGroupById = getGroupById;
 exports.getAllGroups = getAllGroups;
 exports.getGroupByPromotionId = getGroupByPromotionId;
+exports.getGroupByProjectId = getGroupByProjectId;
 exports.createManualGroup = createManualGroup;
 exports.createFreeGroup = createFreeGroup;
 exports.createRandomGroup = createRandomGroup;
@@ -112,6 +113,21 @@ function getGroupByPromotionId(promotionId) {
         catch (error) {
             console.error('Error fetching group by promotion ID:', error);
             throw new Error('Failed to fetch group by promotion ID');
+        }
+    });
+}
+function getGroupByProjectId(projectId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield apiClient_1.apiClient.get(`${URL_GROUPS}/project/${projectId}`);
+            if (response.status !== 200) {
+                throw new Error('Failed to fetch group by project ID');
+            }
+            return response.data;
+        }
+        catch (error) {
+            console.error('Error fetching group by project ID:', error);
+            throw new Error('Failed to fetch group by project ID');
         }
     });
 }

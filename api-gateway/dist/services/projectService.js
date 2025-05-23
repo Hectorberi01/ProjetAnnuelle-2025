@@ -17,8 +17,10 @@ exports.deleteProject = deleteProject;
 exports.getProjectsByPromotionId = getProjectsByPromotionId;
 const apiClient_1 = require("../utils/apiClient");
 const services_config_1 = require("../config/services.config");
-const express_1 = require("express");
+const groupService_1 = require("./groupService");
 const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/api/projects";
+const URL_PROMOTIONS = services_config_1.SERVICES.promotions || "http://localhost:3007/api/promotions";
+const URL_GROUPS = services_config_1.SERVICES.groups || "http://localhost:3004/api/groups";
 function createProject(projectData) {
     return __awaiter(this, void 0, void 0, function* () {
         let response = {};
@@ -55,16 +57,28 @@ function getAllProjects() {
 function getProjectById(projectId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            console.log('projectId', projectId);
+            // recuperer le projet par son ID
             const response = yield apiClient_1.apiClient.get(`${URL_PROJECTS}/${projectId}`);
             if (response.status !== 200) {
-                //throw new Error('Failed to fetch project');
-                return response;
+                return { error: "Échec de récupération du projet", status: response.status };
             }
-            else { }
-            return response;
+            console.log('response', response);
+            // récupérer la promotion par son ID
+            const promotionId = response.data.promotionId;
+            const promotionResponse = yield apiClient_1.apiClient.get(`${URL_PROMOTIONS}/${promotionId}`);
+            if (promotionResponse.status !== 200) {
+                return { error: "Échec de récupération de la promotion", status: promotionResponse.status };
+            }
+            // on récupère les groupes rattachés au projet
+            const groupsResponse = yield (0, groupService_1.getGroupByProjectId)(projectId);
+            console.log('groupsResponse', groupsResponse);
+            console.log('promotionResponse', promotionResponse);
+            const result = Object.assign(Object.assign({}, response.data), { promotion: promotionResponse.data, groups: groupsResponse });
+            return result;
         }
         catch (error) {
-            return express_1.response;
+            return { error: "Échec de récupération du projet", status: 500 };
             //throw new Error('Failed to fetch project');
         }
     });

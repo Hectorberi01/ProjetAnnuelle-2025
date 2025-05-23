@@ -59,6 +59,19 @@ export async function getGroupByPromotionId(promotionId: string) {
     }
 }
 
+export async function getGroupByProjectId(projectId: number) {
+    try {
+        const response = await apiClient.get(`${URL_GROUPS}/project/${projectId}`);
+        if (response.status !== 200) {
+            throw new Error('Failed to fetch group by project ID');
+        }
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching group by project ID:', error);
+        throw new Error('Failed to fetch group by project ID');
+    }
+}
+
 export async function createManualGroup(groupData: any, projectId: number) {
     try {
         const project = await getProjectById(projectId);
