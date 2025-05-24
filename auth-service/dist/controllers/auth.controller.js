@@ -42,14 +42,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.changePassword = exports.me = exports.forgotPassword = exports.logout = exports.login = exports.register = void 0;
+exports.changePassword = exports.me = exports.forgotPassword = exports.logout = exports.login = exports.registerAdmin = exports.register = void 0;
 const AuthService = __importStar(require("../services/auth.service"));
 //OK
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield AuthService.register(req.body);
-    res.status(result.status).json(result.data);
+    try {
+        const result = yield AuthService.register(req.body);
+        res.status(result.status).json(result.data);
+    }
+    catch (error) {
+        console.error('Error during registration:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 exports.register = register;
+// register admin
+const registerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield AuthService.createAdminUser(req.body);
+        res.status(201).json({ message: 'Admin user created successfully', data: result });
+    }
+    catch (error) {
+        console.error('Error creating admin user:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.registerAdmin = registerAdmin;
+// Login
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -62,30 +81,74 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(400).json({ error: 'Invalid email format' });
         return;
     }
-    //console.log("email", email);
-    //console.log("password", password);
     const result = yield AuthService.login({ email, password });
     res.status(result.status).json(result.data);
 });
 exports.login = login;
+// Logout
 const logout = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(200).json({ message: 'Logged out successfully' });
+    try {
+        res.status(200).json({ message: 'Logged out successfully' });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 exports.logout = logout;
+// forgot password
 const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email } = req.body;
-    const result = yield AuthService.forgotPassword(email);
-    res.status(result.status).json(result.data);
+    try {
+        const { email } = req.body;
+        if (!email) {
+            res.status(400).json({ error: 'Email is required' });
+            return;
+        }
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            res.status(400).json({ error: 'Invalid email format' });
+            return;
+        }
+        const result = yield AuthService.forgotPassword(email);
+        if (result.status === 200) {
+            res.status(200).json({ message: 'Email de réinitialisation envoyé' });
+        }
+        else {
+            res.status(result.status).json(result.data);
+        }
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 exports.forgotPassword = forgotPassword;
 const me = (req, res) => {
     res.status(200).json({ user: req.user });
 };
 exports.me = me;
+// Change password
 const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { oldPassword, newPassword } = req.body;
-    const userId = req.user.user.id;
-    const result = yield AuthService.changePassword(userId, oldPassword, newPassword);
-    res.status(result.status).json(result.data);
+    try {
+        const { oldPassword, newPassword } = req.body;
+        if (!oldPassword || !newPassword) {
+            res.status(400).json({ error: 'Old password and new password are required' });
+            return;
+        }
+        const userId = req.user.user.id;
+        if (!userId) {
+            res.status(400).json({ error: 'User ID is required' });
+            return;
+        }
+        const result = yield AuthService.changePassword(userId, oldPassword, newPassword);
+        if (result.status === 200) {
+            res.status(200).json({ message: 'Password changed successfully' });
+        }
+        else {
+            res.status(result.status).json(result.data);
+        }
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 exports.changePassword = changePassword;

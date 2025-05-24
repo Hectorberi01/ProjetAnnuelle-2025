@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendResetEmail = exports.changePassword = exports.verifyRoleMiddleware = exports.verifyTokenMiddleware = exports.verifyToken = exports.logout = exports.forgotPassword = exports.loginWithGoogleOrAzure = exports.login = exports.register = void 0;
+exports.sendResetEmail = exports.changePassword = exports.verifyRoleMiddleware = exports.verifyTokenMiddleware = exports.verifyToken = exports.logout = exports.forgotPassword = exports.loginWithGoogleOrAzure = exports.login = exports.createAdminUser = exports.register = void 0;
 const axios_1 = __importDefault(require("axios"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -64,6 +64,32 @@ const register = (data) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.register = register;
+// create admin user
+const createAdminUser = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    const adminData = {
+        nom: data.nom,
+        prenom: data.prenom,
+        email: data.email,
+        password: data.password,
+    };
+    try {
+        const result = yield axios_1.default.post(`${USER_SERVICE_URL}/admin`, adminData);
+        if (result.status !== 201) {
+            throw new Error(`Erreur lors de la création de l'utilisateur admin: ${result.statusText}`);
+        }
+        // Supprimer le champ password avant de retourner l'utilisateur
+        delete result.data.password;
+        // Génération du token JWT
+        const token = jsonwebtoken_1.default.sign({ user: result.data }, JWT_SECRET, { expiresIn: '1h' });
+        // Retourner l'utilisateur créé avec le token
+        return { status: 201, data: { user: result.data, token } };
+    }
+    catch (error) {
+        console.error("Error creating admin user:", error);
+        return { status: 500, data: { error: 'Internal server error' } };
+    }
+});
+exports.createAdminUser = createAdminUser;
 const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, password }) {
     // console.log("USER_SERVICE_URL", USER_SERVICE_URL);
     // console.log("email", email);

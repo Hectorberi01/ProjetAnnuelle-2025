@@ -42,6 +42,13 @@ interface GoogleUserInfo {
   sub: string; // ID Google
 }
 
+interface createAdminUserDTO {
+  nom: string;
+  prenom: string;
+  email: string;
+  password: string;
+}
+
 
 export const register = async (data: RegisterDTO) => {
 
@@ -71,6 +78,34 @@ export const register = async (data: RegisterDTO) => {
     return { status: 201, data: response.data };
   } catch (error: any) {
     return { status: 400, data: { error: error.message } };
+  }
+};
+
+// create admin user
+export const createAdminUser = async (data: createAdminUserDTO) => {
+  const adminData: createAdminUserDTO = {
+    nom: data.nom,
+    prenom: data.prenom,
+    email: data.email,
+    password: data.password,
+  };
+
+  try {
+    const result = await axios.post(`${USER_SERVICE_URL}/admin`, adminData);
+    if (result.status !== 201) {
+      throw new Error(`Erreur lors de la création de l'utilisateur admin: ${result.statusText}`);
+    }
+    // Supprimer le champ password avant de retourner l'utilisateur
+    delete result.data.password;
+   
+    // Génération du token JWT
+    const token = jwt.sign({ user: result.data }, JWT_SECRET, { expiresIn: '1h' });
+    // Retourner l'utilisateur créé avec le token
+    return { status: 201, data: { user: result.data, token } };
+    
+  } catch (error) {
+    console.error("Error creating admin user:", error);
+    return { status: 500, data: { error: 'Internal server error' } };
   }
 };
 
