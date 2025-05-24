@@ -35,6 +35,7 @@ export class UserController {
   };
 
   getById: RequestHandler = async (req, res) => {
+    console.log("getById user");
     const id = Number(req.params?.id);
     if (isNaN(id)) {
       res.status(400).json({ message: "ID invalide" });
@@ -51,6 +52,7 @@ export class UserController {
   };
 
   getByEmail: RequestHandler = async (req, res) => {
+    console.log("getByEmail user");
     const email = req.params?.email;
     if (!email) {
       res.status(400).json({ message: "Email invalide" });
