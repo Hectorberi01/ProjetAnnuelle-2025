@@ -7,7 +7,6 @@ import { registerSchema } from '../validations/auth.validation';
 import Mailjet from 'node-mailjet';
 
 import { Buffer } from 'buffer';
-import { console } from 'inspector';
 
 dotenv.config();
 
@@ -76,9 +75,26 @@ export const register = async (data: RegisterDTO) => {
 };
 
 export const login = async ({ email, password }: { email: string; password: string }) => {
+    // console.log("USER_SERVICE_URL", USER_SERVICE_URL);
+    // console.log("email", email);
+    // console.log("password", password);
     try {
+        if (!email || !password) {
+            return { status: 400, data: { error: 'Email et mot de passe requis' } };
+        }
+        // Vérifier si l'email est valide
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          return { status: 400, data: { error: 'Email invalide' } };
+        }
+
+        // Récupérer l'utilisateur par email
+        //console.log("USER_SERVICE_URL", `${USER_SERVICE_URL}/email/${email}`);
+
         const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
         const data = await response.json();
+
+        // console.log("data", data);
         const user = data;
         if (!user) {
           return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
@@ -90,8 +106,8 @@ export const login = async ({ email, password }: { email: string; password: stri
         }
         // Supprimer le champ password
       delete user.password;
-      const encodedId = Buffer.from(user.id.toString()).toString('base64');
-      user.id = encodedId;
+      //const encodedId = Buffer.from(user.id.toString()).toString('base64');
+      //user.id = encodedId;
       const token = jwt.sign({ user: user }, JWT_SECRET, {expiresIn: '1h',});
   
       return { status: 200, data: { token, user } };
@@ -240,6 +256,8 @@ export const changePassword = async (userId: string, oldPassword: string, newPas
   }
 };
 
+
+// Envoi d'un email de réinitialisation de mot de passe
 export const sendResetEmail = async (to: string, token: string) => {
   const resetLink = `http://localhost:3000/reset-password?token=${token}`;
 

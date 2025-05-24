@@ -51,7 +51,20 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.register = register;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield AuthService.login(req.body);
+    const { email, password } = req.body;
+    if (!email || !password) {
+        res.status(400).json({ error: 'Email and password are required' });
+        return;
+    }
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        res.status(400).json({ error: 'Invalid email format' });
+        return;
+    }
+    //console.log("email", email);
+    //console.log("password", password);
+    const result = yield AuthService.login({ email, password });
     res.status(result.status).json(result.data);
 });
 exports.login = login;

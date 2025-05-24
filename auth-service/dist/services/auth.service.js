@@ -20,7 +20,6 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const auth_validation_1 = require("../validations/auth.validation");
 const node_mailjet_1 = __importDefault(require("node-mailjet"));
 const buffer_1 = require("buffer");
-const inspector_1 = require("inspector");
 dotenv_1.default.config();
 const mailjet = node_mailjet_1.default.apiConnect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
 let USER_SERVICE_URL = null;
@@ -34,7 +33,7 @@ else {
 //USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!USER_SERVICE_URL) {
-    inspector_1.console.error("❌ ERREUR: USER_SERVICE_URL n'est pas défini !");
+    console.error("❌ ERREUR: USER_SERVICE_URL n'est pas défini !");
     process.exit(1);
 }
 const register = (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -57,7 +56,7 @@ const register = (data) => __awaiter(void 0, void 0, void 0, function* () {
     }
     try {
         const response = yield axios_1.default.post(`${USER_SERVICE_URL}`, data);
-        inspector_1.console.log("response", response);
+        console.log("response", response);
         return { status: 201, data: response.data };
     }
     catch (error) {
@@ -66,9 +65,23 @@ const register = (data) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.register = register;
 const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, password }) {
+    // console.log("USER_SERVICE_URL", USER_SERVICE_URL);
+    // console.log("email", email);
+    // console.log("password", password);
     try {
+        if (!email || !password) {
+            return { status: 400, data: { error: 'Email et mot de passe requis' } };
+        }
+        // Vérifier si l'email est valide
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return { status: 400, data: { error: 'Email invalide' } };
+        }
+        // Récupérer l'utilisateur par email
+        //console.log("USER_SERVICE_URL", `${USER_SERVICE_URL}/email/${email}`);
         const response = yield fetch(`${USER_SERVICE_URL}/email/${email}`);
         const data = yield response.json();
+        // console.log("data", data);
         const user = data;
         if (!user) {
             return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
@@ -79,8 +92,8 @@ const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, passwo
         }
         // Supprimer le champ password
         delete user.password;
-        const encodedId = buffer_1.Buffer.from(user.id.toString()).toString('base64');
-        user.id = encodedId;
+        //const encodedId = Buffer.from(user.id.toString()).toString('base64');
+        //user.id = encodedId;
         const token = jsonwebtoken_1.default.sign({ user: user }, JWT_SECRET, { expiresIn: '1h', });
         return { status: 200, data: { token, user } };
     }
@@ -92,7 +105,7 @@ exports.login = login;
 const loginWithGoogleOrAzure = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield fetch(`${USER_SERVICE_URL}/email/${email}`);
-        inspector_1.console.log("url", `${USER_SERVICE_URL}/email/${email}`);
+        console.log("url", `${USER_SERVICE_URL}/email/${email}`);
         const data = yield response.json();
         const user = data;
         if (!user) {
@@ -191,28 +204,28 @@ const changePassword = (userId, oldPassword, newPassword) => __awaiter(void 0, v
         return { status: 400, data: { error: 'Champs requis' } };
     }
     const decodedId = parseInt(buffer_1.Buffer.from(userId, 'base64').toString());
-    inspector_1.console.log("decodedId", decodedId);
+    console.log("decodedId", decodedId);
     try {
         // 1. Récupère l’utilisateur
         const response = yield axios_1.default.get(`${USER_SERVICE_URL}/${decodedId}`);
         const user = response.data;
-        inspector_1.console.log("user", user);
+        console.log("user", user);
         // 2. Vérifie le mot de passe actuel
         const isValid = yield bcrypt_1.default.compare(oldPassword, user.password);
         if (!isValid) {
             return { status: 403, data: { error: 'Ancien mot de passe incorrect' } };
         }
-        inspector_1.console.log("avatar");
+        console.log("avatar");
         // 3. Mise à jour via le service utilisateur
-        inspector_1.console.log(`${USER_SERVICE_URL}/${userId}`);
+        console.log(`${USER_SERVICE_URL}/${userId}`);
         try {
             const res = yield axios_1.default.put(`${USER_SERVICE_URL}/${decodedId}`, {
                 password: newPassword
             });
-            inspector_1.console.log("✅ Mot de passe mis à jour :", res.data);
+            console.log("✅ Mot de passe mis à jour :", res.data);
         }
         catch (err) {
-            inspector_1.console.error("❌ Erreur lors de la mise à jour :", err.message);
+            console.error("❌ Erreur lors de la mise à jour :", err.message);
         }
         return { status: 200, data: { message: 'Mot de passe changé avec succès' } };
     }
@@ -221,6 +234,7 @@ const changePassword = (userId, oldPassword, newPassword) => __awaiter(void 0, v
     }
 });
 exports.changePassword = changePassword;
+// Envoi d'un email de réinitialisation de mot de passe
 const sendResetEmail = (to, token) => __awaiter(void 0, void 0, void 0, function* () {
     const resetLink = `http://localhost:3000/reset-password?token=${token}`;
     try {
@@ -247,11 +261,11 @@ const sendResetEmail = (to, token) => __awaiter(void 0, void 0, void 0, function
                 }
             ]
         });
-        inspector_1.console.log("📧 Email envoyé :", result.body);
+        console.log("📧 Email envoyé :", result.body);
         return true;
     }
     catch (err) {
-        inspector_1.console.error("❌ Erreur lors de l’envoi de l’email :", err);
+        console.error("❌ Erreur lors de l’envoi de l’email :", err);
         return false;
     }
 });

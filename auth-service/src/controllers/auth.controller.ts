@@ -9,8 +9,24 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-    const result = await AuthService.login(req.body);
-    res.status(result.status).json(result.data);
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(400).json({ error: 'Email and password are required' });
+    return;
+  }
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    res.status(400).json({ error: 'Invalid email format' });
+    return;
+  }
+
+  //console.log("email", email);
+  //console.log("password", password);
+
+  const result = await AuthService.login({ email, password });
+  res.status(result.status).json(result.data);
 };
 
 
