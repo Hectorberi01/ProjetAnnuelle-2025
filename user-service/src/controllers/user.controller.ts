@@ -1,6 +1,5 @@
 import { RequestHandler } from "express";
 import { UserService } from "../services/user.service";
-import { console } from "inspector";
 
 export class UserController {
   private userService: UserService;
@@ -30,6 +29,7 @@ export class UserController {
   };
 
   getAll: RequestHandler = async (req, res) => {
+    console.log("getAll users");
     const users = await this.userService.findAll();
     res.status(200).json(users);
   };

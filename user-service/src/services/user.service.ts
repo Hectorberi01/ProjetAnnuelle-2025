@@ -55,6 +55,7 @@ export class UserService {
 
     // UserList
     async findAll(): Promise<User[]> {
+        console.log("findAll users");
         return this.userRepo.find({ relations: ["role"] });
     }
 
@@ -65,6 +66,7 @@ export class UserService {
 
     // UserByEmail
     async findByEmail(email: string): Promise<User | null> {
+        console.log("findByEmail", email);
         return this.userRepo.findOne({ where: { email }, relations: ["role"] });
     }
 
