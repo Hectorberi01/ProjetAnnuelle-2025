@@ -68,6 +68,7 @@ class UserService {
     // UserList
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("findAll users");
             return this.userRepo.find({ relations: ["role"] });
         });
     }
@@ -80,6 +81,7 @@ class UserService {
     // UserByEmail
     findByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("findByEmail", email);
             return this.userRepo.findOne({ where: { email }, relations: ["role"] });
         });
     }
