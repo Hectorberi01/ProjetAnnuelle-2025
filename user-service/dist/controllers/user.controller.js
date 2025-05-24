@@ -9,95 +9,198 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userControllerInstance = exports.UserController = void 0;
+exports.deleteUser = exports.update = exports.getByEmail = exports.getById = exports.getAll = exports.createAdmin = exports.create = void 0;
 const user_service_1 = require("../services/user.service");
-class UserController {
-    constructor() {
-        this.create = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const user = yield this.userService.create(req.body);
-                res.status(201).json(user);
-            }
-            catch (error) {
-                res.status(400).json({ message: error.message });
-            }
-        });
-        this.createAdmin = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            console.log("req.body");
-            console.log(req.body);
-            try {
-                const user = yield this.userService.createAdmin(req.body);
-                res.status(201).json(user);
-            }
-            catch (error) {
-                res.status(400).json({ message: error.message });
-            }
-        });
-        this.getAll = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            console.log("getAll users");
-            const users = yield this.userService.findAll();
-            res.status(200).json(users);
-        });
-        this.getById = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            console.log("getById user");
-            const id = Number((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);
-            if (isNaN(id)) {
-                res.status(400).json({ message: "ID invalide" });
-                return;
-            }
-            const user = yield this.userService.findById(id);
-            if (!user) {
-                res.status(404).json({ message: "Utilisateur non trouvé" });
-                return;
-            }
-            res.status(200).json(user);
-        });
-        this.getByEmail = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            console.log("getByEmail user");
-            const email = (_a = req.params) === null || _a === void 0 ? void 0 : _a.email;
-            if (!email) {
-                res.status(400).json({ message: "Email invalide" });
-                return;
-            }
-            const user = yield this.userService.findByEmail(email);
-            if (!user) {
-                res.status(404).json({ message: "Utilisateur non trouvé" });
-                return;
-            }
-            res.status(200).json(user);
-        });
-        this.update = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const id = Number((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);
-            if (isNaN(id)) {
-                res.status(400).json({ message: "ID invalide" });
-                return;
-            }
-            const updated = yield this.userService.update(id, req.body);
-            if (!updated) {
-                res.status(404).json({ message: "Utilisateur non trouvé" });
-                return;
-            }
-            res.json(updated);
-        });
-        this.delete = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const id = Number((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);
-            if (isNaN(id)) {
-                res.status(400).json({ message: "ID invalide" });
-                return;
-            }
-            const deleted = yield this.userService.delete(id);
-            if (!deleted) {
-                res.status(404).json({ message: "Utilisateur non trouvé" });
-                return;
-            }
-            res.status(204).send();
-        });
-        this.userService = new user_service_1.UserService();
+const userService = new user_service_1.UserService();
+const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield userService.create(req.body);
+        res.status(201).json(user);
     }
+    catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+exports.create = create;
+const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("req.body");
+    console.log(req.body);
+    try {
+        const user = yield userService.createAdmin(req.body);
+        res.status(201).json(user);
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+exports.createAdmin = createAdmin;
+const getAll = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("getAll users");
+    const users = yield userService.findAll();
+    res.status(200).json(users);
+});
+exports.getAll = getAll;
+const getById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    console.log("getById user");
+    const id = Number((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);
+    if (isNaN(id)) {
+        res.status(400).json({ message: "ID invalide" });
+        return;
+    }
+    const user = yield userService.findById(id);
+    if (!user) {
+        res.status(404).json({ message: "Utilisateur non trouvé" });
+        return;
+    }
+    res.status(200).json(user);
+});
+exports.getById = getById;
+const getByEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    console.log("getByEmail user");
+    const email = (_a = req.params) === null || _a === void 0 ? void 0 : _a.email;
+    if (!email) {
+        res.status(400).json({ message: "Email invalide" });
+        return;
+    }
+    const user = yield userService.findByEmail(email);
+    if (!user) {
+        res.status(404).json({ message: "Utilisateur non trouvé" });
+        return;
+    }
+    res.status(200).json(user);
+});
+exports.getByEmail = getByEmail;
+const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const id = Number((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);
+    if (isNaN(id)) {
+        res.status(400).json({ message: "ID invalide" });
+        return;
+    }
+    const updated = yield userService.update(id, req.body);
+    if (!updated) {
+        res.status(404).json({ message: "Utilisateur non trouvé" });
+        return;
+    }
+    res.json(updated);
+});
+exports.update = update;
+const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const id = Number((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);
+    if (isNaN(id)) {
+        res.status(400).json({ message: "ID invalide" });
+        return;
+    }
+    const deleted = yield userService.delete(id);
+    if (!deleted) {
+        res.status(404).json({ message: "Utilisateur non trouvé" });
+        return;
+    }
+    res.status(204).send();
+});
+exports.deleteUser = deleteUser;
+/*
+export class UserController {
+  private userService: UserService;
+
+  constructor() {
+    this.userService = new UserService();
+  }
+
+  create: RequestHandler = async (req, res) => {
+    try {
+      const user = await this.userService.create(req.body);
+      res.status(201).json(user);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  };
+
+  createAdmin: RequestHandler = async (req, res) => {
+    console.log("req.body");
+    console.log(req.body);
+    try {
+      const user = await this.userService.createAdmin(req.body);
+      res.status(201).json(user);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  };
+
+  getAll: RequestHandler = async (req, res) => {
+    console.log("getAll users");
+    const users = await this.userService.findAll();
+    res.status(200).json(users);
+  };
+
+  getById: RequestHandler = async (req, res) => {
+    console.log("getById user");
+    const id = Number(req.params?.id);
+    if (isNaN(id)) {
+      res.status(400).json({ message: "ID invalide" });
+      return;
+    }
+
+    const user = await this.userService.findById(id);
+    if (!user) {
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
+    }
+
+    res.status(200).json(user);
+  };
+
+  getByEmail: RequestHandler = async (req, res) => {
+    console.log("getByEmail user");
+    const email = req.params?.email;
+    if (!email) {
+      res.status(400).json({ message: "Email invalide" });
+      return;
+    }
+
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
+    }
+
+    res.status(200).json(user);
+  };
+
+  update: RequestHandler = async (req, res) => {
+    const id = Number(req.params?.id);
+    if (isNaN(id)) {
+      res.status(400).json({ message: "ID invalide" });
+      return;
+    }
+
+    const updated = await this.userService.update(id, req.body);
+    if (!updated) {
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
+    }
+
+    res.json(updated);
+  };
+
+  delete: RequestHandler = async (req, res) => {
+    const id = Number(req.params?.id);
+    if (isNaN(id)) {
+      res.status(400).json({ message: "ID invalide" });
+      return;
+    }
+
+    const deleted = await this.userService.delete(id);
+    if (!deleted) {
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
+    }
+
+    res.status(204).send();
+  };
 }
-exports.UserController = UserController;
-exports.userControllerInstance = new UserController();
+
+export const userControllerInstance = new UserController();*/
