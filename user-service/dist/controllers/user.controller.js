@@ -40,6 +40,7 @@ class UserController {
         });
         this.getById = (req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
+            console.log("getById user");
             const id = Number((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);
             if (isNaN(id)) {
                 res.status(400).json({ message: "ID invalide" });
@@ -54,6 +55,7 @@ class UserController {
         });
         this.getByEmail = (req, res) => __awaiter(this, void 0, void 0, function* () {
             var _a;
+            console.log("getByEmail user");
             const email = (_a = req.params) === null || _a === void 0 ? void 0 : _a.email;
             if (!email) {
                 res.status(400).json({ message: "Email invalide" });
