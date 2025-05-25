@@ -32,4 +32,8 @@ for service in "${SERVICES[@]}"; do
   fi
 done
 
+docker-compose up --build -d
+echo "-------------------------------------"
+echo "🚀 Starting all services with Docker Compose..."
+
 echo "✅ All builds completed."
