@@ -18,7 +18,6 @@ const isDocker = process.env.IS_DOCKER === 'true';
 console.log("isDocker", isDocker);
 console.log("USER_SERVICE_URL", process.env.USER_SERVICE_URL);
 
-
 const USER_SERVICE_URL: string =
   process.env.USER_SERVICE_URL !== undefined
     ? process.env.USER_SERVICE_URL
@@ -26,14 +25,13 @@ const USER_SERVICE_URL: string =
       ? "http://users:3003/api/users"
       : "http://localhost:3003/api/users";
 
-      
+
 console.log("Final USER_SERVICE_URL =", USER_SERVICE_URL);
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 if (!USER_SERVICE_URL) {
   console.error("❌ ERREUR: USER_SERVICE_URL n'est pas défini !");
-  process.exit(1);
 }
 
 const mailjet = Mailjet.apiConnect(
@@ -99,6 +97,7 @@ export const createAdminUser = async (data: createAdminUserDTO) => {
    
     // Génération du token JWT
     const token = jwt.sign({ user: result.data }, JWT_SECRET, { expiresIn: '1h' });
+    
     // Retourner l'utilisateur créé avec le token
     return { status: 201, data: { user: result.data, token } };
 
