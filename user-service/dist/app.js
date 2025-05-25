@@ -17,6 +17,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 require("reflect-metadata");
 const database_1 = require("./database/database");
 const initRoutes_1 = require("./routes/initRoutes");
+const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 // Port
@@ -27,8 +28,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         yield database_1.AppDataSource.initialize();
         console.log("📦 Base de données connectée !");
         app.use(express_1.default.json());
-        app.use(express_1.default.json());
         app.use(express_1.default.urlencoded({ extended: true }));
+        app.use((0, cors_1.default)());
         (0, initRoutes_1.initRoutes)(app);
         app.listen(PORT, () => {
             console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);

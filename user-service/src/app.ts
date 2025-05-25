@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import "reflect-metadata";
 import { AppDataSource } from "./database/database";
 import { initRoutes } from "./routes/initRoutes";
+import cors from "cors";
 dotenv.config();
 
 const app = express();
@@ -15,8 +16,8 @@ const main = async () => {
     await AppDataSource.initialize();
     console.log("📦 Base de données connectée !");
     app.use(express.json());
-    app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+    app.use(cors())
 
     initRoutes(app);
 
