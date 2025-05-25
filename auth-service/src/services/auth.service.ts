@@ -29,9 +29,9 @@ console.log("isDocker", isDocker);
 // }
 
 if (isDocker) {
-  USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://users:3003/api/users";
+  USER_SERVICE_URL = process.env.USER_SERVICE_URL ||"http://users:3003/api/users" ;
 } else {
-  USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://localhost:3003/api/users";
+  USER_SERVICE_URL = process.env.USER_SERVICE_URL ||"http://localhost:3003/api/users" ;
 }
 
  //USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
