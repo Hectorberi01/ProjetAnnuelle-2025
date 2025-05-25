@@ -29,7 +29,14 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         console.log("📦 Base de données connectée !");
         app.use(express_1.default.json());
         app.use(express_1.default.urlencoded({ extended: true }));
-        app.use((0, cors_1.default)());
+        app.use((0, cors_1.default)({
+            origin: [
+                "http://localhost:3000",
+                "http://192.168.145.162:3000"
+            ],
+            credentials: true
+        }));
+        console.log("🌐 CORS configuré pour les origines autorisées");
         (0, initRoutes_1.initRoutes)(app);
         app.listen(PORT, () => {
             console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);

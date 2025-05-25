@@ -17,8 +17,15 @@ const main = async () => {
     console.log("📦 Base de données connectée !");
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    app.use(cors())
+    app.use(cors({
+      origin: [
+        "http://localhost:3000",
+        "http://192.168.145.162:3000"
+      ],
+      credentials: true
+    }));
 
+    console.log("🌐 CORS configuré pour les origines autorisées");
     initRoutes(app);
 
 
