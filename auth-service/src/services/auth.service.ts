@@ -16,16 +16,22 @@ const mailjet = Mailjet.apiConnect(
 );
 
 
-let USER_SERVICE_URL = null;
+let USER_SERVICE_URL: string;
 
 const isDocker = process.env.IS_DOCKER === 'true';
 
 
+console.log("isDocker", isDocker);
+// if (!isDocker) {
+//   USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
+// }else {
+//   USER_SERVICE_URL = "http://users:3003/api/users";
+// }
 
-if (!isDocker) {
-  USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
-}else {
-  USER_SERVICE_URL = "http://users:3003/api/users";
+if (isDocker) {
+  USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://users:3003/api/users";
+} else {
+  USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://localhost:3003/api/users";
 }
 
  //USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
@@ -36,11 +42,6 @@ if (!USER_SERVICE_URL) {
     process.exit(1);
 }
 
-interface GoogleUserInfo {
-  email: string;
-  name: string;
-  sub: string; // ID Google
-}
 
 interface createAdminUserDTO {
   nom: string;

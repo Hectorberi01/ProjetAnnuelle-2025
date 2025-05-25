@@ -22,13 +22,19 @@ const node_mailjet_1 = __importDefault(require("node-mailjet"));
 const buffer_1 = require("buffer");
 dotenv_1.default.config();
 const mailjet = node_mailjet_1.default.apiConnect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
-let USER_SERVICE_URL = null;
+let USER_SERVICE_URL;
 const isDocker = process.env.IS_DOCKER === 'true';
-if (!isDocker) {
-    USER_SERVICE_URL = process.env.USER_SERVICE_URL;
+console.log("isDocker", isDocker);
+// if (!isDocker) {
+//   USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
+// }else {
+//   USER_SERVICE_URL = "http://users:3003/api/users";
+// }
+if (isDocker) {
+    USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://users:3003/api/users";
 }
 else {
-    USER_SERVICE_URL = "http://users:3003/api/users";
+    USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://localhost:3003/api/users";
 }
 //USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
 const JWT_SECRET = process.env.JWT_SECRET;
