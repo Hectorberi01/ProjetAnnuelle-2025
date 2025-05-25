@@ -34,7 +34,6 @@ console.log("Final USER_SERVICE_URL =", USER_SERVICE_URL);
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!USER_SERVICE_URL) {
     console.error("❌ ERREUR: USER_SERVICE_URL n'est pas défini !");
-    process.exit(1);
 }
 const mailjet = node_mailjet_1.default.apiConnect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
 const register = (data) => __awaiter(void 0, void 0, void 0, function* () {
