@@ -71,6 +71,7 @@ exports.registerAdmin = registerAdmin;
 // Login
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
+    console.log('Login request received:', { email, password });
     if (!email || !password) {
         res.status(400).json({ error: 'Email and password are required' });
         return;
@@ -82,6 +83,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return;
     }
     const result = yield AuthService.login({ email, password });
+    console.log('Login result:', result);
     res.status(result.status).json(result.data);
 });
 exports.login = login;

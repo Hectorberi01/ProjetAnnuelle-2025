@@ -91,9 +91,9 @@ const createAdminUser = (data) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.createAdminUser = createAdminUser;
 const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, password }) {
-    // console.log("USER_SERVICE_URL", USER_SERVICE_URL);
-    // console.log("email", email);
-    // console.log("password", password);
+    console.log("USER_SERVICE_URL", USER_SERVICE_URL);
+    console.log("email", email);
+    console.log("password", password);
     try {
         if (!email || !password) {
             return { status: 400, data: { error: 'Email et mot de passe requis' } };
@@ -104,7 +104,7 @@ const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, passwo
             return { status: 400, data: { error: 'Email invalide' } };
         }
         // Récupérer l'utilisateur par email
-        //console.log("USER_SERVICE_URL", `${USER_SERVICE_URL}/email/${email}`);
+        console.log("USER_SERVICE_URL", `${USER_SERVICE_URL}/email/${email}`);
         const response = yield fetch(`${USER_SERVICE_URL}/email/${email}`);
         const data = yield response.json();
         // console.log("data", data);

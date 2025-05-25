@@ -30,6 +30,7 @@ export const registerAdmin = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
+  console.log('Login request received:', { email, password });
   if (!email || !password) {
     res.status(400).json({ error: 'Email and password are required' });
     return;
@@ -43,6 +44,7 @@ export const login = async (req: Request, res: Response) => {
 
 
   const result = await AuthService.login({ email, password });
+  console.log('Login result:', result);
   res.status(result.status).json(result.data);
 };
 

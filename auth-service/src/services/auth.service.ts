@@ -110,9 +110,9 @@ export const createAdminUser = async (data: createAdminUserDTO) => {
 };
 
 export const login = async ({ email, password }: { email: string; password: string }) => {
-    // console.log("USER_SERVICE_URL", USER_SERVICE_URL);
-    // console.log("email", email);
-    // console.log("password", password);
+    console.log("USER_SERVICE_URL", USER_SERVICE_URL);
+    console.log("email", email);
+    console.log("password", password);
     try {
         if (!email || !password) {
             return { status: 400, data: { error: 'Email et mot de passe requis' } };
@@ -124,7 +124,7 @@ export const login = async ({ email, password }: { email: string; password: stri
         }
 
         // Récupérer l'utilisateur par email
-        //console.log("USER_SERVICE_URL", `${USER_SERVICE_URL}/email/${email}`);
+        console.log("USER_SERVICE_URL", `${USER_SERVICE_URL}/email/${email}`);
 
         const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
         const data = await response.json();
