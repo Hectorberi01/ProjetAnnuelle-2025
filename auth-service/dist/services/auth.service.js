@@ -25,14 +25,11 @@ dotenv_1.default.config();
 const isDocker = process.env.IS_DOCKER === 'true';
 console.log("isDocker", isDocker);
 console.log("USER_SERVICE_URL", process.env.USER_SERVICE_URL);
-// if (isDocker) {
-//   USER_SERVICE_URL = process.env.USER_SERVICE_URL! || "http://193.168.145.162:3003/api/users"; 
-// } else {
-//   USER_SERVICE_URL = process.env.USER_SERVICE_URL! ||"http://localhost:3003/api/users" ;
-// }
-const USER_SERVICE_URL = process.env.USER_SERVICE_URL || (isDocker
-    ? "http://193.168.145.162:3003/api/users"
-    : "http://localhost:3003/api/users");
+const USER_SERVICE_URL = process.env.USER_SERVICE_URL !== undefined
+    ? process.env.USER_SERVICE_URL
+    : isDocker
+        ? "http://users:3003/api/users"
+        : "http://localhost:3003/api/users";
 console.log("Final USER_SERVICE_URL =", USER_SERVICE_URL);
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!USER_SERVICE_URL) {
