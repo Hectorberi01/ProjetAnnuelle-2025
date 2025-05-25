@@ -11,6 +11,8 @@ require("../config/passport");
 const auth_service_1 = require("../services/auth.service");
 const router = (0, express_1.Router)();
 router.post('/register', auth_controller_1.register);
+// Register admin
+router.post('/register-admin', auth_controller_1.registerAdmin);
 router.post('/login', auth_controller_1.login);
 router.post('/logout', auth_controller_1.logout);
 router.post('/forgot-password', auth_controller_1.forgotPassword);

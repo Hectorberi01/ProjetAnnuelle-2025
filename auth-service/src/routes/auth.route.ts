@@ -1,6 +1,6 @@
 
 import { Router } from 'express';
-import {register,login,logout,forgotPassword,me, changePassword,
+import {register,login,logout,forgotPassword,me, changePassword, registerAdmin,
 } from '../controllers/auth.controller';
 import { authMiddleware } from '../middlewares/auth.middleware';
 import passport from 'passport';
@@ -9,6 +9,9 @@ import { loginWithGoogleOrAzure } from '../services/auth.service';
 const router = Router();
 
 router.post('/register', register);
+
+// Register admin
+router.post('/register-admin', registerAdmin)
 
 router.post('/login', login);
 
