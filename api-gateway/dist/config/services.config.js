@@ -60,11 +60,11 @@ exports.SERVICES = {
         ? 'http://groupes:3004/api/groups'
         : process.env.GROUPES || 'http://localhost:3004/api/groups',
     users: isDocker
-        ? 'http://users:3003/users'
-        : process.env.USERS || 'http://localhost:3003/users',
+        ? 'http://users:3003/api/users'
+        : process.env.USERS || 'http://localhost:3003/api/users',
     roles: isDocker
-        ? 'http://users:3003/roles'
-        : process.env.ROLES || 'http://localhost:3003/roles',
+        ? 'http://users:3003/api/roles'
+        : process.env.ROLES || 'http://localhost:3003/api/roles',
     promotions: isDocker
         ? 'http://promotions:3007/api/promotions'
         : process.env.PROMOTIONS || 'http://localhost:3007/api/promotions',

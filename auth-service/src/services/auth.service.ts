@@ -25,7 +25,7 @@ const isDocker = process.env.IS_DOCKER === 'true';
 if (!isDocker) {
   USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
 }else {
-  USER_SERVICE_URL = "http://users:3003/users";
+  USER_SERVICE_URL = "http://users:3003/api/users";
 }
 
  //USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
@@ -102,7 +102,7 @@ export const createAdminUser = async (data: createAdminUserDTO) => {
     const token = jwt.sign({ user: result.data }, JWT_SECRET, { expiresIn: '1h' });
     // Retourner l'utilisateur créé avec le token
     return { status: 201, data: { user: result.data, token } };
-    
+
   } catch (error) {
     console.error("Error creating admin user:", error);
     return { status: 500, data: { error: 'Internal server error' } };

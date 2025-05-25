@@ -28,7 +28,7 @@ if (!isDocker) {
     USER_SERVICE_URL = process.env.USER_SERVICE_URL;
 }
 else {
-    USER_SERVICE_URL = "http://users:3003/users";
+    USER_SERVICE_URL = "http://users:3003/api/users";
 }
 //USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
 const JWT_SECRET = process.env.JWT_SECRET;
