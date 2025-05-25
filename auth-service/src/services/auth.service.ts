@@ -10,13 +10,7 @@ import { Buffer } from 'buffer';
 
 dotenv.config();
 
-const mailjet = Mailjet.apiConnect(
-  process.env.MJ_APIKEY_PUBLIC!,
-  process.env.MJ_APIKEY_PRIVATE!
-);
-
-
-let USER_SERVICE_URL: string;
+//let USER_SERVICE_URL: string;
 
 const isDocker = process.env.IS_DOCKER === 'true';
 
@@ -24,20 +18,31 @@ const isDocker = process.env.IS_DOCKER === 'true';
 console.log("isDocker", isDocker);
 console.log("USER_SERVICE_URL", process.env.USER_SERVICE_URL);
 
-if (isDocker) {
-  USER_SERVICE_URL = process.env.USER_SERVICE_URL! || "http://193.168.145.162:3003/api/users"; 
-} else {
-  USER_SERVICE_URL = process.env.USER_SERVICE_URL! ||"http://localhost:3003/api/users" ;
-}
+// if (isDocker) {
+//   USER_SERVICE_URL = process.env.USER_SERVICE_URL! || "http://193.168.145.162:3003/api/users"; 
+// } else {
+//   USER_SERVICE_URL = process.env.USER_SERVICE_URL! ||"http://localhost:3003/api/users" ;
+// }
 
- //USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
+const USER_SERVICE_URL: string = process.env.USER_SERVICE_URL || (
+  isDocker
+    ? "http://193.168.145.162:3003/api/users"
+    : "http://localhost:3003/api/users"
+);
+
+console.log("Final USER_SERVICE_URL =", USER_SERVICE_URL);
+
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 if (!USER_SERVICE_URL) {
-    console.error("❌ ERREUR: USER_SERVICE_URL n'est pas défini !");
-    process.exit(1);
+  console.error("❌ ERREUR: USER_SERVICE_URL n'est pas défini !");
+  process.exit(1);
 }
 
+const mailjet = Mailjet.apiConnect(
+  process.env.MJ_APIKEY_PUBLIC!,
+  process.env.MJ_APIKEY_PRIVATE!
+);
 
 interface createAdminUserDTO {
   nom: string;

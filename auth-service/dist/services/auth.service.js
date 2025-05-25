@@ -21,23 +21,25 @@ const auth_validation_1 = require("../validations/auth.validation");
 const node_mailjet_1 = __importDefault(require("node-mailjet"));
 const buffer_1 = require("buffer");
 dotenv_1.default.config();
-const mailjet = node_mailjet_1.default.apiConnect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
-let USER_SERVICE_URL;
+//let USER_SERVICE_URL: string;
 const isDocker = process.env.IS_DOCKER === 'true';
 console.log("isDocker", isDocker);
 console.log("USER_SERVICE_URL", process.env.USER_SERVICE_URL);
-if (isDocker) {
-    USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://193.168.145.162:3003/api/users";
-}
-else {
-    USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://localhost:3003/api/users";
-}
-//USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
+// if (isDocker) {
+//   USER_SERVICE_URL = process.env.USER_SERVICE_URL! || "http://193.168.145.162:3003/api/users"; 
+// } else {
+//   USER_SERVICE_URL = process.env.USER_SERVICE_URL! ||"http://localhost:3003/api/users" ;
+// }
+const USER_SERVICE_URL = process.env.USER_SERVICE_URL || (isDocker
+    ? "http://193.168.145.162:3003/api/users"
+    : "http://localhost:3003/api/users");
+console.log("Final USER_SERVICE_URL =", USER_SERVICE_URL);
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!USER_SERVICE_URL) {
     console.error("❌ ERREUR: USER_SERVICE_URL n'est pas défini !");
     process.exit(1);
 }
+const mailjet = node_mailjet_1.default.apiConnect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
 const register = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const requiredTextFields = ['nom', 'prenom', 'email'];
     for (const field of requiredTextFields) {
