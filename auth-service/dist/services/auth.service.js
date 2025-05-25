@@ -25,14 +25,9 @@ const mailjet = node_mailjet_1.default.apiConnect(process.env.MJ_APIKEY_PUBLIC, 
 let USER_SERVICE_URL;
 const isDocker = process.env.IS_DOCKER === 'true';
 console.log("isDocker", isDocker);
-// if (!isDocker) {
-//   USER_SERVICE_URL = process.env.USER_SERVICE_URL!;
-// }else {
-//   USER_SERVICE_URL = "http://users:3003/api/users";
-// }
-//||"http://users:3003/api/users" ;
+console.log("USER_SERVICE_URL", process.env.USER_SERVICE_URL);
 if (isDocker) {
-    USER_SERVICE_URL = process.env.USER_SERVICE_URL;
+    USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://users:3003/api/users";
 }
 else {
     USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://localhost:3003/api/users";
