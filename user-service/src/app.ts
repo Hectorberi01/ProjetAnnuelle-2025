@@ -2,49 +2,42 @@ import express from "express";
 import dotenv from "dotenv";
 import "reflect-metadata";
 import { AppDataSource } from "./database/database";
-import { initRoutes } from "./routes/initRoutes";
 import cors from "cors";
+import userRoutes from "./routes/user.routes";
 dotenv.config();
 
 const app = express();
-// Port
 const PORT = process.env.PORT || 3003;
 
 const main = async () => {
-  try {
-    // Initialiser la connexion à la base de données
-    await AppDataSource.initialize();
-    console.log("📦 Base de données connectée !");
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
-    app.use(cors({
-      origin: [
-        "http://localhost:3000",
-        "http://192.168.145.162:3000"
-      ],
-      credentials: true
-    }));
 
-    console.log("🌐 CORS configuré pour les origines autorisées");
-    initRoutes(app);
+    try {
+        await AppDataSource.initialize();
+        console.log('Database connection established');
 
+        // 2. Middleware
+        app.use(cors());
+        app.use(express.json());
+        app.use(express.urlencoded({ extended: true }));
 
-    app.listen(PORT, () => {
-      console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
-    });
+        // 3. Routes
+        app.use('/api',userRoutes);
 
-  } catch (error) {
-    console.error("❌ Erreur de connexion à la base :", error);
-  }
-};
+        // 5. Lancement serveur
+        app.listen(PORT, () => {
+          console.log(`Server is running on port ${PORT}`)
+        })
+    }
+    catch (error) {
+      console.error('Error establishing database connection:', error);
+    }  
+}
+
 main()
-  .catch((err) => {
-    console.error("❌ Erreur lors du démarrage de l'application :", err);
-  })
-  .finally(() => {
-    console.log("🚀 Application démarrée !");
-  }
-  );
+.catch((err) => {
+    console.error('Error starting the server:', err);
+}
+)
 
 
 

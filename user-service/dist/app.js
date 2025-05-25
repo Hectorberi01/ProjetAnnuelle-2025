@@ -16,40 +16,31 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 require("reflect-metadata");
 const database_1 = require("./database/database");
-const initRoutes_1 = require("./routes/initRoutes");
 const cors_1 = __importDefault(require("cors"));
+const user_routes_1 = __importDefault(require("./routes/user.routes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-// Port
 const PORT = process.env.PORT || 3003;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Initialiser la connexion à la base de données
         yield database_1.AppDataSource.initialize();
-        console.log("📦 Base de données connectée !");
+        console.log('Database connection established');
+        // 2. Middleware
+        app.use((0, cors_1.default)());
         app.use(express_1.default.json());
         app.use(express_1.default.urlencoded({ extended: true }));
-        app.use((0, cors_1.default)({
-            origin: [
-                "http://localhost:3000",
-                "http://192.168.145.162:3000"
-            ],
-            credentials: true
-        }));
-        console.log("🌐 CORS configuré pour les origines autorisées");
-        (0, initRoutes_1.initRoutes)(app);
+        // 3. Routes
+        app.use('/api', user_routes_1.default);
+        // 5. Lancement serveur
         app.listen(PORT, () => {
-            console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
+            console.log(`Server is running on port ${PORT}`);
         });
     }
     catch (error) {
-        console.error("❌ Erreur de connexion à la base :", error);
+        console.error('Error establishing database connection:', error);
     }
 });
 main()
     .catch((err) => {
-    console.error("❌ Erreur lors du démarrage de l'application :", err);
-})
-    .finally(() => {
-    console.log("🚀 Application démarrée !");
+    console.error('Error starting the server:', err);
 });

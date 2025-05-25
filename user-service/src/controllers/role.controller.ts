@@ -1,90 +1,77 @@
 import { RequestHandler } from "express";
 import { RoleService } from "../services/role.service";
-import { console } from "inspector";
+import e, { Request, Response } from 'express';
 
-export class RoleController {
-  private roleService: RoleService;
 
-  constructor() {
-    this.roleService = new RoleService();
+export const createRole = async (req: Request, res: Response) => {
+  try {
+    const role = await new RoleService().create(req.body);
+    res.status(201).json(role);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
   }
+};
 
-  create: RequestHandler = async (req, res) => {
-    try {
-      const role = await this.roleService.create(req.body);
-      res.status(201).json(role);
-    } catch (err: any) {
-      res.status(400).json({ message: err.message });
-    }
-  };
+export const getAllRoles = async (req: Request, res: Response) => {
+  console.log("getAll roles");
+  const roles = await new RoleService().findAll();
+  res.status(200).json(roles);
+};
+export const getRoleById = async (req: Request, res: Response) => {
+  console.log("getById role");
+  const id = Number(req.params?.id);
+  if (isNaN(id)) {
+    res.status(400).json({ message: "ID invalide" });
+    return;
+  }
+  const role = await new RoleService().findById(id);
+  if (!role) {
+    res.status(404).json({ message: "Rôle non trouvé" });
+    return;
+  }
+  res.status(200).json(role);
+};
+export const getRoleByName = async (req: Request, res: Response) => {
+  console.log("getByName role");
+  const name = req.params?.name;
+  if (!name) {
+    res.status(400).json({ message: "Nom invalide" });
+    return;
+  }
+  const role = await new RoleService().findByName(name);
+  if (!role) {
+    res.status(404).json({ message: "Rôle non trouvé" });
+    return;
+  }
+  res.status(200).json(role);
+};
 
-  getAll: RequestHandler = async (req, res) => {
-    console.log("getAll called");
-  
-    const roles = await this.roleService.findAll();
-    res.json(roles);
-  };
-  getById: RequestHandler = async (req, res) => {
-    const id = Number(req.params?.id);
-    if (isNaN(id)) {
-      res.status(400).json({ message: "ID invalide" });
-      return;
-    }
+export const updateRole = async (req: Request, res: Response) => {
+  console.log("update role");
+  const id = Number(req.params?.id);
+  if (isNaN(id)) {
+    res.status(400).json({ message: "ID invalide" });
+    return;
+  }
+  const updated = await new RoleService().update(id, req.body);
+  if (!updated) {
+    res.status(404).json({ message: "Rôle non trouvé" });
+    return;
+  }
+  res.status(200).json(updated);
+};
 
-    const role = await this.roleService.findById(id);
-    if (!role) {
-      res.status(404).json({ message: "Rôle non trouvé" });
-      return;
-    }
-
-    res.json(role);
-  };
-  
-  getByName: RequestHandler = async (req, res) => {
-    const name = req.params?.name;
-    if (!name) {
-      res.status(400).json({ message: "Nom invalide" });
-      return;
-    }
-    const role = await this.roleService.findByName(name);
-    if (!role) {
-      res.status(404).json({ message: "Rôle non trouvé" });
-      return;
-    }
-    res.json(role);
-  };
-
-  update: RequestHandler = async (req, res) => {
-    const id = Number(req.params?.id);
-    if (isNaN(id)) {
-      res.status(400).json({ message: "ID invalide" });
-      return;
-    }
-
-    const updated = await this.roleService.update(id, req.body);
-    if (!updated) {
-      res.status(404).json({ message: "Rôle non trouvé" });
-      return;
-    }
-
-    res.json(updated);
-  };
-
-  delete: RequestHandler = async (req, res) => {
-    const id = Number(req.params?.id);
-    if (isNaN(id)) {
-      res.status(400).json({ message: "ID invalide" });
-      return;
-    }
-
-    const deleted = await this.roleService.delete(id);
-    if (!deleted) {
-      res.status(404).json({ message: "Rôle non trouvé" });
-      return;
-    }
-
-    res.status(204).send();
-  };
-}
-
-export const roleControllerInstance = new RoleController();
+export const deleteRole = async (req: Request, res: Response) => {
+  console.log("delete role");
+  const id = Number(req.params?.id);
+  if (isNaN(id)) {
+    res.status(400).json({ message: "ID invalide" });
+    return;
+  }
+  const deleted = await new RoleService().delete(id);
+  if (!deleted) {
+    res.status(404).json({ message: "Rôle non trouvé" });
+    return;
+  }
+  res.status(204).send();
+};
