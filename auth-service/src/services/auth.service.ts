@@ -25,7 +25,7 @@ console.log("isDocker", isDocker);
 console.log("USER_SERVICE_URL", process.env.USER_SERVICE_URL);
 
 if (isDocker) {
-  USER_SERVICE_URL = process.env.USER_SERVICE_URL! || "http://users:3003/api/users"; 
+  USER_SERVICE_URL = process.env.USER_SERVICE_URL! || "http://193.168.145.162:3003/api/users"; 
 } else {
   USER_SERVICE_URL = process.env.USER_SERVICE_URL! ||"http://localhost:3003/api/users" ;
 }
