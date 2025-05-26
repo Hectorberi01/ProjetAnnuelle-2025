@@ -82,7 +82,9 @@ class UserService {
     findByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("findByEmail", email);
-            return this.userRepo.findOne({ where: { email }, relations: ["role"] });
+            const user = yield this.userRepo.findOne({ where: { email }, relations: ["role"] });
+            console.log("findByEmail result", user);
+            return user;
         });
     }
     // UserUpdate
