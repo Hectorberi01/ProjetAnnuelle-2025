@@ -96,19 +96,19 @@ const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, passwo
     console.log("password", password);
     try {
         if (!email || !password) {
-            return { status: 400, data: { error: 'Email et mot de passe requis' } };
+            return { data: { error: 'Email et mot de passe requis' } };
         }
         // Vérifier si l'email est valide
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            return { status: 400, data: { error: 'Email invalide' } };
+            return { data: { error: 'Email invalide' } };
         }
         // Récupérer l'utilisateur par email
         console.log("USER_SERVICE_URL", `${USER_SERVICE_URL}/email/${email}`);
         const response = yield fetch(`${USER_SERVICE_URL}/email/${email}`);
         if (response.status !== 200) {
             console.log("response.status", response.status);
-            return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+            return { data: { error: 'Email ou mot de passe invalide' } };
         }
         console.log("response", response);
         const data = yield response.json();
@@ -120,18 +120,18 @@ const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, passwo
         console.log("user", user);
         const isValid = yield bcrypt_1.default.compare(password, user.password);
         console.log("isValid", isValid);
-        if (!isValid) {
-            return { status: 401, data: { error: 'Mot de passe incorrect' } };
+        if (isValid === false) {
+            return { data: { error: 'Mot de passe incorrect' } };
         }
         // Supprimer le champ password
         delete user.password;
         //const encodedId = Buffer.from(user.id.toString()).toString('base64');
         //user.id = encodedId;
         const token = jsonwebtoken_1.default.sign({ user: user }, JWT_SECRET, { expiresIn: '1h', });
-        return { status: 200, data: { token, user } };
+        return { data: { token, user } };
     }
     catch (err) {
-        return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+        return { data: { error: 'Email ou mot de passe invalide' } };
     }
 });
 exports.login = login;

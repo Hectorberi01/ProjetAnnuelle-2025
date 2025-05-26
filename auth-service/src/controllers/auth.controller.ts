@@ -44,8 +44,9 @@ export const login = async (req: Request, res: Response) => {
 
 
   const result = await AuthService.login({ email, password });
+  
   console.log('Login result:', result);
-  res.status(result.status).json(result.data);
+  res.status(200).json(result.data);
 };
 
 // Logout

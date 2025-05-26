@@ -113,12 +113,12 @@ export const login = async ({ email, password }: { email: string; password: stri
     console.log("password", password);
     try {
         if (!email || !password) {
-            return { status: 400, data: { error: 'Email et mot de passe requis' } };
+          return {data: { error: 'Email et mot de passe requis' } };
         }
         // Vérifier si l'email est valide
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-          return { status: 400, data: { error: 'Email invalide' } };
+          return {data: { error: 'Email invalide' } };
         }
 
         // Récupérer l'utilisateur par email
@@ -128,7 +128,7 @@ export const login = async ({ email, password }: { email: string; password: stri
 
         if(response.status !== 200) {
           console.log("response.status", response.status);
-          return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+          return { data: { error: 'Email ou mot de passe invalide' } };
         }
 
         console.log("response", response);
@@ -145,8 +145,8 @@ export const login = async ({ email, password }: { email: string; password: stri
 
         const isValid = await bcrypt.compare(password, user.password);
         console.log("isValid", isValid);
-        if (!isValid) {
-            return { status: 401, data: { error: 'Mot de passe incorrect' } };
+        if (isValid === false) {
+            return { data: { error: 'Mot de passe incorrect' } };
         }
         // Supprimer le champ password
       delete user.password;
@@ -154,9 +154,9 @@ export const login = async ({ email, password }: { email: string; password: stri
       //user.id = encodedId;
       const token = jwt.sign({ user: user }, JWT_SECRET, {expiresIn: '1h',});
   
-      return { status: 200, data: { token, user } };
+      return {data: { token, user } };
     } catch (err: any) {
-      return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+      return {data: { error: 'Email ou mot de passe invalide' } };
     }
 };
 
