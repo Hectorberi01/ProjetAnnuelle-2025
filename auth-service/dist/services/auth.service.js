@@ -106,8 +106,9 @@ const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, passwo
         // Récupérer l'utilisateur par email
         console.log("USER_SERVICE_URL", `${USER_SERVICE_URL}/email/${email}`);
         const response = yield fetch(`${USER_SERVICE_URL}/email/${email}`);
+        console.log("response", response);
         const data = yield response.json();
-        // console.log("data", data);
+        console.log("data", data);
         const user = data;
         if (!user) {
             return { status: 401, data: { error: 'Email ou mot de passe invalide' } };

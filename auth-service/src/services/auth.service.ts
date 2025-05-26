@@ -125,9 +125,12 @@ export const login = async ({ email, password }: { email: string; password: stri
         console.log("USER_SERVICE_URL", `${USER_SERVICE_URL}/email/${email}`);
 
         const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
+
+        console.log("response", response);
         const data = await response.json();
 
-        // console.log("data", data);
+        console.log("data", data);
+
         const user = data;
         if (!user) {
           return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
