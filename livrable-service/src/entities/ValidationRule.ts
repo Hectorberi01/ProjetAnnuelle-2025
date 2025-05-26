@@ -7,11 +7,11 @@ export class ValidationRule {
   id!: number;
 
   @Column()
+  projectId!: number;
+
+  @Column()
   type!: 'maxSize' | 'requiredFile' | 'structure' | 'regex';
 
   @Column()
   value!: string;
-
-  @ManyToOne(() => Deliverable, deliverable => deliverable.rules)
-  deliverable!: Deliverable;
 }

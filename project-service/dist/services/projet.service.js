@@ -14,30 +14,68 @@ const database_1 = require("../config/database");
 const Project_1 = require("../entities/Project");
 const projetRepo = database_1.AppDataSource.getRepository(Project_1.Project);
 class ProjetService {
-    constructor() {
-    }
+    constructor() { }
     getAllProjects() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield projetRepo.find();
+        return __awaiter(this, arguments, void 0, function* (page = 1, limit = 10) {
+            try {
+                const [projects, total] = yield projetRepo.findAndCount({
+                    skip: (page - 1) * limit,
+                    take: limit,
+                });
+                return {
+                    projects,
+                    total,
+                    page,
+                    lastPage: Math.ceil(total / limit),
+                };
+            }
+            catch (error) {
+                console.error('Error fetching projects:', error);
+                throw new Error('Failed to fetch projects');
+            }
         });
     }
     getProjectsByPromotion(promotionId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield projetRepo.find({ where: { promotionId } });
+            if (!promotionId) {
+                throw new Error('Promotion ID is required');
+            }
+            try {
+                return yield projetRepo.find({ where: { promotionId } });
+            }
+            catch (error) {
+                console.error('Error fetching projects by promotion:', error);
+                throw new Error('Failed to fetch projects by promotion');
+            }
         });
     }
     getProjectById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield projetRepo.findOneByOrFail({ id });
+            if (!id) {
+                throw new Error('Project ID is required');
+            }
+            try {
+                return yield projetRepo.findOneByOrFail({ id });
+            }
+            catch (error) {
+                console.error('Error fetching project by ID:', error);
+                throw new Error('Failed to fetch project by ID');
+            }
         });
     }
     createProject(data) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
-            const preparedData = Object.assign(Object.assign({}, data), { soutenanceDate: (_a = data.soutenanceDate) !== null && _a !== void 0 ? _a : undefined // Remplace null par undefined
-             });
-            const project = projetRepo.create(preparedData);
-            return yield projetRepo.save(project);
+            try {
+                const preparedData = Object.assign(Object.assign({}, data), { soutenanceDate: (_a = data.soutenanceDate) !== null && _a !== void 0 ? _a : undefined // Remplace null par undefined
+                 });
+                const project = projetRepo.create(preparedData);
+                return yield projetRepo.save(project);
+            }
+            catch (error) {
+                console.error('Error creating project:', error);
+                throw new Error('Failed to create project');
+            }
         });
     }
     updateProject(id, updateData) {
@@ -51,6 +89,70 @@ class ProjetService {
             catch (error) {
                 console.error('Error updating project:', error);
                 throw new Error('Failed to update project');
+            }
+        });
+    }
+    updateProjectStatus(id, status) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!id || !status) {
+                throw new Error('Project ID and status are required');
+            }
+            try {
+                const project = yield projetRepo.findOneByOrFail({ id });
+                project.status = status;
+                return yield projetRepo.save(project);
+            }
+            catch (error) {
+                console.error('Error updating project status:', error);
+                throw new Error('Failed to update project status');
+            }
+        });
+    }
+    updateProjectMode(id, mode) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!id || !mode) {
+                throw new Error('Project ID and mode are required');
+            }
+            try {
+                const project = yield projetRepo.findOneByOrFail({ id });
+                project.mode = mode;
+                return yield projetRepo.save(project);
+            }
+            catch (error) {
+                console.error('Error updating project mode:', error);
+                throw new Error('Failed to update project mode');
+            }
+        });
+    }
+    updateProjectLatePolicy(id, allowLate) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (typeof allowLate !== 'boolean' || !id) {
+                throw new Error('Invalid parameters for late policy update');
+            }
+            try {
+                const project = yield projetRepo.findOneByOrFail({ id });
+                project.allowLate = allowLate;
+                return yield projetRepo.save(project);
+            }
+            catch (error) {
+                console.error('Error updating project late policy:', error);
+                throw new Error('Failed to update project late policy');
+            }
+        });
+    }
+    updateSoutenanceDate(id, soutenanceDate) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!id || !soutenanceDate) {
+                throw new Error('Project ID and soutenance date are required');
+            }
+            try {
+                const project = yield projetRepo.findOneByOrFail({ id });
+                project.soutenanceDate = soutenanceDate;
+                return yield projetRepo.save(project);
+            }
+            catch (error) {
+                console.error('Error updating soutenance date:', error);
+                throw new Error('Failed to update soutenance date');
             }
         });
     }

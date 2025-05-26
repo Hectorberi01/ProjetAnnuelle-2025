@@ -15,28 +15,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const database_1 = require("./config/database");
 const deliverable_routes_1 = __importDefault(require("./routes/deliverable.routes"));
-const node_cron_1 = __importDefault(require("node-cron"));
-const checkSimilarityOnDeadline_1 = require("./scripts/checkSimilarityOnDeadline");
-const submission_routes_1 = __importDefault(require("./routes/submission.routes"));
+const deliverable_service_1 = require("./services/deliverable.service");
+//import { checkSimilarityOnDeadline } from './scripts/checkSimilarityOnDeadline';
+//import submissionRoutes from "./routes/submission.routes";
+const deliverableService = new deliverable_service_1.DeliverableService();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3009;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database_1.AppDataSource.initialize();
         console.log('Database connection established');
+        deliverableService.startSimilarityCron();
         // 2. Middleware
         app.use(express_1.default.json());
         app.use(express_1.default.urlencoded({ extended: true }));
         // 3. Routes
         app.use('/api/deliverables', deliverable_routes_1.default);
-        app.use('/api/submissions', submission_routes_1.default);
+        //app.use('/api/submissions', submissionRoutes);
         // app.use('/api/rules', rulesRoutes);
         // 4. Cron job to check for similarity on deadline
-        node_cron_1.default.schedule('0 0 * * *', () => __awaiter(void 0, void 0, void 0, function* () {
-            console.log('⏰ Checking for submissions at deadline...');
-            yield (0, checkSimilarityOnDeadline_1.checkSimilarityOnDeadline)();
-        }));
-        yield (0, checkSimilarityOnDeadline_1.checkSimilarityOnDeadline)();
+        // cron.schedule('0 0 * * *', async () => {
+        //     console.log('⏰ Checking for submissions at deadline...');
+        //     await checkSimilarityOnDeadline();
+        // });
+        //await checkSimilarityOnDeadline();
         // 5. Lancement serveur
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);

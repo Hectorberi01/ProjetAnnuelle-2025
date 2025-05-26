@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { SubmissionService } from '../services/submission.service';
+/*import { Request, Response } from 'express';
+//import { SubmissionService } from '../services/submission.service';
 import { console } from 'inspector';
 
 const submissionService = new SubmissionService();
@@ -37,4 +37,4 @@ export const downloadSubmission = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error });
   }
-};
+};*/

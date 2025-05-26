@@ -9,23 +9,45 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getGroupSubmissions = exports.getSubmissionById = exports.deleteSubmission = exports.updateSubmission = exports.addSubmission = exports.getSubmissions = exports.deleteValidationRule = exports.updateValidationRule = exports.addValidationRule = exports.getValidationRulesForDeliverable = exports.deleteDeliverable = exports.updateDeliverable = exports.getDeliverableById = exports.getDeliverablesByProjectId = exports.getAllDeliverables = exports.createDeliverable = void 0;
+exports.similarityMatrix = exports.similarityCheck = exports.downloadDeliverable = exports.getDeliverableById = exports.getAllDeliverables = exports.submitDeliverable = void 0;
 const database_1 = require("../config/database");
 const Deliverable_1 = require("../entities/Deliverable");
-const Submission_1 = require("../entities/Submission");
 const deliverable_service_1 = require("../services/deliverable.service");
+const GoogleDriveService_1 = require("../services/GoogleDriveService");
+const detectSimilarity_1 = require("../scripts/detectSimilarity");
+const SimilarityComparison_1 = require("../entities/SimilarityComparison");
 const deliverableService = new deliverable_service_1.DeliverableService();
+const googleDriveService = new GoogleDriveService_1.GoogleDriveService();
 // Create a new deliverable
-const createDeliverable = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const submitDeliverable = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const deliverable = yield deliverableService.createDeliverable(req.body);
+        const { projectId, groupId, name, description, githubUrl } = req.body;
+        const file = req.file;
+        console.log("dans submitDeliverable");
+        if (!file) {
+            res.status(400).json({ message: 'File is required' });
+            return;
+        }
+        let fileUrl = undefined;
+        if (file) {
+            fileUrl = yield googleDriveService.uploadFile(file);
+        }
+        const data = {
+            projectId,
+            groupId,
+            name,
+            description,
+            githubUrl: githubUrl || null,
+            fileUrl,
+        };
+        const deliverable = yield deliverableService.submitDeliverable(data);
         res.status(201).json({ message: 'Deliverable created successfully', deliverable });
     }
     catch (error) {
         res.status(500).json({ message: 'Internal server error', error });
     }
 });
-exports.createDeliverable = createDeliverable;
+exports.submitDeliverable = submitDeliverable;
 // Get all deliverables for a specific project
 const getAllDeliverables = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -37,241 +59,328 @@ const getAllDeliverables = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getAllDeliverables = getAllDeliverables;
-// Get all deliverables
-const getDeliverablesByProjectId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const deliverables = yield deliverableService.getProjectDeliverables(parseInt(req.params.id));
-        if (!deliverables) {
-            res.status(404).json({ message: 'Deliverables not found for this project' });
-        }
-        res.json(deliverables);
-    }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.getDeliverablesByProjectId = getDeliverablesByProjectId;
 // Get a specific deliverable by ID
 const getDeliverableById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const deliverableId = parseInt(req.params.id);
-        const Response = yield deliverableService.getDeliverableById(deliverableId);
-        if (!Response) {
+        const deliverable = yield deliverableService.getDeliverableById(deliverableId);
+        if (!deliverable) {
             res.status(404).json({ message: 'Deliverable not found' });
             return;
         }
-        res.status(200).send(Response);
+        res.status(200).json(deliverable);
     }
     catch (error) {
         res.status(500).json({ message: 'Internal server error', error });
     }
 });
 exports.getDeliverableById = getDeliverableById;
+const downloadDeliverable = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    console.log("dans downloadDeliverable");
+    const repo = database_1.AppDataSource.getRepository(Deliverable_1.Deliverable);
+    const deliverable = yield repo.findOneBy({ id: Number(id) });
+    if (!deliverable || !deliverable.fileUrl) {
+        res.status(404).json({ error: 'Fichier non trouvé' });
+        return;
+    }
+    const match = deliverable.fileUrl.match(/\/d\/([^/]+)\//);
+    const fileId = match === null || match === void 0 ? void 0 : match[1];
+    if (!fileId) {
+        res.status(400).json({ error: 'ID de fichier invalide' });
+        return;
+    }
+    console.log(`Téléchargement du fichier avec ID: ${fileId}`);
+    const driveService = new GoogleDriveService_1.GoogleDriveService();
+    try {
+        const fileStream = yield driveService.downloadFile(fileId);
+        const fileName = yield driveService.getFileMetadata(fileId);
+        res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+        fileStream.pipe(res);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erreur lors du téléchargement du fichier' });
+        return;
+    }
+});
+exports.downloadDeliverable = downloadDeliverable;
+const similarityCheck = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { projectId } = req.params;
+    console.log("dans similarityCheck");
+    if (!projectId || isNaN(Number(projectId))) {
+        res.status(400).json({ error: 'Project ID invalide' });
+        return;
+    }
+    try {
+        yield (0, detectSimilarity_1.detectSimilarityForDeliverable)(parseInt(projectId));
+        res.json({ message: `Analyse de similarité terminée pour le projet #${projectId}` });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erreur lors de l’analyse de similarité' });
+        return;
+    }
+});
+exports.similarityCheck = similarityCheck;
+const similarityMatrix = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { projectId } = req.params;
+    console.log("dans similarityMatrix");
+    const comparisonRepo = database_1.AppDataSource.getRepository(SimilarityComparison_1.SimilarityComparison);
+    const results = yield comparisonRepo
+        .createQueryBuilder('sc')
+        .innerJoin('deliverable', 'd', 'sc.deliverableId = d.id')
+        .where('d.projectId = :projectId', { projectId })
+        .getMany();
+    const matrix = results.map(r => ({
+        deliverableA: r.submissionAId,
+        deliverableB: r.submissionBId,
+        score: (r.score * 100).toFixed(2) + '%',
+        isSuspected: r.score >= 0.8,
+    }));
+    res.json({ projectId, comparisons: matrix });
+});
+exports.similarityMatrix = similarityMatrix;
+/*
+// Get all deliverables
+export const getDeliverablesByProjectId = async (req: Request, res: Response) => {
+  try {
+    const deliverables = await deliverableService.getProjectDeliverables(parseInt(req.params.id));
+    if (!deliverables) {
+      res.status(404).json({ message: 'Deliverables not found for this project' });
+    }
+    res.json(deliverables);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+};
+
+// Get a specific deliverable by ID
+export const getDeliverableById = async (req: Request, res: Response) => {
+  try {
+    const deliverableId = parseInt(req.params.id);
+    const Response = await deliverableService.getDeliverableById(deliverableId);
+    if (!Response) {
+      res.status(404).json({ message: 'Deliverable not found' });
+      return;
+    }
+    res.status(200).send(Response);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+}
+
 // Update a deliverable
-const updateDeliverable = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const deliverable = yield deliverableService.updateDeliverable(parseInt(req.params.id), req.body);
-        if (!deliverable) {
-            res.status(404).json({ message: 'Deliverable not found' });
-            return;
-        }
-        res.status(200).json({ message: 'Deliverable updated successfully', deliverable });
+export const updateDeliverable = async (req: Request, res: Response) => {
+  try {
+    const deliverable = await deliverableService.updateDeliverable(parseInt(req.params.id), req.body);
+    if (!deliverable) {
+      res.status(404).json({ message: 'Deliverable not found' });
+      return;
     }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.updateDeliverable = updateDeliverable;
+
+    res.status(200).json({ message: 'Deliverable updated successfully', deliverable });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+}
+
 // Delete a deliverable
-const deleteDeliverable = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const response = yield deliverableService.deleteDeliverable(parseInt(req.params.id));
-        if (!response) {
-            res.status(404).json({ message: 'Deliverable not found' });
-            return;
-        }
-        res.status(200).json({ message: 'Deliverable deleted successfully' });
+export const deleteDeliverable = async (req: Request, res: Response) => {
+  try {
+    const response = await deliverableService.deleteDeliverable(parseInt(req.params.id));
+    if (!response) {
+      res.status(404).json({ message: 'Deliverable not found' });
+      return;
     }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.deleteDeliverable = deleteDeliverable;
+    res.status(200).json({ message: 'Deliverable deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+}
+
 // Get all validation rules for a specific deliverable
-const getValidationRulesForDeliverable = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const deliverablesRules = yield deliverableService.getDeliverablesById(parseInt(req.params.id));
-        if (!deliverablesRules) {
-            res.status(404).json({ message: 'Deliverable not found' });
-            return;
-        }
-        res.status(200).send(deliverablesRules);
+export const getValidationRulesForDeliverable = async (req: Request, res: Response) => {
+  try {
+    const deliverablesRules  = await deliverableService.getDeliverablesById(parseInt(req.params.id));
+    if (!deliverablesRules) {
+      res.status(404).json({ message: 'Deliverable not found' });
+      return;
     }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.getValidationRulesForDeliverable = getValidationRulesForDeliverable;
-/** Ajoute , modification, suppression et mise à jours d'une règle de valisation d'un livrable */
+
+    res.status(200).send(deliverablesRules);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+}
+
+
 // Add a validation rule to a specific deliverable
-const addValidationRule = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { type, value } = req.body;
-        const data = { type, value };
-        const response = yield deliverableService.createValidationRule(data, parseInt(req.params.id));
-        if (!response) {
-            res.status(404).json({ message: 'Deliverable not found' });
-            return;
-        }
-        res.status(201).json({ message: 'Validation rule added successfully', response });
+export const addValidationRule = async (req: Request, res: Response) => {
+  try {
+    const { type, value } = req.body;
+    const data = { type, value };
+    const response = await deliverableService.createValidationRule(data, parseInt(req.params.id));
+    if (!response) {
+      res.status(404).json({ message: 'Deliverable not found' });
+      return;
     }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.addValidationRule = addValidationRule;
+
+    res.status(201).json({ message: 'Validation rule added successfully', response });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+}
+
 // Update a validation rule for a specific deliverable
-const updateValidationRule = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { type, value } = req.body;
-        const response = yield deliverableService.updateValidationRule(parseInt(req.params.ruleId), { type, value });
-        if (!response) {
-            res.status(404).json({ message: 'Validation rule not found' });
-        }
-        res.json({ message: 'Validation rule updated successfully', response });
+export const updateValidationRule = async (req: Request, res: Response) => {
+  try {
+    const { type, value } = req.body;
+
+    const response = await deliverableService.updateValidationRule(parseInt(req.params.ruleId), { type, value });
+    if (!response) {
+      res.status(404).json({ message: 'Validation rule not found' });
     }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.updateValidationRule = updateValidationRule;
+   
+    res.json({ message: 'Validation rule updated successfully', response });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+}
+
 // Delete a validation rule for a specific deliverable
-const deleteValidationRule = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const ruleId = parseInt(req.params.ruleId);
-        const response = yield deliverableService.deleteValidationRule(ruleId);
-        if (!response) {
-            res.status(404).json({ message: 'Validation rule not found' });
-            return;
-        }
-        res.json({ message: 'Validation rule deleted successfully' });
+export const deleteValidationRule = async (req: Request, res: Response) => {
+  try {
+    const ruleId = parseInt(req.params.ruleId);
+    const response = await deliverableService.deleteValidationRule(ruleId);
+    if (!response) {
+      res.status(404).json({ message: 'Validation rule not found' });
+      return;
     }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.deleteValidationRule = deleteValidationRule;
+    res.json({ message: 'Validation rule deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+}
+
+
 // Get all submissions for a specific deliverable
-const getSubmissions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const deliverableId = parseInt(req.params.id);
-        const deliverableRepo = database_1.AppDataSource.getRepository(Deliverable_1.Deliverable);
-        const deliverable = yield deliverableRepo.findOne({
-            where: { id: deliverableId },
-            relations: ['submissions'],
-        });
-        if (!deliverable) {
-            return res.status(404).json({ message: 'Deliverable not found' });
-        }
-        res.json(deliverable.submissions);
+export const getSubmissions = async (req: Request, res: Response) => {
+  try {
+    const deliverableId = parseInt(req.params.id);
+    const deliverableRepo = AppDataSource.getRepository(Deliverable);
+    const deliverable = await deliverableRepo.findOne({
+      where: { id: deliverableId },
+      relations: ['submissions'],
+    });
+
+    if (!deliverable) {
+      return res.status(404).json({ message: 'Deliverable not found' });
     }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.getSubmissions = getSubmissions;
+
+    res.json(deliverable.submissions);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+}
 // Add a submission for a specific deliverable
-const addSubmission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const deliverableId = parseInt(req.params.id);
-        const { groupId, fileUrl, submittedAt, isLate, similarityRate } = req.body;
-        const deliverableRepo = database_1.AppDataSource.getRepository(Deliverable_1.Deliverable);
-        const submissionRepo = database_1.AppDataSource.getRepository(Submission_1.Submission);
-        const deliverable = yield deliverableRepo.findOne({ where: { id: deliverableId } });
-        if (!deliverable) {
-            return res.status(404).json({ message: 'Deliverable not found' });
-        }
-        const submission = submissionRepo.create({ groupId, fileUrl, submittedAt, isLate, similarityRate, deliverable });
-        yield submissionRepo.save(submission);
-        res.status(201).json({ message: 'Submission added successfully', submission });
+export const addSubmission = async (req: Request, res: Response) => {
+  try {
+    const deliverableId = parseInt(req.params.id);
+    const { groupId, fileUrl, submittedAt, isLate, similarityRate } = req.body;
+
+    const deliverableRepo = AppDataSource.getRepository(Deliverable);
+    const submissionRepo = AppDataSource.getRepository(Submission);
+
+    const deliverable = await deliverableRepo.findOne({ where: { id: deliverableId } });
+
+    if (!deliverable) {
+      return res.status(404).json({ message: 'Deliverable not found' });
     }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.addSubmission = addSubmission;
+
+    const submission = submissionRepo.create({ groupId, fileUrl, submittedAt, isLate, similarityRate, deliverable });
+    await submissionRepo.save(submission);
+
+    res.status(201).json({ message: 'Submission added successfully', submission });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+}
 // Update a submission for a specific deliverable
-const updateSubmission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const submissionId = parseInt(req.params.submissionId);
-        const { groupId, fileUrl, submittedAt, isLate, similarityRate } = req.body;
-        const submissionRepo = database_1.AppDataSource.getRepository(Submission_1.Submission);
-        const submission = yield submissionRepo.findOne({ where: { id: submissionId } });
-        if (!submission) {
-            return res.status(404).json({ message: 'Submission not found' });
-        }
-        // Update the submission properties
-        submission.groupId = groupId;
-        submission.fileUrl = fileUrl;
-        submission.submittedAt = submittedAt;
-        submission.isLate = isLate;
-        submission.similarityRate = similarityRate;
-        yield submissionRepo.save(submission);
-        res.json({ message: 'Submission updated successfully', submission });
+export const updateSubmission = async (req: Request, res: Response) => {
+  try {
+    const submissionId = parseInt(req.params.submissionId);
+    const { groupId, fileUrl, submittedAt, isLate, similarityRate } = req.body;
+
+    const submissionRepo = AppDataSource.getRepository(Submission);
+    const submission = await submissionRepo.findOne({ where: { id: submissionId } });
+
+    if (!submission) {
+      return res.status(404).json({ message: 'Submission not found' });
     }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.updateSubmission = updateSubmission;
+
+    // Update the submission properties
+    submission.groupId = groupId;
+    submission.fileUrl = fileUrl;
+    submission.submittedAt = submittedAt;
+    submission.isLate = isLate;
+    submission.similarityRate = similarityRate;
+
+    await submissionRepo.save(submission);
+
+    res.json({ message: 'Submission updated successfully', submission });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+}
 // Delete a submission for a specific deliverable
-const deleteSubmission = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const submissionId = parseInt(req.params.submissionId);
-        const submissionRepo = database_1.AppDataSource.getRepository(Submission_1.Submission);
-        const submission = yield submissionRepo.findOne({ where: { id: submissionId } });
-        if (!submission) {
-            return res.status(404).json({ message: 'Submission not found' });
-        }
-        yield submissionRepo.remove(submission);
-        res.json({ message: 'Submission deleted successfully' });
+export const deleteSubmission = async (req: Request, res: Response) => {
+  try {
+    const submissionId = parseInt(req.params.submissionId);
+    const submissionRepo = AppDataSource.getRepository(Submission);
+    const submission = await submissionRepo.findOne({ where: { id: submissionId } });
+
+    if (!submission) {
+      return res.status(404).json({ message: 'Submission not found' });
     }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.deleteSubmission = deleteSubmission;
+
+    await submissionRepo.remove(submission);
+
+    res.json({ message: 'Submission deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+}
 // Get a specific submission by ID
-const getSubmissionById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const submissionId = parseInt(req.params.submissionId);
-        const submissionRepo = database_1.AppDataSource.getRepository(Submission_1.Submission);
-        const submission = yield submissionRepo.findOne({
-            where: { id: submissionId },
-            relations: ['deliverable'],
-        });
-        if (!submission) {
-            return res.status(404).json({ message: 'Submission not found' });
-        }
-        res.json(submission);
+export const getSubmissionById = async (req: Request, res: Response) => {
+  try {
+    const submissionId = parseInt(req.params.submissionId);
+    const submissionRepo = AppDataSource.getRepository(Submission);
+    const submission = await submissionRepo.findOne({
+      where: { id: submissionId },
+      relations: ['deliverable'],
+    });
+
+    if (!submission) {
+      return res.status(404).json({ message: 'Submission not found' });
     }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.getSubmissionById = getSubmissionById;
+
+    res.json(submission);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+}
 // Get all submissions for a specific group and deliverable
-const getGroupSubmissions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { groupId, deliverableId } = req.params;
-        const submissionRepo = database_1.AppDataSource.getRepository(Submission_1.Submission);
-        const submissions = yield submissionRepo.find({
-            where: { groupId: parseInt(groupId), id: parseInt(deliverableId) },
-        });
-        res.json(submissions);
-    }
-    catch (error) {
-        res.status(500).json({ message: 'Internal server error', error });
-    }
-});
-exports.getGroupSubmissions = getGroupSubmissions;
+export const getGroupSubmissions = async (req: Request, res: Response) => {
+  try {
+    const { groupId, deliverableId } = req.params;
+    const submissionRepo = AppDataSource.getRepository(Submission);
+    const submissions = await submissionRepo.find({
+      where: { groupId: parseInt(groupId), id: parseInt(deliverableId) },
+    });
+
+    res.json(submissions);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+*/ 

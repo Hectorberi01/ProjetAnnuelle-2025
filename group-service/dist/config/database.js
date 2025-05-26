@@ -37,7 +37,7 @@ exports.AppDataSource = void 0;
 const typeorm_1 = require("typeorm");
 const dotenv = __importStar(require("dotenv"));
 const Group_1 = require("../entities/Group");
-const GroupConfig_1 = require("../entities/GroupConfig");
+//import { GroupConfig } from '../entities/GroupConfig';
 const groupeStudent_1 = require("../entities/groupeStudent");
 // Spécifiez le chemin vers le fichier .env
 dotenv.config();
@@ -50,7 +50,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
     database: process.env.DB_NAME || 'group-Service',
     synchronize: true,
     logging: false,
-    entities: [Group_1.Group, GroupConfig_1.GroupConfig, groupeStudent_1.GroupStudent],
+    entities: [Group_1.Group, groupeStudent_1.GroupStudent],
     migrations: [],
     subscribers: [],
 });

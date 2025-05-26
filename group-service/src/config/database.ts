@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
 import { Group } from '../entities/Group';
-import { GroupConfig } from '../entities/GroupConfig';
+//import { GroupConfig } from '../entities/GroupConfig';
 import { GroupStudent } from '../entities/groupeStudent';
 
 
@@ -17,7 +17,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || 'group-Service',
   synchronize: true,
   logging: false,
-  entities: [Group,GroupConfig,GroupStudent],
+  entities: [Group,GroupStudent],
   migrations: [],
   subscribers: [],
 });

@@ -100,7 +100,7 @@ services:
   # notations:
   #   build: ./notation-service
   #   ports:
-  #     - "3008:3000"
+  #     - "3008:3008"
   #   container_name: notations
   #   networks:
   #     - backend
@@ -118,7 +118,7 @@ services:
   # soutenances:
   #   build: ./soutenance-service
   #   ports:
-  #     - "3010:3000"
+  #     - "3010:3009"
   #   container_name: soutenances
   #   networks:
   #     - backend
@@ -126,7 +126,7 @@ services:
   # notifications:
   #   build: ./notification-service
   #   ports:
-  #     - "3011:3000"
+  #     - "3011:3011"
   #   container_name: notifications
   #   networks:
   #     - backend
@@ -136,4 +136,4 @@ volumes:
 
 networks:
   backend:
-    driver: bridge
+    # driver: bridge

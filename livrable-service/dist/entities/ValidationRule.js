@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ValidationRule = void 0;
 const typeorm_1 = require("typeorm");
-const Deliverable_1 = require("./Deliverable");
 let ValidationRule = class ValidationRule {
 };
 exports.ValidationRule = ValidationRule;
@@ -21,16 +20,16 @@ __decorate([
 ], ValidationRule.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], ValidationRule.prototype, "projectId", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], ValidationRule.prototype, "type", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], ValidationRule.prototype, "value", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => Deliverable_1.Deliverable, deliverable => deliverable.rules),
-    __metadata("design:type", Deliverable_1.Deliverable)
-], ValidationRule.prototype, "deliverable", void 0);
 exports.ValidationRule = ValidationRule = __decorate([
     (0, typeorm_1.Entity)()
 ], ValidationRule);

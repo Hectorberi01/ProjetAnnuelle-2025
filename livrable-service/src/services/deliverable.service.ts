@@ -1,6 +1,9 @@
 import { AppDataSource } from '../config/database';
 import { Deliverable } from '../entities/Deliverable';
 import { ValidationRule } from '../entities/ValidationRule';
+import { detectSimilarityForDeliverable } from '../scripts/detectSimilarity';
+import cron from 'node-cron';
+
 
 const deliverableRepo = AppDataSource.getRepository(Deliverable);
 const ruleRepo = AppDataSource.getRepository(ValidationRule);
@@ -9,44 +12,53 @@ export class DeliverableService {
     constructor() {}
 
     // Fonction pour créer un livrable
-    public createDeliverable = async (data: any) => {
-        const { name, description, deadline, allowLate, latePenaltyPerHour, projectId, rules } = data;
-        const deliverable = deliverableRepo.create({name, description, deadline, allowLate, latePenaltyPerHour,projectId: projectId});
-        // Créer un nouveau livrable
+    public submitDeliverable = async (data: any) => {
+        const {projectId, groupId, name, description,githubUrl,fileUrl} = data;
+        const deliverable = deliverableRepo.create({
+            projectId,
+            groupId,
+            name,
+            description,
+            githubUrl: githubUrl || null,
+            fileUrl: fileUrl || null,
+            submittedAt: new Date(),
+        });
+        
         const savedDeliverable = await deliverableRepo.save(deliverable);
+        if (!savedDeliverable) {
+            throw new Error('Error saving deliverable');
+        }
 
-        if (Array.isArray(rules)) {
-            for (const rule of rules) {
-              const newRule = ruleRepo.create({ ...rule, deliverable: savedDeliverable });
-              await ruleRepo.save(newRule);
-            }
-          }
+        console.log(`Deliverable #${savedDeliverable.id} created for group ${groupId} in project ${projectId}`);
 
         return savedDeliverable;
     }
 
-     // Récupérer tous les livrables d'un projet spécifique
-    public async getProjectDeliverables(projectId: number) {
-        return await deliverableRepo.find({where: { projectId },relations: ['rules','submissions'],});
-    }
-
-    // Fonction pour récupérer tous les livrables
+    // Récupérer tous les livrables d'un projet spécifique
     public async getAllDeliverables() {
-        return await deliverableRepo.find({ relations: ['rules','submissions'] });
+        try {
+            return await deliverableRepo.find();
+        } catch (error) {
+            throw new Error('Error fetching all deliverables');
+        }
     }
 
     // Fonction pour récupérer un livrable par son ID
     public async getDeliverableById(id: number) {
-        return await deliverableRepo.findOne({ where: { id }, relations: ['rules','submissions'] });
+        return await deliverableRepo.findOne({ where: { id } });
     }
 
-    // Fonction pour mettre à jour un livrable
-    public async updateDeliverable(id: number, data: any) {
-        const deliverable = await deliverableRepo.findOne({ where: { id } });
-        if (!deliverable) {throw new Error('Deliverable not found');}
-        Object.assign(deliverable, data); // Mettre à jour les propriétés du livrable
-        return await deliverableRepo.save(deliverable);// Enregistrer les modifications
+    // Fonction pour récupérer tous les livrables d'un groupe spécifique
+    public async getDeliverablesByGroupId(groupId: number) {
+        try {
+        return await deliverableRepo.find({
+            where: { groupId },
+        });
+        } catch (error) {
+            throw new Error('Error fetching group deliverables');
+        }
     }
+
 
     // Fonction pour supprimer un livrable
     public async deleteDeliverable(id: number) {
@@ -55,42 +67,40 @@ export class DeliverableService {
         return await deliverableRepo.remove(deliverable);
     }
 
-    // Get all rules deliverables by specific deliverable ID
-    public async getDeliverablesById(id: number) {
-        const deliverable = await deliverableRepo.findOne({ where: { id }, relations: ['rules'] });
-        // Check if the deliverable exists
-        if (!deliverable?.rules) return null;
-        return deliverable?.rules;
+
+    public async startSimilarityCron() {
+        cron.schedule('0 * * * *', async () => {
+            console.log('🕒 Vérification de similarité planifiée');
+            const repo = AppDataSource.getRepository(Deliverable);
+
+            const deliverables = await repo.find();
+
+            const now = new Date();
+
+            for (const d of deliverables) {
+                const deadline = await this.fetchDeadlineFromProjectService(d.projectId);
+                if (deadline && new Date(deadline) < now) {
+                    console.log(`📌 Analyse du livrable ${d.id}`);
+                    await detectSimilarityForDeliverable(d.id);
+                }
+            }
+        });
     }
 
-    /** Création, modification, mise à jour et suppression d'une règles */
-
-    // Fonction pour récupérer les règles de validation d'un livrable
-    public async createValidationRule(data: any , deliverableId: number) {
-        const { type, value } = data;
-
-        const deliverable = await deliverableRepo.findOne({ where: { id: deliverableId } });
-        if (!deliverable) { return null;}
-
-        const rule = ruleRepo.create({ type, value, deliverable });
-        return await ruleRepo.save(rule);
+    public async fetchDeadlineFromProjectService(projectId: number): Promise<string | null> {
+        try {
+            const projectUrl = process.env.PROJECT_SERVICE_URL || 'http://projets:3002/projects'; // Default URL if not set
+            const response = await fetch(`${projectUrl}/${projectId}`);
+            if (!response.ok) {
+                throw new Error(`Error fetching deadline for project ${projectId}`);
+            }
+            const data = await response.json();
+            const deadline = data.deadline; // Assuming the API returns { deadline: "YYYY-MM-DD" }
+            return deadline;
+        } catch (error) {
+            console.error('❌ Error fetching deadline:', error);
+        }
+        return null;
     }
 
-    // Fonction pour mettre à jour une règle de validation
-    public async updateValidationRule(id: number, data: any) {
-        const rule = await ruleRepo.findOne({ where: { id } });
-        if (!rule) { return null;}
-        Object.assign(rule, data);
-        return await ruleRepo.save(rule);
-    }
-    // Fonction pour supprimer une règle de validation
-    public async deleteValidationRule(id: number) {
-        const rule = await ruleRepo.findOne({ where: { id } });
-        if (!rule) { return null;}
-        return await ruleRepo.remove(rule);
-    }
-    // Fonction pour récupérer une règle de validation par son ID
-    public async getValidationRuleById(id: number) {
-        return await ruleRepo.findOne({ where: { id } });
-    }
 }

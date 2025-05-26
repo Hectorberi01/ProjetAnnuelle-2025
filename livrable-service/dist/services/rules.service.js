@@ -27,11 +27,9 @@ class ValidationRuleService {
             return yield ruleRepo.save(rule);
         });
     }
-    getRulesByDeliverableId(deliverableId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield ruleRepo.find({ where: { deliverable: { id: deliverableId } } });
-        });
-    }
+    // public async getRulesByDeliverableId(deliverableId: number) {
+    //     return await ruleRepo.find({ where: { deliverable: { id: deliverableId } } });
+    // }
     updateRule(id, ruleData) {
         return __awaiter(this, void 0, void 0, function* () {
             const rule = yield ruleRepo.findOne({ where: { id } });
@@ -62,23 +60,6 @@ class ValidationRuleService {
     getRulesByType(type) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield ruleRepo.find({ where: { type } });
-        });
-    }
-    getRulesByProjectId(projectId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const deliverable = yield deliverableRepo.findOne({ where: { projectId } });
-            if (!deliverable) {
-                throw new Error('Project not found');
-            }
-            // Récupérer les livrables associés au projet
-            const deliverables = yield deliverableRepo.find({ where: { projectId } });
-            const rules = [];
-            // Récupérer les règles associées à ces livrables
-            for (const deliverable of deliverables) {
-                const rules = yield ruleRepo.find({ where: { deliverable: { id: deliverable.id } } });
-                rules.push(...rules);
-            }
-            return rules;
         });
     }
 }

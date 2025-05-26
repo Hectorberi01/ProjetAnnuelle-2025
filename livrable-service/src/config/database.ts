@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
 import { Deliverable } from '../entities/Deliverable';
-import { Submission } from '../entities/Submission';
 import { ValidationRule } from '../entities/ValidationRule';
+import { SimilarityComparison } from '../entities/SimilarityComparison';
 
 
 // Spécifiez le chemin vers le fichier .env
@@ -17,7 +17,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || 'livrable-Service',
   synchronize: true,
   logging: false,
-  entities: [Deliverable, Submission, ValidationRule],
+  entities: [Deliverable, ValidationRule, SimilarityComparison],
   migrations: [],
   subscribers: [],
 });

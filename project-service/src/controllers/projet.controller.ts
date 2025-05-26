@@ -5,42 +5,121 @@ const projetService = new ProjetService();
 export class ProjectController {
 
     static async getAllProjects(req: Request, res: Response) {
-        const projects = await projetService.getAllProjects();
-        res.status(200).json(projects);
+        try {
+            const projects = await projetService.getAllProjects();
+            res.status(200).json(projects);
+        } catch (error) {
+            console.error('Error fetching projects:', error);
+            res.status(500).json({ message: 'Failed to fetch projects' });
+        }
     }
-    static async getProjectsByPromotion(req: Request, res: Response) {
-        const { promotionId } = req.params;
-        const projects = await projetService.getProjectsByPromotion(+promotionId);
-        res.status(200).json(projects);
-    }
-    static async deleteProject(req: Request, res: Response) {
+
+    static async getProjectById(req: Request, res: Response) {
         const { id } = req.params;
-        const project = await projetService.deleteProject(+id);
-        res.status(200).json(project);
+        try {
+            const project = await projetService.getProjectById(+id);
+            res.status(200).json(project);
+        } catch (error) {
+            console.error('Error fetching project by ID:', error);
+            res.status(500).json({ message: 'Failed to fetch project by ID' });
+        }
+    }
+
+    static async getProjectsByPromotionId(req: Request, res: Response) {
+        const { promotionId } = req.params;
+        try {
+            const projects = await projetService.getProjectsByPromotion(+promotionId);
+            res.status(200).json(projects);
+        } catch (error) {
+            console.error('Error fetching projects by promotion:', error);
+            res.status(500).json({ message: 'Failed to fetch projects by promotion' });
+        }
     }
 
     static async createProject(req: Request, res: Response) {
-        try{
+        try {
             const project = await projetService.createProject(req.body);
             res.status(201).json(project);
-        }catch (error) {
+        } catch (error) {
             console.error('Error creating project:', error);
             res.status(500).json({ message: 'Failed to create project' });
         }
-        
     }
-    
-    static async getProjectById(req: Request, res: Response) {
+
+    static async deleteProject(req: Request, res: Response) {
         const { id } = req.params;
-        const project = await projetService.getProjectById(+id);
-        res.status(200).json(project);
+        try {
+            const project = await projetService.deleteProject(+id);
+            res.status(200).json(project);
+        } catch (error) {
+            console.error('Error deleting project:', error);
+            res.status(500).json({ message: 'Failed to delete project' });
+        }
     }
+
     
     static async updateProject(req: Request, res: Response) {
         const { id } = req.params;
         const projectData = req.body;
-    
-        const project = await projetService.updateProject(+id, projectData);
-        res.status(200).json(project);
+
+        try {
+            const project = await projetService.updateProject(+id, projectData);
+            res.status(200).json(project);
+        } catch (error) {
+            console.error('Error updating project:', error);
+            res.status(500).json({ message: 'Failed to update project' });
+        }
+    }
+
+    static async updateProjectStatus(req: Request, res: Response) {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        try {
+            const updatedProject = await projetService.updateProjectStatus(+id, status);
+            res.status(200).json(updatedProject);
+        } catch (error) {
+            console.error('Error updating project status:', error);
+            res.status(500).json({ message: 'Failed to update project status' });
+        }
+    }
+
+    static async updateProjectMode(req: Request, res: Response) {
+        const { id } = req.params;
+        const { mode } = req.body;
+
+        try {
+            const updatedProject = await projetService.updateProjectMode(+id, mode);
+            res.status(200).json(updatedProject);
+        } catch (error) {
+            console.error('Error updating project mode:', error);
+            res.status(500).json({ message: 'Failed to update project mode' });
+        }
+    }
+
+    static async updateProjectLatePolicy(req: Request, res: Response) {
+        const { id } = req.params;
+        const { allowLate } = req.body;
+
+        try {
+            const updatedProject = await projetService.updateProjectLatePolicy(+id, allowLate);
+            res.status(200).json(updatedProject);
+        } catch (error) {
+            console.error('Error updating project late policy:', error);
+            res.status(500).json({ message: 'Failed to update project late policy' });
+        }
+    }
+
+    static async updateSoutenanceDate(req: Request, res: Response) {
+        const { id } = req.params;
+        const { soutenanceDate } = req.body;
+
+        try {
+            const updatedProject = await projetService.updateSoutenanceDate(+id, soutenanceDate);
+            res.status(200).json(updatedProject);
+        } catch (error) {
+            console.error('Error updating soutenance date:', error);
+            res.status(500).json({ message: 'Failed to update soutenance date' });
+        }
     }
 }

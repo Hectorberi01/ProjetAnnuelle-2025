@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Submission = void 0;
 const typeorm_1 = require("typeorm");
-const Deliverable_1 = require("./Deliverable");
 let Submission = class Submission {
 };
 exports.Submission = Submission;
@@ -43,10 +42,6 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'float', nullable: true }),
     __metadata("design:type", Number)
 ], Submission.prototype, "similarityRate", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => Deliverable_1.Deliverable, deliverable => deliverable.submissions),
-    __metadata("design:type", Deliverable_1.Deliverable)
-], Submission.prototype, "deliverable", void 0);
 exports.Submission = Submission = __decorate([
     (0, typeorm_1.Entity)()
 ], Submission);

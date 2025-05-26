@@ -15,13 +15,22 @@ export class Project {
   soutenanceDate!: Date;
 
   @Column({ default: 1 })
-  minStudents!: number;  // Minimum number of students required for the project
+  minStudents!: number; 
 
   @Column({ default: 1 })
-  maxStudents!: number; // Maximum number of students allowed for the project
+  maxStudents!: number; 
+
+  @Column({ type: 'timestamp' })
+  deadline!: Date;
+
+  @Column({ default: false })
+  allowLate!: boolean;
+
+  @Column({ nullable: true })
+  latePenaltyPerHour!: number;
 
   @Column({ type: 'enum', enum: ['manual', 'random', 'free'] })
-  mode!: 'manual' | 'random' | 'free'; // Mode of group formation
+  mode!: 'manual' | 'random' | 'free';
 
   @Column({default: () => "CURRENT_TIMESTAMP"})
   createdAt!: Date;

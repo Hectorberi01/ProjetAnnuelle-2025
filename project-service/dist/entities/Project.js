@@ -39,6 +39,18 @@ __decorate([
     __metadata("design:type", Number)
 ], Project.prototype, "maxStudents", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'timestamp' }),
+    __metadata("design:type", Date)
+], Project.prototype, "deadline", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], Project.prototype, "allowLate", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", Number)
+], Project.prototype, "latePenaltyPerHour", void 0);
+__decorate([
     (0, typeorm_1.Column)({ type: 'enum', enum: ['manual', 'random', 'free'] }),
     __metadata("design:type", String)
 ], Project.prototype, "mode", void 0);

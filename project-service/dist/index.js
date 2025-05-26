@@ -62,7 +62,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         app.use(express_1.default.json());
         app.use(express_1.default.urlencoded({ extended: true }));
         // 3. Routes
-        app.use('/api/projects', projet_route_1.default);
+        app.use('/projects', projet_route_1.default);
         // 5. Lancement serveur
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);

@@ -37,8 +37,8 @@ exports.AppDataSource = void 0;
 const typeorm_1 = require("typeorm");
 const dotenv = __importStar(require("dotenv"));
 const Deliverable_1 = require("../entities/Deliverable");
-const Submission_1 = require("../entities/Submission");
 const ValidationRule_1 = require("../entities/ValidationRule");
+const SimilarityComparison_1 = require("../entities/SimilarityComparison");
 // Spécifiez le chemin vers le fichier .env
 dotenv.config();
 exports.AppDataSource = new typeorm_1.DataSource({
@@ -50,7 +50,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
     database: process.env.DB_NAME || 'livrable-Service',
     synchronize: true,
     logging: false,
-    entities: [Deliverable_1.Deliverable, Submission_1.Submission, ValidationRule_1.ValidationRule],
+    entities: [Deliverable_1.Deliverable, ValidationRule_1.ValidationRule, SimilarityComparison_1.SimilarityComparison],
     migrations: [],
     subscribers: [],
 });

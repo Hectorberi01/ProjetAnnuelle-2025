@@ -7,7 +7,6 @@ export class GroupService {
   constructor(private dataSource: DataSource) {}
 
   private groupRepo = this.dataSource.getRepository(Group);
-  private configRepo = this.dataSource.getRepository(GroupConfig);
   private groupStudentRepo = this.dataSource.getRepository(GroupStudent);
 
   async getAllGroups() {
@@ -26,8 +25,17 @@ export class GroupService {
       },
     });
   }
-  async createManualGroup(projectId: number, name:string) {
 
+  async getGroupByProjectId(projectId: number) {
+    return await this.groupRepo.find({
+      where: { projectId },
+      relations: {
+        groupStudent: true,
+      },
+    });
+  }
+
+  async createGroup(projectId: number, name:string) {
     // on vérifie si le nom du groupe est unique
     const existingGroup = await this.groupRepo.findOneBy({ name, projectId });
     if (existingGroup) throw new Error('Group name already exists');
@@ -36,18 +44,13 @@ export class GroupService {
     return this.groupRepo.save(group);
   }
 
-  async getGroupsByProject(projectId: number) {
-    return this.groupRepo.find({ where: { projectId } });
-  }
 
-  async createRandomGroups(projectId: number, name: string) {
+  async updateGroup(id: number, name: string) {
+    const group = await this.groupRepo.findOneBy({ id });
+    if (!group) throw new Error('Group not found');
 
-    const group = this.groupRepo.create({ projectId, name });
-    return await this.groupRepo.save(group);
-  }
-  async createFreeGroups(projectId: number, name: string) {
-    const group = this.groupRepo.create({ projectId, name });
-    return await this.groupRepo.save(group);
+    group.name = name;
+    return this.groupRepo.save(group);
   }
 
   async addStudentToGroup(groupId: number, studentId: number) {
@@ -56,5 +59,31 @@ export class GroupService {
 
     const groupStudent = this.groupStudentRepo.create({studentId, createdAt: new Date(), groupStudent: group});
     return this.groupStudentRepo.save(groupStudent);
+  }
+
+  async getStudentsInGroup(groupId: number) {
+    return await this.groupStudentRepo.find({
+      where: { groupStudent: { id: groupId } },
+      relations: {
+        groupStudent: true,
+      },
+    });
+  }
+
+  async removeStudentFromGroup(groupId: number, studentId: number) {
+    const groupStudent = await this.groupStudentRepo.findOne({
+      where: { groupStudent: { id: groupId }, studentId },
+    });
+
+    if (!groupStudent) throw new Error('Group student not found');
+
+    return this.groupStudentRepo.remove(groupStudent);
+  }
+
+  async deleteGroup(id: number) {
+    const group = await this.groupRepo.findOneBy({ id });
+    if (!group) throw new Error('Group not found');
+
+    return this.groupRepo.remove(group);
   }
 }

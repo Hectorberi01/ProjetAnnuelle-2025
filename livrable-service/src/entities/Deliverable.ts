@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Submission } from "./Submission";
-import { ValidationRule } from "./ValidationRule";
+//import { Submission } from "./Submission";
+//import { ValidationRule } from "./ValidationRule";
 
 @Entity()
 export class Deliverable {
@@ -11,23 +11,23 @@ export class Deliverable {
     projectId!: number;
 
     @Column()
+    groupId!: number;
+
+    @Column()
     name!: string;
 
     @Column({ type: 'text' })
     description!: string;
 
+    @Column({ type: 'text', nullable: true })
+    githubUrl?: string;
+
+    @Column({nullable: true})
+    fileUrl?: string;
+
+    @Column({ default: 0 })
+    similarityRate!: number;
+
     @Column({ type: 'timestamp' })
-    deadline!: Date;
-
-    @Column({ default: false })
-    allowLate!: boolean;
-
-    @Column({ nullable: true })
-    latePenaltyPerHour!: number;
-
-    @OneToMany(() => Submission, submission => submission.deliverable)
-    submissions!: Submission[];
-
-    @OneToMany(() => ValidationRule, rule => rule.deliverable)
-    rules!: ValidationRule[];
+    submittedAt!: Date;
 }

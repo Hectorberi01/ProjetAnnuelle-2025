@@ -2,10 +2,11 @@ import express from "express";
 import { AppDataSource } from "./config/database";
 import deliverableRoutes from "./routes/deliverable.routes";
 import cron from 'node-cron';
-import { checkSimilarityOnDeadline } from './scripts/checkSimilarityOnDeadline';
-import submissionRoutes from "./routes/submission.routes";
+import {DeliverableService} from "./services/deliverable.service";
+//import { checkSimilarityOnDeadline } from './scripts/checkSimilarityOnDeadline';
+//import submissionRoutes from "./routes/submission.routes";
 
-
+const deliverableService = new DeliverableService();
 const app  = express()
 
 const PORT = process.env.PORT || 3009
@@ -19,22 +20,24 @@ const main = async () => {
         await AppDataSource.initialize();
         console.log('Database connection established');
 
+        deliverableService.startSimilarityCron();
+
         // 2. Middleware
         app.use(express.json());
         app.use(express.urlencoded({ extended: true }));
 
         // 3. Routes
         app.use('/api/deliverables', deliverableRoutes);
-        app.use('/api/submissions', submissionRoutes);
+        //app.use('/api/submissions', submissionRoutes);
         // app.use('/api/rules', rulesRoutes);
 
         // 4. Cron job to check for similarity on deadline
-        cron.schedule('0 0 * * *', async () => {
-            console.log('⏰ Checking for submissions at deadline...');
-            await checkSimilarityOnDeadline();
-        });
+        // cron.schedule('0 0 * * *', async () => {
+        //     console.log('⏰ Checking for submissions at deadline...');
+        //     await checkSimilarityOnDeadline();
+        // });
 
-        await checkSimilarityOnDeadline();
+        //await checkSimilarityOnDeadline();
 
         // 5. Lancement serveur
         app.listen(PORT, () => {

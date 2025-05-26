@@ -1,8 +1,34 @@
 import { Router } from 'express';
-import { addValidationRule, createDeliverable, deleteDeliverable, deleteValidationRule, getAllDeliverables, getDeliverableById, getDeliverablesByProjectId, getValidationRulesForDeliverable, updateDeliverable, updateValidationRule } from '../controllers/deliverable.controller';
+import e, { Request, Response } from 'express';
+import multer from 'multer';
+import { downloadDeliverable, getAllDeliverables, getDeliverableById, similarityCheck, similarityMatrix, submitDeliverable } from '../controllers/deliverable.controller';
+import { get } from 'http';
+
+import { detectSimilarityForDeliverable } from '../scripts/detectSimilarity';
+
 
 const router = Router();
 
+const upload = multer({
+  dest: 'uploads/'
+});
+
+router.post('/', upload.single('file'), submitDeliverable);
+router.get('/:id/download', downloadDeliverable);
+
+// All livrable routes
+router.get('/', getAllDeliverables);
+router.get('/:id', getDeliverableById);
+
+
+router.post('/internal/similarity-check/project/:projectId', similarityCheck);
+router.get('/projects/:projectId/similarity-matrix', similarityMatrix);
+
+export default router;
+
+
+
+/*
 // Créer un livrable
 router.post('/', createDeliverable);
 
@@ -24,7 +50,6 @@ router.delete('/:id',deleteDeliverable);
 // Récupérer les règles d'un livrable par ID
 router.get('/:id/rules', getValidationRulesForDeliverable); // id du livrable
 
-/** Création, modification, mise à jour et suppression d'une règles */
 router.post('/:id/rules', addValidationRule); // id du livrable
 router.put('/rules/:ruleId', updateValidationRule); // id de la règle
 router.delete('/rules/:ruleId', deleteValidationRule);
@@ -32,5 +57,3 @@ router.delete('/rules/:ruleId', deleteValidationRule);
 
 
 /** Soumission d'un livrable */
-
-export default router;

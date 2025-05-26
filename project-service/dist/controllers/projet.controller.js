@@ -15,22 +15,40 @@ const projetService = new projet_service_1.ProjetService();
 class ProjectController {
     static getAllProjects(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const projects = yield projetService.getAllProjects();
-            res.status(200).json(projects);
+            try {
+                const projects = yield projetService.getAllProjects();
+                res.status(200).json(projects);
+            }
+            catch (error) {
+                console.error('Error fetching projects:', error);
+                res.status(500).json({ message: 'Failed to fetch projects' });
+            }
         });
     }
-    static getProjectsByPromotion(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { promotionId } = req.params;
-            const projects = yield projetService.getProjectsByPromotion(+promotionId);
-            res.status(200).json(projects);
-        });
-    }
-    static deleteProject(req, res) {
+    static getProjectById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const project = yield projetService.deleteProject(+id);
-            res.status(200).json(project);
+            try {
+                const project = yield projetService.getProjectById(+id);
+                res.status(200).json(project);
+            }
+            catch (error) {
+                console.error('Error fetching project by ID:', error);
+                res.status(500).json({ message: 'Failed to fetch project by ID' });
+            }
+        });
+    }
+    static getProjectsByPromotionId(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { promotionId } = req.params;
+            try {
+                const projects = yield projetService.getProjectsByPromotion(+promotionId);
+                res.status(200).json(projects);
+            }
+            catch (error) {
+                console.error('Error fetching projects by promotion:', error);
+                res.status(500).json({ message: 'Failed to fetch projects by promotion' });
+            }
         });
     }
     static createProject(req, res) {
@@ -45,19 +63,87 @@ class ProjectController {
             }
         });
     }
-    static getProjectById(req, res) {
+    static deleteProject(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const project = yield projetService.getProjectById(+id);
-            res.status(200).json(project);
+            try {
+                const project = yield projetService.deleteProject(+id);
+                res.status(200).json(project);
+            }
+            catch (error) {
+                console.error('Error deleting project:', error);
+                res.status(500).json({ message: 'Failed to delete project' });
+            }
         });
     }
     static updateProject(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             const projectData = req.body;
-            const project = yield projetService.updateProject(+id, projectData);
-            res.status(200).json(project);
+            try {
+                const project = yield projetService.updateProject(+id, projectData);
+                res.status(200).json(project);
+            }
+            catch (error) {
+                console.error('Error updating project:', error);
+                res.status(500).json({ message: 'Failed to update project' });
+            }
+        });
+    }
+    static updateProjectStatus(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const { status } = req.body;
+            try {
+                const updatedProject = yield projetService.updateProjectStatus(+id, status);
+                res.status(200).json(updatedProject);
+            }
+            catch (error) {
+                console.error('Error updating project status:', error);
+                res.status(500).json({ message: 'Failed to update project status' });
+            }
+        });
+    }
+    static updateProjectMode(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const { mode } = req.body;
+            try {
+                const updatedProject = yield projetService.updateProjectMode(+id, mode);
+                res.status(200).json(updatedProject);
+            }
+            catch (error) {
+                console.error('Error updating project mode:', error);
+                res.status(500).json({ message: 'Failed to update project mode' });
+            }
+        });
+    }
+    static updateProjectLatePolicy(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const { allowLate } = req.body;
+            try {
+                const updatedProject = yield projetService.updateProjectLatePolicy(+id, allowLate);
+                res.status(200).json(updatedProject);
+            }
+            catch (error) {
+                console.error('Error updating project late policy:', error);
+                res.status(500).json({ message: 'Failed to update project late policy' });
+            }
+        });
+    }
+    static updateSoutenanceDate(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const { soutenanceDate } = req.body;
+            try {
+                const updatedProject = yield projetService.updateSoutenanceDate(+id, soutenanceDate);
+                res.status(200).json(updatedProject);
+            }
+            catch (error) {
+                console.error('Error updating soutenance date:', error);
+                res.status(500).json({ message: 'Failed to update soutenance date' });
+            }
         });
     }
 }

@@ -21,7 +21,7 @@ const main = async () => {
         app.use(express.urlencoded({ extended: true }));
 
         // 3. Routes
-        app.use('/api/projects',projet);
+        app.use('/projects',projet);
         // 5. Lancement serveur
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`)
