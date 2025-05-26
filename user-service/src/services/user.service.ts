@@ -2,7 +2,6 @@ import { AppDataSource } from "../database/database";
 import { User } from "../database/entities/User";
 import { Role } from "../database/entities/Role";
 import bcrypt from "bcrypt";
-import { console } from "inspector";
 
 
 export class UserService {
