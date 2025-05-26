@@ -126,17 +126,25 @@ export const login = async ({ email, password }: { email: string; password: stri
 
         const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
 
+        if(response.status !== 200) {
+          console.log("response.status", response.status);
+          return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+        }
+
         console.log("response", response);
         const data = await response.json();
 
         console.log("data", data);
 
         const user = data;
-        if (!user) {
-          return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
-        }
+        // if (!user) {
+        //   return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+        // }
+
+        console.log("user", user);
 
         const isValid = await bcrypt.compare(password, user.password);
+        console.log("isValid", isValid);
         if (!isValid) {
             return { status: 401, data: { error: 'Mot de passe incorrect' } };
         }

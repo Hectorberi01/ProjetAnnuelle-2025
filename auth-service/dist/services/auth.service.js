@@ -106,14 +106,20 @@ const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, passwo
         // Récupérer l'utilisateur par email
         console.log("USER_SERVICE_URL", `${USER_SERVICE_URL}/email/${email}`);
         const response = yield fetch(`${USER_SERVICE_URL}/email/${email}`);
+        if (response.status !== 200) {
+            console.log("response.status", response.status);
+            return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+        }
         console.log("response", response);
         const data = yield response.json();
         console.log("data", data);
         const user = data;
-        if (!user) {
-            return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
-        }
+        // if (!user) {
+        //   return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+        // }
+        console.log("user", user);
         const isValid = yield bcrypt_1.default.compare(password, user.password);
+        console.log("isValid", isValid);
         if (!isValid) {
             return { status: 401, data: { error: 'Mot de passe incorrect' } };
         }
