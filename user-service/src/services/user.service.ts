@@ -2,6 +2,7 @@ import { AppDataSource } from "../database/database";
 import { User } from "../database/entities/User";
 import { Role } from "../database/entities/Role";
 import bcrypt from "bcrypt";
+import { console } from "inspector";
 
 
 export class UserService {
@@ -67,7 +68,9 @@ export class UserService {
     // UserByEmail
     async findByEmail(email: string): Promise<User | null> {
         console.log("findByEmail", email);
-        return this.userRepo.findOne({ where: { email }, relations: ["role"] });
+        const user = await this.userRepo.findOne({ where: { email }, relations: ["role"] });
+        console.log("findByEmail result", user);
+        return user;
     }
 
     // UserUpdate
