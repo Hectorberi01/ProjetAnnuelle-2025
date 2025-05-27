@@ -4,7 +4,7 @@ import { getProjectById } from "./projectService";
 import * as env from "dotenv"
 env.config();
 
-const URL_GROUPS = SERVICES.groups || "http://localhost:3004/api/groups";
+const URL_GROUPS = SERVICES.groups || "http://localhost:3004/groups";
 
 export async function getGroupById(groupId: number) {
     try {

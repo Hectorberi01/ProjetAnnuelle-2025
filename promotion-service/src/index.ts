@@ -21,7 +21,7 @@ const main = async () => {
         app.use(express.urlencoded({ extended: true }));
 
         // 3. Routes
-        app.use('/api/promotions', promotion);
+        app.use('/promotions', promotion);
 
         // 5. Lancement serveur
         app.listen(PORT, () => {

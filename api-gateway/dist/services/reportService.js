@@ -18,7 +18,7 @@ exports.updateReport = updateReport;
 exports.deleteReport = deleteReport;
 const services_config_1 = require("../config/services.config");
 const apiClient_1 = require("../utils/apiClient");
-const URL_REPORTS = services_config_1.SERVICES.reports || "http://localhost:3005/api/reports";
+const URL_REPORTS = services_config_1.SERVICES.reports || "http://localhost:3005/reports";
 function getAllReports() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

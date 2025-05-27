@@ -59,8 +59,8 @@ const userService_1 = require("./userService");
 const env = __importStar(require("dotenv"));
 const services_config_1 = require("../config/services.config");
 env.config();
-const URL_PROMOTIONS = services_config_1.SERVICES.promotions || "http://localhost:3007/api/promotions";
-const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/api/projects";
+const URL_PROMOTIONS = services_config_1.SERVICES.promotions || "http://localhost:3007/promotions";
+const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/projects";
 function parseCSV(file) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
@@ -182,8 +182,13 @@ function getAllPromotions() {
             if (projects.status !== 200) {
                 throw new Error('Failed to fetch projects');
             }
+            const projectList = projects.data.projects;
+            if (!Array.isArray(projectList)) {
+                throw new Error('Projects is not an array');
+            }
+            console.log("data", projectList);
             // Regroupement des projets par ID de promotion
-            const projectsByPromotionId = projects.data.reduce((acc, project) => {
+            const projectsByPromotionId = projectList.reduce((acc, project) => {
                 if (!acc[project.promotionId]) {
                     acc[project.promotionId] = 0;
                 }

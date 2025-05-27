@@ -18,9 +18,9 @@ exports.getProjectsByPromotionId = getProjectsByPromotionId;
 const apiClient_1 = require("../utils/apiClient");
 const services_config_1 = require("../config/services.config");
 const groupService_1 = require("./groupService");
-const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/api/projects";
-const URL_PROMOTIONS = services_config_1.SERVICES.promotions || "http://localhost:3007/api/promotions";
-const URL_GROUPS = services_config_1.SERVICES.groups || "http://localhost:3004/api/groups";
+const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/projects";
+const URL_PROMOTIONS = services_config_1.SERVICES.promotions || "http://localhost:3007/promotions";
+const URL_GROUPS = services_config_1.SERVICES.groups || "http://localhost:3004/groups";
 function createProject(projectData) {
     return __awaiter(this, void 0, void 0, function* () {
         let response = {};

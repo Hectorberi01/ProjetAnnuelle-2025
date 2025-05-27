@@ -4,9 +4,9 @@ import { SERVICES } from "../config/services.config";
 import { response } from "express";
 import { getGroupByProjectId } from "./groupService";
 
-const URL_PROJECTS = SERVICES.projects || "http://localhost:3002/api/projects";
-const URL_PROMOTIONS = SERVICES.promotions || "http://localhost:3007/api/promotions";
-const URL_GROUPS = SERVICES.groups || "http://localhost:3004/api/groups";
+const URL_PROJECTS = SERVICES.projects || "http://localhost:3002/projects";
+const URL_PROMOTIONS = SERVICES.promotions || "http://localhost:3007/promotions";
+const URL_GROUPS = SERVICES.groups || "http://localhost:3004/groups";
 
 export async function createProject(projectData: any) {
     let response : any = {}

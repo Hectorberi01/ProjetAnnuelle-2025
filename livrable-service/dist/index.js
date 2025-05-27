@@ -30,7 +30,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         app.use(express_1.default.json());
         app.use(express_1.default.urlencoded({ extended: true }));
         // 3. Routes
-        app.use('/api/deliverables', deliverable_routes_1.default);
+        app.use('/deliverables', deliverable_routes_1.default);
         //app.use('/api/submissions', submissionRoutes);
         // app.use('/api/rules', rulesRoutes);
         // 4. Cron job to check for similarity on deadline

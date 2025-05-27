@@ -9,13 +9,13 @@ import { createRole, deleteRole, getAllRoles, getRoleByName, updateRole } from "
 
 const router = Router();
 
-router.post("/users", validateBody(createUserSchema),create);
-router.post("/users/admin", createAdmin);
-router.get("/users", getAll);
-router.get("/users/:id", getById);
-router.get("/users/email/:email", getByEmail);
-router.put("/users/:id", validateBody(updateUserSchema), update);
-router.delete("/users/:id", deleteUser);
+router.post("/", validateBody(createUserSchema),create);
+router.post("/admin", createAdmin);
+router.get("/", getAll);
+router.get("/:id", getById);
+router.get("/email/:email", getByEmail);
+router.put("/:id", validateBody(updateUserSchema), update);
+router.delete("/:id", deleteUser);
 
 // role routes
 

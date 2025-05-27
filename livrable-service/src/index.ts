@@ -27,7 +27,7 @@ const main = async () => {
         app.use(express.urlencoded({ extended: true }));
 
         // 3. Routes
-        app.use('/api/deliverables', deliverableRoutes);
+        app.use('/deliverables', deliverableRoutes);
         //app.use('/api/submissions', submissionRoutes);
         // app.use('/api/rules', rulesRoutes);
 

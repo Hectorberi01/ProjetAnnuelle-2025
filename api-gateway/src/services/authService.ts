@@ -12,7 +12,7 @@ interface register{
     roleId: number;
 }
 
-const URL_AUTH = SERVICES.auth || "http://localhost:3001/api/auth";
+const URL_AUTH = SERVICES.auth || "http://localhost:3001/auth";
 
 export async function LoginUser(loginData: login) {
     const { email, password } = loginData;

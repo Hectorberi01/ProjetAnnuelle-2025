@@ -7,8 +7,31 @@ import { SERVICES } from "../config/services.config";
 env.config();
 
 
-const URL_PROMOTIONS = SERVICES.promotions || "http://localhost:3007/api/promotions";
-const URL_PROJECTS = SERVICES.projects || "http://localhost:3002/api/projects";
+const URL_PROMOTIONS = SERVICES.promotions || "http://localhost:3007/promotions";
+const URL_PROJECTS = SERVICES.projects || "http://localhost:3002/projects";
+interface Project {
+  id: number;
+  name: string;
+  description: string;
+  promotionId: number;
+  soutenanceDate: string | null;
+  minStudents: number;
+  maxStudents: number;
+  deadline: string | null;
+  allowLate: boolean;
+  latePenaltyPerHour: number | null;
+  mode: 'random' | 'manual' | 'free';
+  createdAt: Date;
+  updatedAt: Date;
+  status: 'draft' | 'visible';
+}
+
+interface ProjectApiResponse {
+  projects: Project[];
+  total: number;
+  page: number;
+  lastPage: number;
+}
 
 export async function parseCSV(file: Express.Multer.File): Promise<any[]> {
     return new Promise((resolve, reject) => {
@@ -132,13 +155,21 @@ export async function getAllPromotions(): Promise<any[]> {
         const students =  await getStudents()
 
         // on récupère le nombre de projets de chaque promotion
-        const projects = await apiClient.get<any[]>(`${URL_PROJECTS}`);
+        const projects = await apiClient.get<ProjectApiResponse>(`${URL_PROJECTS}`);
         if (projects.status !== 200) {
             throw new Error('Failed to fetch projects');
         }
+
+        const projectList = projects.data.projects;
+
+        if (!Array.isArray(projectList)) {
+            throw new Error('Projects is not an array');
+        }
+
+        console.log("data", projectList);
         
         // Regroupement des projets par ID de promotion
-        const projectsByPromotionId = projects.data.reduce((acc: any, project: any) => {
+        const projectsByPromotionId = projectList.reduce((acc: any, project: any) => {
             if (!acc[project.promotionId]) {
                 acc[project.promotionId] = 0;
             }

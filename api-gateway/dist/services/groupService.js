@@ -58,7 +58,7 @@ const apiClient_1 = require("../utils/apiClient");
 const projectService_1 = require("./projectService");
 const env = __importStar(require("dotenv"));
 env.config();
-const URL_GROUPS = services_config_1.SERVICES.groups || "http://localhost:3004/api/groups";
+const URL_GROUPS = services_config_1.SERVICES.groups || "http://localhost:3004/groups";
 function getGroupById(groupId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

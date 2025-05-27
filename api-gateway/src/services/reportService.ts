@@ -4,7 +4,7 @@
 import { SERVICES } from "../config/services.config";
 import { apiClient } from "../utils/apiClient";
 
-const URL_REPORTS = SERVICES.reports || "http://localhost:3005/api/reports";
+const URL_REPORTS = SERVICES.reports || "http://localhost:3005/reports";
 
 export async function getAllReports(): Promise<any[]> {
     try {

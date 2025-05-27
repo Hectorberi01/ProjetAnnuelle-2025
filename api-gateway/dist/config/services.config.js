@@ -51,30 +51,30 @@ else {
 }
 exports.SERVICES = {
     projects: isDocker
-        ? 'http://projets:3002/api/projects'
-        : process.env.PROJETS || 'http://localhost:3002/api/projects',
+        ? 'http://projets:3002/projects'
+        : process.env.PROJETS || 'http://localhost:3002/projects',
     grades: isDocker
-        ? 'http://grades:3005/api/grades'
-        : process.env.GRADES || 'http://localhost:3005/api/grades',
+        ? 'http://grades:3005/grades'
+        : process.env.GRADES || 'http://localhost:3005/grades',
     groups: isDocker
-        ? 'http://groupes:3004/api/groups'
-        : process.env.GROUPES || 'http://localhost:3004/api/groups',
+        ? 'http://groupes:3004/groups'
+        : process.env.GROUPES || 'http://localhost:3004/groups',
     users: isDocker
-        ? 'http://users:3003/api/users'
-        : process.env.USERS || 'http://localhost:3003/api/users',
+        ? 'http://users:3003/users'
+        : process.env.USERS || 'http://localhost:3003/users',
     roles: isDocker
-        ? 'http://users:3003/api/roles'
-        : process.env.ROLES || 'http://localhost:3003/api/roles',
+        ? 'http://users:3003/roles'
+        : process.env.ROLES || 'http://localhost:3003/roles',
     promotions: isDocker
-        ? 'http://promotions:3007/api/promotions'
-        : process.env.PROMOTIONS || 'http://localhost:3007/api/promotions',
+        ? 'http://promotions:3007/promotions'
+        : process.env.PROMOTIONS || 'http://localhost:3007/promotions',
     auth: isDocker
-        ? 'http://auth:3001/api/auth'
-        : process.env.AUTH || 'http://localhost:3001/api/auth',
+        ? 'http://auth:3001/auth'
+        : process.env.AUTH || 'http://localhost:3001/auth',
     livrables: isDocker
-        ? 'http://livrables:3000/api/livrables'
-        : process.env.LIVRABLES || 'http://localhost:3009/api/livrables',
+        ? 'http://livrables:3000/livrables'
+        : process.env.LIVRABLES || 'http://localhost:3009/livrables',
     reports: isDocker
-        ? 'http://reports:3006/api/reports'
-        : process.env.REPORTS || 'http://localhost:3006/api/reports',
+        ? 'http://reports:3006/reports'
+        : process.env.REPORTS || 'http://localhost:3006/reports',
 };
