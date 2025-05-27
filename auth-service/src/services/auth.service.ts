@@ -22,8 +22,8 @@ const USER_SERVICE_URL: string =
   process.env.USER_SERVICE_URL !== undefined
     ? process.env.USER_SERVICE_URL
     : isDocker
-      ? "http://users:3003/api/users"
-      : "http://localhost:3003/api/users";
+      ? "http://users:3003/users"
+      : "http://localhost:3003/users";
 
 
 console.log("Final USER_SERVICE_URL =", USER_SERVICE_URL);
