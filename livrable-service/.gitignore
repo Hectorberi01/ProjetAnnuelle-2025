@@ -2,7 +2,6 @@
 google-drive-credentials.json
 
 # Output de build
-dist/
 
 # Node
 node_modules/
