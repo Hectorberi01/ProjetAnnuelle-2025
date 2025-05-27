@@ -15,13 +15,21 @@ dotenv.config();
 export async function extractZip(fileUrl: string, dest: string): Promise<void> {
     const fileIdMatch = fileUrl.match(/\/d\/([a-zA-Z0-9_-]+)\//);
     const fileId = fileIdMatch?.[1];
+    console.log(`Extracting file from URL: ${fileUrl}`);
+    console.log(`Extracting file ID: ${fileId}`);
     if (!fileId) {
         throw new Error('Invalid file URL: Unable to extract file ID');
     }
 
-    const auth = new google.auth.GoogleAuth({
-        keyFile: path.join(process.env.GDRIVE_CREDENTIALS_PATH ||'google-drive-credentials.json'),
-        scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+    // const auth = new google.auth.GoogleAuth({
+    //     keyFile: path.join(process.env.GDRIVE_CREDENTIALS_PATH ||'google-drive-credentials.json'),
+    //     scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+    // });
+
+    const auth = new google.auth.JWT({
+        email: process.env.GOOGLE_CLIENT_EMAIL,
+        key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        scopes: ['https://www.googleapis.com/auth/drive.file'],
     });
 
     const drive = google.drive({ version: 'v3', auth });

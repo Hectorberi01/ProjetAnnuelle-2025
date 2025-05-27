@@ -18,10 +18,12 @@ export async function detectSimilarityForDeliverable(projectId: number) {
   const textMap = new Map<number, string>();
 
   for (const deliverable of deliverables) {
+    console.log(`🔍 Processing deliverable #${deliverable}`);
     if (!deliverable.fileUrl) continue;
 
     const localFolder = path.join(TEMP_DIR, `deliverable_${deliverable.id}`);
 
+    console.log(`📥 Downloading and extracting deliverable #${deliverable.id}...`)  ;
     await fs.mkdir(localFolder, { recursive: true });
     await extractZip(deliverable.fileUrl, localFolder);
 
