@@ -17,6 +17,7 @@ export interface CreateProject {
     name: string;
     description: string;
     soutenanceDate?: Date | null;
+    soutenanceDuration?: number;
     minStudents: number;
     maxStudents: number;
     mode: 'manual' | 'random' | 'free';

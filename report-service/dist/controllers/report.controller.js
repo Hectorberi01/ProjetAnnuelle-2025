@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getById = exports.getByProject = exports.getAll = exports.deleteReport = exports.update = exports.create = void 0;
+exports.getByGroup = exports.getById = exports.getByProject = exports.getAll = exports.deleteReport = exports.update = exports.create = void 0;
 const report_service_1 = require("../services/report.service");
 const reportService = new report_service_1.ReportService();
 // Create a new report
@@ -88,3 +88,15 @@ const getById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json(response);
 });
 exports.getById = getById;
+const getByGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Getting reports by group');
+    const groupId = parseInt(req.params.groupId);
+    console.log('Group ID:', groupId);
+    const response = yield reportService.findByGroup(groupId);
+    if (!response) {
+        res.status(404).json({ message: 'No reports found for this group' });
+        return;
+    }
+    res.status(200).json(response);
+});
+exports.getByGroup = getByGroup;

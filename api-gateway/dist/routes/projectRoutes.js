@@ -14,7 +14,7 @@ const projectService_1 = require("../services/projectService");
 const promotionService_1 = require("../services/promotionService");
 const router = (0, express_1.Router)();
 // Get all projects
-router.get("/list", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield (0, projectService_1.getAllProjects)();
         res.status(200).json(response);
@@ -37,6 +37,19 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
     catch (error) {
         res.status(500).json({ message: "Failed to fetch project" });
+        return;
+    }
+}));
+router.get("/promotion/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const promotionId = parseInt(req.params.id);
+    console.log("Fetching projects for promotion ID:", promotionId);
+    try {
+        const response = yield (0, projectService_1.getProjectsByPromotionId)(promotionId);
+        res.status(200).json(response);
+    }
+    catch (error) {
+        console.error("Error fetching projects for promotion:", error);
+        res.status(500).json({ message: "Failed to fetch projects for promotion" });
         return;
     }
 }));
@@ -113,6 +126,61 @@ router.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     catch (error) {
         res.status(500).json({ message: "Failed to delete project" });
+        return;
+    }
+}));
+// add soutenance information to a project
+router.post("/soutenance/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const projectId = parseInt(req.params.id);
+    console.log("Adding soutenance information for project ID:", projectId);
+    const { soutenanceDate, soutenanceDuration, lieuSoutenance } = req.body;
+    try {
+        const response = yield (0, projectService_1.getProjectById)(projectId);
+        if (!response) {
+            res.status(404).json({ message: "Project not found" });
+            return;
+        }
+        const updatedProject = yield (0, projectService_1.updateProject)(projectId, {
+            soutenanceDate,
+            soutenanceDuration,
+            lieuSoutenance
+        });
+        if (updatedProject.status !== 200) {
+            res.status(400).json({ message: "Failed to add soutenance information" });
+            return;
+        }
+        res.status(200).json(updatedProject.data);
+    }
+    catch (error) {
+        console.error("Error adding soutenance information:", error);
+        res.status(500).json({ message: "Failed to add soutenance information" });
+        return;
+    }
+}));
+// update soutenance information of a project
+router.put("/soutenance/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const projectId = parseInt(req.params.id);
+    const { soutenanceDate, soutenanceDuration, lieuSoutenance } = req.body;
+    try {
+        const response = yield (0, projectService_1.getProjectById)(projectId);
+        if (!response) {
+            res.status(404).json({ message: "Project not found" });
+            return;
+        }
+        const updatedProject = yield (0, projectService_1.updateProject)(projectId, {
+            soutenanceDate,
+            soutenanceDuration,
+            lieuSoutenance
+        });
+        if (updatedProject.status !== 200) {
+            res.status(400).json({ message: "Failed to update soutenance information" });
+            return;
+        }
+        res.status(200).json(updatedProject.data);
+    }
+    catch (error) {
+        console.error("Error updating soutenance information:", error);
+        res.status(500).json({ message: "Failed to update soutenance information" });
         return;
     }
 }));

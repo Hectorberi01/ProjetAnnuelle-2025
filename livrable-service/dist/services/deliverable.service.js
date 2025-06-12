@@ -59,6 +59,20 @@ class DeliverableService {
             return yield deliverableRepo.findOne({ where: { id } });
         });
     }
+    // Fonction pour récupérer les livrables d'un projet spécifique
+    getDeliverablesByProjectId(projectId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield deliverableRepo.find({
+                    where: { projectId },
+                    order: { submittedAt: 'DESC' }, // Optionnel : trier par date de soumission
+                });
+            }
+            catch (error) {
+                throw new Error('Error fetching project deliverables');
+            }
+        });
+    }
     // Fonction pour récupérer tous les livrables d'un groupe spécifique
     getDeliverablesByGroupId(groupId) {
         return __awaiter(this, void 0, void 0, function* () {

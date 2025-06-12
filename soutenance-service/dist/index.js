@@ -13,18 +13,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const soutenance_routes_1 = __importDefault(require("./routes/soutenance.routes"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const database_1 = require("./config/database");
+const cors_1 = __importDefault(require("cors"));
+dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3010;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        //await AppDataSource.initialize();
+        yield database_1.AppDataSource.initialize();
         console.log('Database connection established');
         // 2. Middleware
-        //app.use(cors());
+        app.use((0, cors_1.default)());
         app.use(express_1.default.json());
         app.use(express_1.default.urlencoded({ extended: true }));
         // 3. Routes
-        //app.use('/api/projects',projet);
+        app.use('/soutenances', soutenance_routes_1.default);
         // 5. Lancement serveur
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);

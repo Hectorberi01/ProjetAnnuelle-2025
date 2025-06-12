@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.similarityMatrix = exports.similarityCheck = exports.downloadDeliverable = exports.getDeliverableById = exports.getAllDeliverables = exports.submitDeliverable = void 0;
+exports.similarityMatrix = exports.similarityCheck = exports.downloadDeliverable = exports.getDeliverablesByGroupId = exports.getDeliverablesByProjectId = exports.getDeliverableById = exports.getAllDeliverables = exports.submitDeliverable = void 0;
 const database_1 = require("../config/database");
 const Deliverable_1 = require("../entities/Deliverable");
 const deliverable_service_1 = require("../services/deliverable.service");
@@ -75,6 +75,40 @@ const getDeliverableById = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getDeliverableById = getDeliverableById;
+// Get all deliverables for a specific project
+const getDeliverablesByProjectId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const projectId = parseInt(req.params.id);
+        const deliverables = yield deliverableService.getDeliverablesByProjectId(projectId);
+        if (!deliverables) {
+            res.status(404).json({ message: 'Deliverables not found for this project' });
+            return;
+        }
+        res.status(200).json(deliverables);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal server error', error });
+    }
+});
+exports.getDeliverablesByProjectId = getDeliverablesByProjectId;
+// Get all deliverables for a specific group
+const getDeliverablesByGroupId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const groupId = parseInt(req.params.groupId);
+        console.log("dans getDeliverablesByGroupId");
+        console.log("Group ID:", groupId);
+        const deliverables = yield deliverableService.getDeliverablesByGroupId(groupId);
+        if (!deliverables) {
+            res.status(404).json({ message: 'Deliverables not found for this group' });
+            return;
+        }
+        res.status(200).json(deliverables);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal server error', error });
+    }
+});
+exports.getDeliverablesByGroupId = getDeliverablesByGroupId;
 const downloadDeliverable = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     console.log("dans downloadDeliverable");

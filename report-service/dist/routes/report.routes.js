@@ -16,4 +16,6 @@ router.get('/:id', report_controller_1.getById);
 router.get('/projects/:projectId', report_controller_1.getByProject);
 // suppression d'un rapport
 router.delete('/:id', report_controller_1.deleteReport);
+// Récupérer tous les rapports d'un groupe
+router.get('/groups/:groupId', report_controller_1.getByGroup);
 exports.default = router;

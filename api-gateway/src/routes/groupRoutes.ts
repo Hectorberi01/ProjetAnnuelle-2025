@@ -8,7 +8,7 @@ import { shuffleArray } from '../utils/shuffle';
 const router = Router();
 
 // Get all groups
-router.get('/list', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         // Simulate fetching groups from a service
         const groups = await getAllGroups(); // Replace with actual service call

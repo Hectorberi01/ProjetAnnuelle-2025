@@ -28,6 +28,12 @@ export interface CreateUser {
     email: string;
     roleId: number;
 }
+export interface CreateAdmin {
+    nom: string;
+    prenom: string;
+    email: string;
+    password: string;
+}
 
 export interface Role {
     id: number;

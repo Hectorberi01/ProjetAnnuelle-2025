@@ -18,6 +18,7 @@ require("reflect-metadata");
 const database_1 = require("./database/database");
 const cors_1 = __importDefault(require("cors"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
+const role_routes_1 = __importDefault(require("./routes/role.routes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3003;
@@ -31,6 +32,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         app.use(express_1.default.urlencoded({ extended: true }));
         // 3. Routes
         app.use('/users', user_routes_1.default);
+        app.use('/roles', role_routes_1.default);
         // 5. Lancement serveur
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);

@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { createReport, deleteReport, getAllReports, getReportById, getReportByProject, updateReport } from "../services/reportService";
+import { createReport, deleteReport, getAllReports, getReportByGroup, getReportById, getReportByProject, updateReport } from "../services/reportService";
 
 const router = Router();
 
@@ -34,6 +34,23 @@ router.get('/projects/:projectId', async (req, res) => {
         const reports = await getReportByProject(projectId);
         if (reports.length === 0) {
             res.status(404).json({ message: "No reports found for this project" });
+            return;
+        }
+        res.status(200).json(reports);
+    } catch (error) {
+        console.error('Error fetching reports:', error);
+        res.status(500).json({ message: "Failed to fetch reports" });
+    }
+});
+
+// Get report by group
+router.get('/groups/:groupId', async (req, res) => {
+    const groupId = parseInt(req.params.groupId);
+    console.log("Fetching reports for group ID:", groupId);
+    try {
+        const reports = await getReportByGroup(groupId);
+        if (reports.length === 0) {
+            res.status(404).json({ message: "No reports found for this group" });
             return;
         }
         res.status(200).json(reports);

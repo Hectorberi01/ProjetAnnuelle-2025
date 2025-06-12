@@ -64,6 +64,17 @@ export class ReportService {
     }
   }
 
+  // Récupérer les rapports d'un groupe spécifique
+  public async findByGroup(groupId: number) {
+    try {
+      const reports = await repo.find({ where: { groupId } });
+      return reports;
+    } catch (error) {
+      console.error('Error fetching reports by group:', error);
+      throw new Error('Failed to fetch reports by group');
+    }
+  }
+
   // supprimer un rapport
   public async deleteReport(id: number) {
     try {

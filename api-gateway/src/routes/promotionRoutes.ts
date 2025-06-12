@@ -5,7 +5,7 @@ const upload = multer();
 const router = Router();
 
 // Get all promotions
-router.get("/list", async (req, res) => {
+router.get("/", async (req, res) => {
     const promotions = await getAllPromotions();
     console.log("promotions", promotions);
     res.json(promotions);
@@ -15,7 +15,6 @@ router.get("/list", async (req, res) => {
 router.get("/:id", async (req, res) => {
     const promotionId =  parseInt(req.params.id);
     const promotion = await getPromotionById(promotionId);
-    console.log("promotion", promotion);
     res.json(promotion);
 });
 

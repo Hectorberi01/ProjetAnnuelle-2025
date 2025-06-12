@@ -22,7 +22,7 @@ const main = async () => {
         app.use(express.urlencoded({ extended: true }));
 
         // 3. Routes
-        app.use('/api/reports', report);
+        app.use('/reports', report);
 
         // 5. Lancement serveur
         app.listen(PORT, () => {

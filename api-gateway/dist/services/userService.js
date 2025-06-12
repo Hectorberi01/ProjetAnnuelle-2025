@@ -58,6 +58,7 @@ const env = __importStar(require("dotenv"));
 env.config();
 const URL_USERS = services_config_1.SERVICES.users || "http://localhost:3003/users";
 const URL_ROLES = services_config_1.SERVICES.roles || "http://localhost:3003/roles";
+const URL_AUTH = services_config_1.SERVICES.auth || "http://localhost:3001/auth";
 function getUserById(userId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -150,18 +151,6 @@ function deleteUser(userId) {
         }
     });
 }
-// export async function getUserByName(userName: string): Promise<any> {
-//     try {
-//         const response = await apiClient.get(`/users/name/${userName}`);
-//         if (response.status !== 200) {
-//             throw new Error('Failed to fetch user by name');
-//         }
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error fetching user by name:', error);
-//         throw new Error('Failed to fetch user by name');
-//     }
-// }
 function getStudents() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -201,16 +190,6 @@ function getAdmins() {
         }
     });
 }
-// export async function getStudentsByPromotionId(promotionId: string): Promise<any[]> {
-//     try {
-//         const allUsers = await getAllUsers();
-//         const studentsList = allUsers.filter((user: any) => user.role.name === "student" && user.promotionId === promotionId);
-//         return studentsList;
-//     } catch (error) {
-//         console.error('Error fetching students by promotion ID:', error);
-//         throw new Error('Failed to fetch students by promotion ID');
-//     }
-// }
 function getRoleIdByName(roleName) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

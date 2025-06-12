@@ -57,6 +57,9 @@ const services_config_1 = require("../config/services.config");
 const apiClient_1 = require("../utils/apiClient");
 const projectService_1 = require("./projectService");
 const env = __importStar(require("dotenv"));
+const userService_1 = require("./userService");
+const reportService_1 = require("./reportService");
+const deliverableService_1 = require("./deliverableService");
 env.config();
 const URL_GROUPS = services_config_1.SERVICES.groups || "http://localhost:3004/groups";
 function getGroupById(groupId) {
@@ -66,7 +69,23 @@ function getGroupById(groupId) {
             if (response.status !== 200) {
                 throw new Error('Failed to fetch group');
             }
+            const groupData = response.data;
+            // Récupère tous les étudiants associés à groupStudent
+            const studentObjects = yield Promise.all(groupData.groupStudent.map((gs) => __awaiter(this, void 0, void 0, function* () {
+                const user = yield (0, userService_1.getUserById)(gs.studentId);
+                return Object.assign(Object.assign({}, gs), { student: user });
+            })));
+            // on récupère les rapports associés à ce groupe
+            const reports = yield (0, reportService_1.getReportByGroup)(groupId);
+            groupData.reports = reports;
+            // on récupère les livrables associés à ce groupe
+            const deliverables = yield (0, deliverableService_1.getDeliverablesByGroup)(groupId);
+            groupData.deliverables = deliverables;
+            // Remplace groupStudent par le tableau enrichi
+            groupData.groupStudent = studentObjects;
+            response.data = groupData;
             return response;
+            //return groupData;
         }
         catch (error) {
             console.error('Error fetching group:', error);

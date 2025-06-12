@@ -16,7 +16,7 @@ const promotionService_1 = require("../services/promotionService");
 const shuffle_1 = require("../utils/shuffle");
 const router = (0, express_1.Router)();
 // Get all groups
-router.get('/list', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Simulate fetching groups from a service
         const groups = yield (0, groupService_1.getAllGroups)(); // Replace with actual service call

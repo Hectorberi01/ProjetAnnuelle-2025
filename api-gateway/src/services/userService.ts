@@ -1,13 +1,14 @@
 import { SERVICES } from "../config/services.config";
-import { CreateUser, Role, User } from "../types/types";
+import { CreateAdmin, CreateUser, Role, User } from "../types/types";
 import { apiClient } from "../utils/apiClient";
 import * as env from "dotenv"
 env.config();
 
 const URL_USERS = SERVICES.users || "http://localhost:3003/users";
 const URL_ROLES = SERVICES.roles || "http://localhost:3003/roles";
+const URL_AUTH = SERVICES.auth || "http://localhost:3001/auth";
 
-export async function getUserById(userId: string): Promise<any> {
+export async function getUserById(userId: number): Promise<any> {
     try {
         const response = await apiClient.get<User>(`${URL_USERS}/${userId}`);
         if (response.status !== 200) {
@@ -60,6 +61,7 @@ export async function createUser(userData: CreateUser): Promise<User> {
     }
 }
 
+
 export async function updateUser(userId: string, userData: any): Promise<any> {
     try {
         const response = await apiClient.put(`${URL_USERS}/${userId}`, userData);
@@ -73,7 +75,7 @@ export async function updateUser(userId: string, userData: any): Promise<any> {
     }
 }
 
-export async function deleteUser(userId: string): Promise<any> {
+export async function deleteUser(userId: number): Promise<any> {
     try {
         const response = await apiClient.delete(`${URL_USERS}/${userId}`);
         if (response.status !== 200) {
@@ -85,19 +87,6 @@ export async function deleteUser(userId: string): Promise<any> {
         throw new Error('Failed to delete user');
     }
 }
-
-// export async function getUserByName(userName: string): Promise<any> {
-//     try {
-//         const response = await apiClient.get(`/users/name/${userName}`);
-//         if (response.status !== 200) {
-//             throw new Error('Failed to fetch user by name');
-//         }
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error fetching user by name:', error);
-//         throw new Error('Failed to fetch user by name');
-//     }
-// }
 
 export async function getStudents(): Promise<any[]> {
     try {
@@ -129,17 +118,6 @@ export async function getAdmins(): Promise<any[]> {
         throw new Error('Failed to fetch admins');
     }
 }
-
-// export async function getStudentsByPromotionId(promotionId: string): Promise<any[]> {
-//     try {
-//         const allUsers = await getAllUsers();
-//         const studentsList = allUsers.filter((user: any) => user.role.name === "student" && user.promotionId === promotionId);
-//         return studentsList;
-//     } catch (error) {
-//         console.error('Error fetching students by promotion ID:', error);
-//         throw new Error('Failed to fetch students by promotion ID');
-//     }
-// }
 
 export async function getRoleIdByName(roleName: string): Promise<Role> {
     try {

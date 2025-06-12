@@ -51,6 +51,23 @@ router.get('/projects/:projectId', (req, res) => __awaiter(void 0, void 0, void 
         res.status(500).json({ message: "Failed to fetch reports" });
     }
 }));
+// Get report by group
+router.get('/groups/:groupId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const groupId = parseInt(req.params.groupId);
+    console.log("Fetching reports for group ID:", groupId);
+    try {
+        const reports = yield (0, reportService_1.getReportByGroup)(groupId);
+        if (reports.length === 0) {
+            res.status(404).json({ message: "No reports found for this group" });
+            return;
+        }
+        res.status(200).json(reports);
+    }
+    catch (error) {
+        console.error('Error fetching reports:', error);
+        res.status(500).json({ message: "Failed to fetch reports" });
+    }
+}));
 // Get report by ID
 router.get('/:reportId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const reportId = parseInt(req.params.reportId);

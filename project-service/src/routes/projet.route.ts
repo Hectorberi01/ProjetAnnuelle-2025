@@ -36,5 +36,11 @@ router.patch("/:id/soutenance-date", ProjectController.updateSoutenanceDate);
 // Mettre à jour le retard d'un projet
 router.patch("/:id/late-policy", ProjectController.updateProjectLatePolicy);
 
+// ajouter les informations de la soutenace
+router.post("/:id/soutenance", ProjectController.addSoutenance);
+
+// Mettre à jour les informations de la soutenance
+router.put("/:id/soutenance", ProjectController.updateSoutenance);
+
 // Exporter le routeur
 export default router;

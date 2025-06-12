@@ -3,8 +3,8 @@ import { Router } from "express";
 import { validateBody } from "../middlewares/validate.middleware";
 import { createUserSchema, updateUserSchema } from "../validators/user.validator";
 import { create, createAdmin, deleteUser, getAll, getByEmail, getById, update } from "../controllers/user.controller";
-import { createRoleSchema, updateRoleSchema } from "../validators/role.validator";
-import { createRole, deleteRole, getAllRoles, getRoleByName, updateRole } from "../controllers/role.controller";
+//import { createRoleSchema, updateRoleSchema } from "../validators/role.validator";
+//import { createRole, deleteRole, getAllRoles, getRoleByName, updateRole } from "../controllers/role.controller";
 
 
 const router = Router();
@@ -19,10 +19,10 @@ router.delete("/:id", deleteUser);
 
 // role routes
 
-router.post("/roles/", validateBody(createRoleSchema), createRole);
-router.get("/roles/", getAllRoles);
-router.get("/roles/:name", getRoleByName);
-router.put("/roles/:id", validateBody(updateRoleSchema), updateRole);
-router.delete("/roles/:id", deleteRole);
+// router.post("/roles/", validateBody(createRoleSchema), createRole);
+// router.get("/roles/", getAllRoles);
+// router.get("/roles/:name", getRoleByName);
+// router.put("/roles/:id", validateBody(updateRoleSchema), updateRole);
+// router.delete("/roles/:id", deleteRole);
 
 export default router;

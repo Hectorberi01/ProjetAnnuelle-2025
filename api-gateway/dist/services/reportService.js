@@ -14,11 +14,12 @@ exports.getAllReports = getAllReports;
 exports.createReport = createReport;
 exports.getReportByProject = getReportByProject;
 exports.getReportById = getReportById;
+exports.getReportByGroup = getReportByGroup;
 exports.updateReport = updateReport;
 exports.deleteReport = deleteReport;
 const services_config_1 = require("../config/services.config");
 const apiClient_1 = require("../utils/apiClient");
-const URL_REPORTS = services_config_1.SERVICES.reports || "http://localhost:3005/reports";
+const URL_REPORTS = services_config_1.SERVICES.reports || "http://localhost:3006/reports";
 function getAllReports() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -76,6 +77,22 @@ function getReportById(reportId) {
         catch (error) {
             console.error('Error fetching report:', error);
             throw new Error('Failed to fetch report');
+        }
+    });
+}
+function getReportByGroup(groupId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log("url", `${URL_REPORTS}/groups/${groupId}`);
+        try {
+            const response = yield apiClient_1.apiClient.get(`${URL_REPORTS}/groups/${groupId}`);
+            if (response.status !== 200) {
+                throw new Error('Failed to fetch reports by group');
+            }
+            return response.data;
+        }
+        catch (error) {
+            console.error('Error fetching reports by group:', error);
+            throw new Error('Failed to fetch reports by group');
         }
     });
 }

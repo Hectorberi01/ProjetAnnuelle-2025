@@ -70,6 +70,38 @@ export const getDeliverableById = async (req: Request, res: Response) => {
   }
 };
 
+// Get all deliverables for a specific project
+export const getDeliverablesByProjectId = async (req: Request, res: Response) => {
+  try {
+    const projectId = parseInt(req.params.id);
+    const deliverables = await deliverableService.getDeliverablesByProjectId(projectId);
+    if (!deliverables) {
+      res.status(404).json({ message: 'Deliverables not found for this project' });
+      return;
+    }
+    res.status(200).json(deliverables);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+};
+
+// Get all deliverables for a specific group
+export const getDeliverablesByGroupId = async (req: Request, res: Response) => {
+  try {
+    const groupId = parseInt(req.params.groupId);
+    console.log("dans getDeliverablesByGroupId");
+    console.log("Group ID:", groupId);
+    const deliverables = await deliverableService.getDeliverablesByGroupId(groupId);
+    if (!deliverables) {
+      res.status(404).json({ message: 'Deliverables not found for this group' });
+      return;
+    }
+    res.status(200).json(deliverables);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+};
+
 export const downloadDeliverable = async (req: Request, res: Response) => {
   const { id } = req.params;
   console.log("dans downloadDeliverable");

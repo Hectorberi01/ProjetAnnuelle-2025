@@ -14,6 +14,12 @@ export class Project {
   @Column({nullable: true})
   soutenanceDate!: Date;
 
+  @Column({ type: 'int', default: 0 })
+  soutenanceDuration!: number;
+
+  @Column()
+  lieuSoutenance!: string;
+
   @Column({ default: 1 })
   minStudents!: number; 
 

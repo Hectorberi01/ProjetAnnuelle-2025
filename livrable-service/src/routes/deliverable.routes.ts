@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import e, { Request, Response } from 'express';
 import multer from 'multer';
-import { downloadDeliverable, getAllDeliverables, getDeliverableById, similarityCheck, similarityMatrix, submitDeliverable } from '../controllers/deliverable.controller';
+import { downloadDeliverable, getAllDeliverables, getDeliverableById, getDeliverablesByGroupId, getDeliverablesByProjectId, similarityCheck, similarityMatrix, submitDeliverable } from '../controllers/deliverable.controller';
 import { get } from 'http';
 
 import { detectSimilarityForDeliverable } from '../scripts/detectSimilarity';
@@ -19,7 +19,8 @@ router.get('/:id/download', downloadDeliverable);
 // All livrable routes
 router.get('/', getAllDeliverables);
 router.get('/:id', getDeliverableById);
-
+router.get('/project/:id', getDeliverablesByProjectId);
+router.get('/groups/:groupId', getDeliverablesByGroupId);
 
 router.post('/internal/similarity-check/project/:projectId', similarityCheck);
 router.get('/projects/:projectId/similarity-matrix', similarityMatrix);

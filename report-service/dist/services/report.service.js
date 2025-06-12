@@ -82,6 +82,19 @@ class ReportService {
             }
         });
     }
+    // Récupérer les rapports d'un groupe spécifique
+    findByGroup(groupId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const reports = yield repo.find({ where: { groupId } });
+                return reports;
+            }
+            catch (error) {
+                console.error('Error fetching reports by group:', error);
+                throw new Error('Failed to fetch reports by group');
+            }
+        });
+    }
     // supprimer un rapport
     deleteReport(id) {
         return __awaiter(this, void 0, void 0, function* () {

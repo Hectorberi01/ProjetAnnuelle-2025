@@ -109,19 +109,21 @@ services:
     build: ./livrable-service
     ports:
       - "3009:3009"
-    container_name: livrables
+    container_name: deliverables
     env_file:
       - ./livrable-service/.env
     networks:
       - backend
 
-  # soutenances:
-  #   build: ./soutenance-service
-  #   ports:
-  #     - "3010:3009"
-  #   container_name: soutenances
-  #   networks:
-  #     - backend
+  soutenances:
+    build: ./soutenance-service
+    ports:
+      - "3010:3010"
+    env_file:
+      - ./soutenance-service/.env
+    container_name: soutenances
+    networks:
+      - backend
 
   # notifications:
   #   build: ./notification-service

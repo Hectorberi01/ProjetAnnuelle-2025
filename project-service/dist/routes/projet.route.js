@@ -24,5 +24,9 @@ router.patch("/:id/mode", projet_controller_1.ProjectController.updateProjectMod
 router.patch("/:id/soutenance-date", projet_controller_1.ProjectController.updateSoutenanceDate);
 // Mettre à jour le retard d'un projet
 router.patch("/:id/late-policy", projet_controller_1.ProjectController.updateProjectLatePolicy);
+// ajouter les informations de la soutenace
+router.post("/:id/soutenance", projet_controller_1.ProjectController.addSoutenance);
+// Mettre à jour les informations de la soutenance
+router.put("/:id/soutenance", projet_controller_1.ProjectController.updateSoutenance);
 // Exporter le routeur
 exports.default = router;

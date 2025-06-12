@@ -5,6 +5,7 @@ export interface CreateProject {
     name: string;
     description: string;
     soutenanceDate?: Date | null;
+    soutenanceDuration?: number;
     minStudents: number;
     maxStudents: number;
     deadline: Date;
@@ -73,6 +74,38 @@ export class ProjetService {
         } catch (error) {
             console.error('Error creating project:', error);
             throw new Error('Failed to create project');
+        }
+    }
+
+    async addSoutenanceInfo(id: number, soutenanceDate: Date, soutenanceDuration: number, lieuSoutenance: string) {
+        if (!id || !soutenanceDate || !soutenanceDuration || !lieuSoutenance) {
+            throw new Error('Project ID, soutenance date, duration, and location are required');
+        }
+        try {
+            const project = await projetRepo.findOneByOrFail({ id });
+            project.soutenanceDate = soutenanceDate;
+            project.soutenanceDuration = soutenanceDuration;
+            project.lieuSoutenance = lieuSoutenance;
+            return await projetRepo.save(project);
+        } catch (error) {
+            console.error('Error adding soutenance info:', error);
+            throw new Error('Failed to add soutenance info');
+        }
+    }
+
+    async updateSoutenanceInfo(id: number, soutenanceDate: Date, soutenanceDuration: number, lieuSoutenance: string) {
+        if (!id || !soutenanceDate || !soutenanceDuration || !lieuSoutenance) {
+            throw new Error('Project ID, soutenance date, duration, and location are required');
+        }
+        try {
+            const project = await projetRepo.findOneByOrFail({ id });
+            project.soutenanceDate = soutenanceDate;
+            project.soutenanceDuration = soutenanceDuration;
+            project.lieuSoutenance = lieuSoutenance;
+            return await projetRepo.save(project);
+        } catch (error) {
+            console.error('Error updating soutenance info:', error);
+            throw new Error('Failed to update soutenance info');
         }
     }
 

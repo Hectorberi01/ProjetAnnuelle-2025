@@ -12,6 +12,13 @@ interface register{
     roleId: number;
 }
 
+interface registerAdmin{
+    nom: string;
+    prenom: string;
+    email: string;
+    password: string;
+}
+
 const URL_AUTH = SERVICES.auth || "http://localhost:3001/auth";
 
 export async function LoginUser(loginData: login) {
@@ -60,6 +67,25 @@ export async function RegisterUser(registerData: register) {
     } catch (error) {
         console.error('Error during registration:', error);
         throw new Error('Registration failed');
+    }
+}
+
+export async function RegisterAdminUser(registerData: registerAdmin) {
+    const { nom, prenom, email, password } = registerData;
+    try {
+        const response = await apiClient.post(`${URL_AUTH}/register-admin`, {
+            nom,
+            prenom,
+            email,
+            password,
+        });
+        if (response.status !== 201) {
+            throw new Error('Admin registration failed');
+        }
+        return response.data;
+    } catch (error) {
+        console.error('Error during admin registration:', error);
+        throw new Error('Admin registration failed');
     }
 }
 

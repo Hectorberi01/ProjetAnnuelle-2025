@@ -78,6 +78,42 @@ class ProjetService {
             }
         });
     }
+    addSoutenanceInfo(id, soutenanceDate, soutenanceDuration, lieuSoutenance) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!id || !soutenanceDate || !soutenanceDuration || !lieuSoutenance) {
+                throw new Error('Project ID, soutenance date, duration, and location are required');
+            }
+            try {
+                const project = yield projetRepo.findOneByOrFail({ id });
+                project.soutenanceDate = soutenanceDate;
+                project.soutenanceDuration = soutenanceDuration;
+                project.lieuSoutenance = lieuSoutenance;
+                return yield projetRepo.save(project);
+            }
+            catch (error) {
+                console.error('Error adding soutenance info:', error);
+                throw new Error('Failed to add soutenance info');
+            }
+        });
+    }
+    updateSoutenanceInfo(id, soutenanceDate, soutenanceDuration, lieuSoutenance) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!id || !soutenanceDate || !soutenanceDuration || !lieuSoutenance) {
+                throw new Error('Project ID, soutenance date, duration, and location are required');
+            }
+            try {
+                const project = yield projetRepo.findOneByOrFail({ id });
+                project.soutenanceDate = soutenanceDate;
+                project.soutenanceDuration = soutenanceDuration;
+                project.lieuSoutenance = lieuSoutenance;
+                return yield projetRepo.save(project);
+            }
+            catch (error) {
+                console.error('Error updating soutenance info:', error);
+                throw new Error('Failed to update soutenance info');
+            }
+        });
+    }
     updateProject(id, updateData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

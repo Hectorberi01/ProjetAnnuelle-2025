@@ -21,15 +21,14 @@ const auth_validation_1 = require("../validations/auth.validation");
 const node_mailjet_1 = __importDefault(require("node-mailjet"));
 const buffer_1 = require("buffer");
 dotenv_1.default.config();
-//let USER_SERVICE_URL: string;
 const isDocker = process.env.IS_DOCKER === 'true';
 console.log("isDocker", isDocker);
 console.log("USER_SERVICE_URL", process.env.USER_SERVICE_URL);
 const USER_SERVICE_URL = process.env.USER_SERVICE_URL !== undefined
     ? process.env.USER_SERVICE_URL
     : isDocker
-        ? "http://users:3003/api/users"
-        : "http://localhost:3003/api/users";
+        ? "http://users:3003/users"
+        : "http://localhost:3003/users";
 console.log("Final USER_SERVICE_URL =", USER_SERVICE_URL);
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!USER_SERVICE_URL) {

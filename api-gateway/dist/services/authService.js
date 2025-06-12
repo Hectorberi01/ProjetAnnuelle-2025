@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginUser = LoginUser;
 exports.LogoutUser = LogoutUser;
 exports.RegisterUser = RegisterUser;
+exports.RegisterAdminUser = RegisterAdminUser;
 exports.forgotPassword = forgotPassword;
 exports.changePassword = changePassword;
 const services_config_1 = require("../config/services.config");
@@ -66,6 +67,27 @@ function RegisterUser(registerData) {
         catch (error) {
             console.error('Error during registration:', error);
             throw new Error('Registration failed');
+        }
+    });
+}
+function RegisterAdminUser(registerData) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { nom, prenom, email, password } = registerData;
+        try {
+            const response = yield apiClient_1.apiClient.post(`${URL_AUTH}/register-admin`, {
+                nom,
+                prenom,
+                email,
+                password,
+            });
+            if (response.status !== 201) {
+                throw new Error('Admin registration failed');
+            }
+            return response.data;
+        }
+        catch (error) {
+            console.error('Error during admin registration:', error);
+            throw new Error('Admin registration failed');
         }
     });
 }

@@ -15,6 +15,8 @@ router.get('/:id/download', deliverable_controller_1.downloadDeliverable);
 // All livrable routes
 router.get('/', deliverable_controller_1.getAllDeliverables);
 router.get('/:id', deliverable_controller_1.getDeliverableById);
+router.get('/project/:id', deliverable_controller_1.getDeliverablesByProjectId);
+router.get('/groups/:groupId', deliverable_controller_1.getDeliverablesByGroupId);
 router.post('/internal/similarity-check/project/:projectId', deliverable_controller_1.similarityCheck);
 router.get('/projects/:projectId/similarity-matrix', deliverable_controller_1.similarityMatrix);
 exports.default = router;

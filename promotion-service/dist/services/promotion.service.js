@@ -45,10 +45,16 @@ class PromotionService {
     }
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.promotionRepo.findOne({
-                where: { id },
-                relations: ["promotionStudents"]
-            });
+            const promo = yield this.promotionRepo.findOne({ where: { id }, relations: ["promotionStudents"] });
+            if (!promo) {
+                throw new Error("Promotion not found");
+            }
+            promo.promotionStudents.forEach(student => delete student.promotion);
+            return promo;
+            // return this.promotionRepo.findOne({
+            //   where: { id },  
+            //   relations: ["promotionStudents"]
+            // });
         });
     }
     update(id, updateData) {

@@ -4,6 +4,7 @@ import "reflect-metadata";
 import { AppDataSource } from "./database/database";
 import cors from "cors";
 import userRoutes from "./routes/user.routes";
+import roleRoutes from "./routes/role.routes";
 dotenv.config();
 
 const app = express();
@@ -22,6 +23,7 @@ const main = async () => {
 
         // 3. Routes
         app.use('/users',userRoutes);
+        app.use('/roles', roleRoutes);
 
         // 5. Lancement serveur
         app.listen(PORT, () => {

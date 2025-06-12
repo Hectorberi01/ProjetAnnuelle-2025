@@ -2,6 +2,9 @@ import { SERVICES } from "../config/services.config";
 import { apiClient } from "../utils/apiClient";
 import { getProjectById } from "./projectService";
 import * as env from "dotenv"
+import { getUserById } from "./userService";
+import { getReportByGroup } from "./reportService";
+import { getDeliverablesByGroup } from "./deliverableService";
 env.config();
 
 const URL_GROUPS = SERVICES.groups || "http://localhost:3004/groups";
@@ -12,7 +15,34 @@ export async function getGroupById(groupId: number) {
         if (response.status !== 200) {
             throw new Error('Failed to fetch group');
         }
+
+        const groupData: any = response.data;
+
+        // Récupère tous les étudiants associés à groupStudent
+        const studentObjects = await Promise.all(
+            groupData.groupStudent.map(async (gs: any) => {
+                const user = await getUserById(gs.studentId);
+                return {
+                ...gs, // garde l'id de groupStudent
+                student: user, // ajoute les données de l'étudiant
+                };
+            })
+        );
+
+        // on récupère les rapports associés à ce groupe
+        const reports = await getReportByGroup(groupId);
+        groupData.reports = reports;
+
+        // on récupère les livrables associés à ce groupe
+        const deliverables = await getDeliverablesByGroup(groupId);
+        groupData.deliverables = deliverables;
+
+        // Remplace groupStudent par le tableau enrichi
+        groupData.groupStudent = studentObjects;
+        
+        response.data = groupData;
         return response;
+        //return groupData;
     } catch (error) {
         console.error('Error fetching group:', error);
         throw new Error('Failed to fetch group');

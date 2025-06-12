@@ -76,3 +76,15 @@ export const  getById = async (req:Request, res:Response)=> {
     }
     res.status(200).json(response);
 }
+
+export const  getByGroup = async (req:Request, res:Response)=> {
+    console.log('Getting reports by group');
+    const groupId = parseInt(req.params.groupId);
+    console.log('Group ID:', groupId);
+    const response = await reportService.findByGroup(groupId);
+    if (!response) {
+        res.status(404).json({ message: 'No reports found for this group' });
+        return;
+    }
+    res.status(200).json(response);
+}

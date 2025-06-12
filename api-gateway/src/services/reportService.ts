@@ -4,7 +4,7 @@
 import { SERVICES } from "../config/services.config";
 import { apiClient } from "../utils/apiClient";
 
-const URL_REPORTS = SERVICES.reports || "http://localhost:3005/reports";
+const URL_REPORTS = SERVICES.reports || "http://localhost:3006/reports";
 
 export async function getAllReports(): Promise<any[]> {
     try {
@@ -56,6 +56,20 @@ export async function getReportById(reportId: number): Promise<any> {
     } catch (error) {
         console.error('Error fetching report:', error);
         throw new Error('Failed to fetch report');
+    }
+}
+
+export async function getReportByGroup(groupId: number): Promise<any[]> {
+    console.log("url", `${URL_REPORTS}/groups/${groupId}`);
+    try {
+        const response = await apiClient.get<any[]>(`${URL_REPORTS}/groups/${groupId}`);
+        if (response.status !== 200) {
+            throw new Error('Failed to fetch reports by group');
+        }
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching reports by group:', error);
+        throw new Error('Failed to fetch reports by group');
     }
 }
 

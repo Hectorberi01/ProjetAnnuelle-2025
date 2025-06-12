@@ -18,7 +18,7 @@ const promotionService_1 = require("../services/promotionService");
 const upload = (0, multer_1.default)();
 const router = (0, express_1.Router)();
 // Get all promotions
-router.get("/list", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const promotions = yield (0, promotionService_1.getAllPromotions)();
     console.log("promotions", promotions);
     res.json(promotions);
@@ -27,7 +27,6 @@ router.get("/list", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const promotionId = parseInt(req.params.id);
     const promotion = yield (0, promotionService_1.getPromotionById)(promotionId);
-    console.log("promotion", promotion);
     res.json(promotion);
 }));
 // Create a new promotion

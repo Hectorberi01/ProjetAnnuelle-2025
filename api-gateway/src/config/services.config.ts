@@ -42,11 +42,15 @@ export const SERVICES = {
     ? 'http://auth:3001/auth'
     : process.env.AUTH || 'http://localhost:3001/auth',
 
-  livrables: isDocker
-    ? 'http://livrables:3000/livrables'
-    : process.env.LIVRABLES || 'http://localhost:3009/livrables',
+  deliverables: isDocker
+    ? 'http://deliverables:3009/deliverables'
+    : process.env.DELIVERABLES || 'http://localhost:3009/deliverables',
 
   reports: isDocker
     ? 'http://reports:3006/reports'
     : process.env.REPORTS || 'http://localhost:3006/reports',
+
+  soutenances: isDocker
+    ? 'http://soutenances:3010/soutenances'
+    : process.env.SOUTENANCES || 'http://localhost:3010/soutenances',
 };

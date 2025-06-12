@@ -10,7 +10,6 @@ import { Buffer } from 'buffer';
 
 dotenv.config();
 
-//let USER_SERVICE_URL: string;
 
 const isDocker = process.env.IS_DOCKER === 'true';
 
@@ -51,6 +50,7 @@ export const register = async (data: RegisterDTO) => {
 
   const requiredTextFields = ['nom', 'prenom', 'email'];
   for (const field of requiredTextFields) {
+    
     const value = (data as any)[field];
     if (!value || value.trim() === "") {
       return { status: 400, data: { error: `Le champ '${field}' est requis.` } };

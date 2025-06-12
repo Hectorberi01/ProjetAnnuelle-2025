@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { create, deleteReport, getAll, getById, getByProject, update } from "../controllers/report.controller";
+import { create, deleteReport, getAll, getByGroup, getById, getByProject, update } from "../controllers/report.controller";
 //import { createSection, getSections, updateSection } from "../controllers/report-section.controller";
 
 const router = Router();
@@ -21,5 +21,8 @@ router.get('/projects/:projectId', getByProject);
 
 // suppression d'un rapport
 router.delete('/:id', deleteReport);
+
+// Récupérer tous les rapports d'un groupe
+router.get('/groups/:groupId', getByGroup);
 
 export default router;

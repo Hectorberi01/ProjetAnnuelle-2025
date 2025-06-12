@@ -27,6 +27,7 @@ export class ProjectController {
 
     static async getProjectsByPromotionId(req: Request, res: Response) {
         const { promotionId } = req.params;
+        console.log('Fetching projects for promotion ID:', promotionId);
         try {
             const projects = await projetService.getProjectsByPromotion(+promotionId);
             res.status(200).json(projects);
@@ -43,6 +44,30 @@ export class ProjectController {
         } catch (error) {
             console.error('Error creating project:', error);
             res.status(500).json({ message: 'Failed to create project' });
+        }
+    }
+
+    static async addSoutenance(req: Request, res: Response) {
+        const { id } = req.params;
+        const { soutenanceDate, soutenanceDuration, lieuSoutenance } = req.body;
+        try {
+            const updatedProject = await projetService.addSoutenanceInfo(+id, soutenanceDate, soutenanceDuration, lieuSoutenance);
+            res.status(200).json(updatedProject);
+        } catch (error) {
+            console.error('Error adding soutenance:', error);
+            res.status(500).json({ message: 'Failed to add soutenance' });
+        }
+    }
+
+    static async updateSoutenance(req: Request, res: Response) {
+        const { id } = req.params;
+        const { soutenanceDate, soutenanceDuration, lieuSoutenance } = req.body;
+        try {
+            const updatedProject = await projetService.addSoutenanceInfo(+id, soutenanceDate, soutenanceDuration, lieuSoutenance);
+            res.status(200).json(updatedProject);
+        } catch (error) {
+            console.error('Error updating soutenance:', error);
+            res.status(500).json({ message: 'Failed to update soutenance' });
         }
     }
 

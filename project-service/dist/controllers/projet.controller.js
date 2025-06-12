@@ -41,6 +41,7 @@ class ProjectController {
     static getProjectsByPromotionId(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { promotionId } = req.params;
+            console.log('Fetching projects for promotion ID:', promotionId);
             try {
                 const projects = yield projetService.getProjectsByPromotion(+promotionId);
                 res.status(200).json(projects);
@@ -60,6 +61,34 @@ class ProjectController {
             catch (error) {
                 console.error('Error creating project:', error);
                 res.status(500).json({ message: 'Failed to create project' });
+            }
+        });
+    }
+    static addSoutenance(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const { soutenanceDate, soutenanceDuration, lieuSoutenance } = req.body;
+            try {
+                const updatedProject = yield projetService.addSoutenanceInfo(+id, soutenanceDate, soutenanceDuration, lieuSoutenance);
+                res.status(200).json(updatedProject);
+            }
+            catch (error) {
+                console.error('Error adding soutenance:', error);
+                res.status(500).json({ message: 'Failed to add soutenance' });
+            }
+        });
+    }
+    static updateSoutenance(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const { soutenanceDate, soutenanceDuration, lieuSoutenance } = req.body;
+            try {
+                const updatedProject = yield projetService.addSoutenanceInfo(+id, soutenanceDate, soutenanceDuration, lieuSoutenance);
+                res.status(200).json(updatedProject);
+            }
+            catch (error) {
+                console.error('Error updating soutenance:', error);
+                res.status(500).json({ message: 'Failed to update soutenance' });
             }
         });
     }

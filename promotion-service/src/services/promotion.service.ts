@@ -30,10 +30,16 @@ export class PromotionService {
   }
 
   async findById(id: number) {
-    return this.promotionRepo.findOne({
-      where: { id },  
-      relations: ["promotionStudents"]
-    });
+    const promo = await this.promotionRepo.findOne({ where: { id }, relations: ["promotionStudents"] });
+    if (!promo) {
+      throw new Error("Promotion not found");
+    }
+    promo.promotionStudents.forEach(student => delete student.promotion);
+    return promo;
+    // return this.promotionRepo.findOne({
+    //   where: { id },  
+    //   relations: ["promotionStudents"]
+    // });
   }
 
   async update(id: number, updateData: Partial<Promotion>) {

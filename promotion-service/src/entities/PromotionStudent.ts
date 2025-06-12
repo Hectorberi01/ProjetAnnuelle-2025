@@ -13,5 +13,5 @@ export class PromotionStudent {
   studentId!: number;
 
   @ManyToOne(() => Promotion, (promotion) => promotion.promotionStudents)
-  promotion!: Promotion;
+  promotion?: Promotion;
 }
