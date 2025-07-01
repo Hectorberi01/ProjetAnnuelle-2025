@@ -46,6 +46,18 @@ router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(500).json({ message: 'Failed to fetch group' });
     }
 }));
+router.get('/project/:projectId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const projectId = parseInt(req.params.projectId);
+    console.log("Fetching groups for project ID:", projectId);
+    try {
+        const groups = yield (0, groupService_1.getGroupByProjectId)(projectId); // Replace with actual service call to fetch groups by project ID
+        res.status(200).json(groups);
+    }
+    catch (error) {
+        console.error('Error fetching groups for project:', error);
+        res.status(500).json({ message: 'Failed to fetch groups for project' });
+    }
+}));
 // Create Group manually
 router.post('/:projectId/manual', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -123,7 +135,7 @@ router.post('/:projectId/random', (req, res) => __awaiter(void 0, void 0, void 0
             console.log("Group Data:", groupData);
             // add students to the group
             for (const studentId of students) {
-                const addStudentResponse = yield (0, groupService_1.addStudentToGroup)(groupData.id, studentId);
+                const addStudentResponse = yield (0, groupService_1.JoinToGroup)(groupData.id, studentId);
                 if (addStudentResponse.status !== 201) {
                     console.warn(`Failed to add student ${studentId} to group ${groupData.id}`);
                     failedStudents.push(studentId);
@@ -163,7 +175,7 @@ router.post('/:projectId/free', (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 }));
 // Add student to group
-router.post('/addStudent', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/join-to-group', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { groupId, studentId } = req.body;
         if (!groupId || !studentId) {
@@ -171,8 +183,9 @@ router.post('/addStudent', (req, res) => __awaiter(void 0, void 0, void 0, funct
             return;
         }
         // Simulate adding a student to a group
-        const updatedGroup = yield (0, groupService_1.addStudentToGroup)(groupId, studentId); // Replace with actual service call
-        res.status(200).json(updatedGroup);
+        const updatedGroup = yield (0, groupService_1.JoinToGroup)(groupId, studentId);
+        const data = yield updatedGroup.data; // Adjust based on your response structure
+        res.status(200).json(data);
     }
     catch (error) {
         console.error('Error adding student to group:', error);

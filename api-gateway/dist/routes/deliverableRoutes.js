@@ -8,14 +8,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const deliverableService_1 = require("../services/deliverableService");
+const multer_1 = __importDefault(require("multer"));
 const router = (0, express_1.Router)();
-router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const upload = (0, multer_1.default)({
+    limits: {
+        fileSize: 10 * 1024 * 1024, // 10 Mo
+    }
+});
+router.post('/', upload.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, description, githubUrl, groupId, projectId } = req.body;
+    const file = req.file;
+    if (!file) {
+        res.status(400).json({ message: "Le fichier est requis." });
+        return;
+    }
     try {
-        const formData = req.body; // Assuming the body contains FormData
-        const result = yield (0, deliverableService_1.submitDeliverable)(formData);
+        const formData = req.body;
+        const deliverable = {
+            name,
+            description,
+            githubUrl,
+            groupId: parseInt(groupId),
+            projectId: parseInt(projectId),
+            file,
+        };
+        const result = yield (0, deliverableService_1.submitDeliverable)(deliverable);
         res.status(201).json(result);
     }
     catch (error) {

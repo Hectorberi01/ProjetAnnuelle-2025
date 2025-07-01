@@ -68,7 +68,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         // Check if the promotion ID is valid
         const promotion = yield (0, promotionService_1.getPromotionById)(promotionId);
-        if (promotion.status !== 200) {
+        if (!promotion) {
             res.status(404).json({ message: "Promotion not found" });
             return;
         }

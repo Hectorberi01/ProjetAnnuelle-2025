@@ -19,11 +19,11 @@ exports.addSoutenanceInfo = addSoutenanceInfo;
 exports.updateSoutenanceInfo = updateSoutenanceInfo;
 const apiClient_1 = require("../utils/apiClient");
 const services_config_1 = require("../config/services.config");
-const express_1 = require("express");
 const groupService_1 = require("./groupService");
 const reportService_1 = require("./reportService");
 const soutenanceService_1 = require("./soutenanceService");
 const deliverableService_1 = require("./deliverableService");
+const userService_1 = require("./userService");
 const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/projects";
 const URL_PROMOTIONS = services_config_1.SERVICES.promotions || "http://localhost:3007/promotions";
 const URL_GROUPS = services_config_1.SERVICES.groups || "http://localhost:3004/groups";
@@ -80,14 +80,24 @@ function getProjectById(projectId) {
             delete promotion.promotionStudents; // on supprime les étudiants de la promotion pour ne pas les renvoyer dans le projet
             // on récupère les groupes rattachés au projet
             const groupsResponse = yield (0, groupService_1.getGroupByProjectId)(projectId);
-            console.log('groupsResponse', groupsResponse);
+            //delete groupsResponse[0].projectId;
+            // 4. Enrichissement de chaque groupStudent avec l'objet student
+            const enrichedGroups = yield Promise.all(groupsResponse.map((group) => __awaiter(this, void 0, void 0, function* () {
+                const enrichedGroupStudent = yield Promise.all(group.groupStudent.map((gs) => __awaiter(this, void 0, void 0, function* () {
+                    const user = yield (0, userService_1.getUserById)(gs.studentId);
+                    return Object.assign(Object.assign({}, gs), { student: user });
+                })));
+                return Object.assign(Object.assign({}, group), { groupStudent: enrichedGroupStudent });
+            })));
             // on récupère les livrables du projet
             const livrablesResponse = yield (0, deliverableService_1.getDeliverablesByProjectId)(projectId);
             // on écupère les rapports du projet
             const reportsResponse = yield (0, reportService_1.getReportByProject)(projectId);
             // on récupère les soutenances du projet
             const soutenancesResponse = yield (0, soutenanceService_1.getSoutenanceSchedule)(projectId);
-            const result = Object.assign(Object.assign({}, response.data), { promotion: promotion, groups: groupsResponse, reports: reportsResponse, livrables: livrablesResponse, soutenances: soutenancesResponse });
+            // on récupère la similarité entre les livrables
+            const similarity = yield (0, deliverableService_1.similarityMatrix)(projectId);
+            const result = Object.assign(Object.assign({}, response.data), { promotion: promotion, groups: enrichedGroups, reports: reportsResponse, livrables: livrablesResponse, soutenances: soutenancesResponse, similarity: similarity });
             return result;
         }
         catch (error) {
@@ -130,18 +140,16 @@ function deleteProject(projectId) {
 }
 function getProjectsByPromotionId(promotionId) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('URL', `${URL_PROJECTS}/promotion/${promotionId}`);
         try {
             const response = yield apiClient_1.apiClient.get(`${URL_PROJECTS}/promotion/${promotionId}`);
-            console.log('response', response);
             if (response.status !== 200) {
-                return response;
+                return [];
             }
             return response.data;
         }
         catch (error) {
             console.error('Error fetching projects by promotion ID:', error);
-            return express_1.response;
+            return [];
         }
     });
 }

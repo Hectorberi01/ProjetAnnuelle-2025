@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllDeliverables = getAllDeliverables;
 exports.getDeliverableById = getDeliverableById;
@@ -18,11 +21,13 @@ exports.downloadDeliverable = downloadDeliverable;
 exports.similarityCheck = similarityCheck;
 exports.similarityMatrix = similarityMatrix;
 const services_config_1 = require("../config/services.config");
+const form_data_1 = __importDefault(require("form-data"));
+const node_fetch_1 = __importDefault(require("node-fetch"));
 const DELIVERABLES_URL = services_config_1.SERVICES.deliverables || "http://localhost:3009/deliverables";
 function getAllDeliverables() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield fetch(`${DELIVERABLES_URL}`);
+            const response = yield (0, node_fetch_1.default)(`${DELIVERABLES_URL}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch deliverables');
             }
@@ -37,7 +42,7 @@ function getAllDeliverables() {
 function getDeliverableById(deliverableId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield fetch(`${DELIVERABLES_URL}/${deliverableId}`);
+            const response = yield (0, node_fetch_1.default)(`${DELIVERABLES_URL}/${deliverableId}`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch deliverable with ID ${deliverableId}`);
             }
@@ -52,7 +57,7 @@ function getDeliverableById(deliverableId) {
 function getDeliverablesByGroup(groupId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield fetch(`${DELIVERABLES_URL}/groups/${groupId}`);
+            const response = yield (0, node_fetch_1.default)(`${DELIVERABLES_URL}/groups/${groupId}`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch deliverables for group ID ${groupId}`);
             }
@@ -68,7 +73,7 @@ function getDeliverablesByProjectId(projectId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             console.log(`Fetching deliverables URL: ${DELIVERABLES_URL}/project/${projectId}`);
-            const response = yield fetch(`${DELIVERABLES_URL}/project/${projectId}`);
+            const response = yield (0, node_fetch_1.default)(`${DELIVERABLES_URL}/project/${projectId}`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch deliverables for project ID ${projectId}`);
             }
@@ -82,10 +87,25 @@ function getDeliverablesByProjectId(projectId) {
 }
 function submitDeliverable(formData) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log('Submitting deliverable with formData:', formData);
+        console.log('Deliverables URL:', DELIVERABLES_URL);
+        const form = new form_data_1.default();
+        form.append('name', formData.name);
+        form.append('description', formData.description);
+        if (formData.githubUrl) {
+            form.append('githubUrl', formData.githubUrl);
+        }
+        form.append('groupId', formData.groupId.toString());
+        form.append('projectId', formData.projectId.toString());
+        form.append('file', formData.file.buffer, {
+            filename: formData.file.originalname,
+            contentType: formData.file.mimetype,
+        });
         try {
-            const response = yield fetch(`${DELIVERABLES_URL}`, {
+            const response = yield (0, node_fetch_1.default)(`${DELIVERABLES_URL}`, {
                 method: 'POST',
-                body: formData,
+                body: form,
+                headers: form.getHeaders(),
             });
             if (!response.ok) {
                 throw new Error('Failed to submit deliverable');
@@ -101,11 +121,13 @@ function submitDeliverable(formData) {
 function downloadDeliverable(deliverableId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield fetch(`${DELIVERABLES_URL}/${deliverableId}/download`);
+            const response = yield (0, node_fetch_1.default)(`${DELIVERABLES_URL}/${deliverableId}/download`);
             if (!response.ok) {
                 throw new Error(`Failed to download deliverable with ID ${deliverableId}`);
             }
-            return yield response.blob();
+            const arrayBuffer = yield response.arrayBuffer();
+            return Buffer.from(arrayBuffer);
+            //return await response.blob();
         }
         catch (error) {
             console.error(`Error downloading deliverable with ID ${deliverableId}:`, error);
@@ -116,7 +138,7 @@ function downloadDeliverable(deliverableId) {
 function similarityCheck(projectId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield fetch(`${DELIVERABLES_URL}/internal/similarity-check/project/${projectId}`, {
+            const response = yield (0, node_fetch_1.default)(`${DELIVERABLES_URL}/internal/similarity-check/project/${projectId}`, {
                 method: 'POST',
             });
             if (!response.ok) {
@@ -133,7 +155,7 @@ function similarityCheck(projectId) {
 function similarityMatrix(projectId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield fetch(`${DELIVERABLES_URL}/projects/${projectId}/similarity-matrix`);
+            const response = yield (0, node_fetch_1.default)(`${DELIVERABLES_URL}/projects/${projectId}/similarity-matrix`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch similarity matrix for project ID ${projectId}`);
             }

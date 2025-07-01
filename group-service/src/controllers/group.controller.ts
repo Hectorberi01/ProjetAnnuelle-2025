@@ -107,6 +107,9 @@ export class GroupController {
 
     static async addStudentToGroup(req: Request, res: Response) {
       const { groupId, studentId } = req.body;
+      console.log('Adding student to group');
+      console.log('Group ID:', groupId);
+      console.log('Student ID:', studentId);
       try {
         const result = await service.addStudentToGroup(groupId, studentId);
         res.status(201).json(result);

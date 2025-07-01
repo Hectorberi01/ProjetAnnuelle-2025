@@ -5,7 +5,8 @@ import { response } from "express";
 import { getGroupByProjectId } from "./groupService";
 import { getReportByProject } from "./reportService";
 import { getSoutenanceSchedule } from "./soutenanceService";
-import { getDeliverableById, getDeliverablesByProjectId } from "./deliverableService";
+import { getDeliverableById, getDeliverablesByProjectId,similarityMatrix } from "./deliverableService";
+import { getUserById } from "./userService";
 
 const URL_PROJECTS = SERVICES.projects || "http://localhost:3002/projects";
 const URL_PROMOTIONS = SERVICES.promotions || "http://localhost:3007/promotions";
@@ -66,8 +67,26 @@ export async function getProjectById(projectId: number) {
 
         // on récupère les groupes rattachés au projet
         const groupsResponse = await getGroupByProjectId(projectId);
+         //delete groupsResponse[0].projectId;
+        // 4. Enrichissement de chaque groupStudent avec l'objet student
+        const enrichedGroups = await Promise.all(
+            groupsResponse.map(async (group: any) => {
+                const enrichedGroupStudent = await Promise.all(
+                    group.groupStudent.map(async (gs: any) => {
+                        const user = await getUserById(gs.studentId);
+                        return {
+                            ...gs,
+                            student: user
+                        };
+                    })
+                );
 
-        console.log('groupsResponse', groupsResponse);
+                return {
+                    ...group,
+                    groupStudent: enrichedGroupStudent
+                };
+            })
+        );
 
         // on récupère les livrables du projet
         const livrablesResponse = await getDeliverablesByProjectId(projectId);
@@ -78,13 +97,18 @@ export async function getProjectById(projectId: number) {
         // on récupère les soutenances du projet
         const soutenancesResponse = await getSoutenanceSchedule(projectId);
 
+        // on récupère la similarité entre les livrables
+
+        const similarity = await similarityMatrix(projectId)
+
         const result = {
             ...response.data,
             promotion: promotion,
-            groups: groupsResponse,
+            groups: enrichedGroups,
             reports: reportsResponse,
             livrables: livrablesResponse,
-            soutenances: soutenancesResponse
+            soutenances: soutenancesResponse,
+            similarity: similarity
         };
 
         return result;
@@ -122,20 +146,18 @@ export async function deleteProject(projectId: number) {
     }
 }
 
-export async function getProjectsByPromotionId(promotionId: number) {
-    
-    console.log('URL',`${URL_PROJECTS}/promotion/${promotionId}`);
+export async function getProjectsByPromotionId(promotionId: number): Promise<any[]> {
+
     try {
         const response = await apiClient.get(`${URL_PROJECTS}/promotion/${promotionId}`);
-        console.log('response', response);
         if (response.status !== 200) {
-            return response;
+            return [];
         }
 
-        return response.data;
+        return response.data as any[];
     } catch (error) {
         console.error('Error fetching projects by promotion ID:', error);
-        return response;
+        return [];
     }
 }
 

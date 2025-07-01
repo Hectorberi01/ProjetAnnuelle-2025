@@ -60,6 +60,22 @@ router.post("/:id/students", (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.status(500).json({ message: "Failed to add student to promotion" });
     }
 }));
+// Get promotions by student ID
+router.get("/students/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const studentId = parseInt(req.params.id);
+    try {
+        const promotions = yield (0, promotionService_1.getPromotionByStudentId)(studentId);
+        if (promotions.length === 0) {
+            res.status(404).json({ message: "No promotions found for this student" });
+            return;
+        }
+        res.status(200).json(promotions);
+    }
+    catch (error) {
+        console.error('Error fetching promotions by student ID:', error);
+        res.status(500).json({ message: "Failed to fetch promotions by student ID" });
+    }
+}));
 //Update a promotion
 router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const promotionId = parseInt(req.params.id);

@@ -29,6 +29,24 @@ export class PromotionService {
     return this.promotionRepo.find({relations: ["promotionStudents"]});
   }
 
+  async findByStudentId(studentId: number) {
+    const promos = await this.promotionRepo
+      .createQueryBuilder("promotion")
+      .innerJoinAndSelect("promotion.promotionStudents", "promotionStudent")
+      .where("promotionStudent.studentId = :studentId", { studentId })
+      .getMany();
+    promos.forEach(promo => promo.promotionStudents.forEach(student => delete student.promotion));
+    return promos;
+    // return this.promotionRepo.find({
+    //   relations: ["promotionStudents"],
+    //   where: {
+    //     promotionStudents: {
+    //       studentId: studentId,
+    //     },
+    //   },
+    // });
+  }
+
   async findById(id: number) {
     const promo = await this.promotionRepo.findOne({ where: { id }, relations: ["promotionStudents"] });
     if (!promo) {

@@ -71,6 +71,8 @@ class GroupService {
             const group = yield this.groupRepo.findOneBy({ id: groupId });
             if (!group)
                 throw new Error('Group not found');
+            console.log("Adding student to group", groupId, studentId);
+            console.log("Group", group);
             const groupStudent = this.groupStudentRepo.create({ studentId, createdAt: new Date(), groupStudent: group });
             return this.groupStudentRepo.save(groupStudent);
         });

@@ -52,7 +52,7 @@ exports.createRandomGroup = createRandomGroup;
 exports.createGroup = createGroup;
 exports.updateGroup = updateGroup;
 exports.deleteGroup = deleteGroup;
-exports.addStudentToGroup = addStudentToGroup;
+exports.JoinToGroup = JoinToGroup;
 const services_config_1 = require("../config/services.config");
 const apiClient_1 = require("../utils/apiClient");
 const projectService_1 = require("./projectService");
@@ -62,6 +62,7 @@ const reportService_1 = require("./reportService");
 const deliverableService_1 = require("./deliverableService");
 env.config();
 const URL_GROUPS = services_config_1.SERVICES.groups || "http://localhost:3004/groups";
+const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/projects";
 function getGroupById(groupId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -108,18 +109,6 @@ function getAllGroups() {
         }
     });
 }
-// export async function getGroupByName(groupName: string) {   
-//     try {
-//         const response = await apiClient.get(`/groups/name/${groupName}`);
-//         if (response.status !== 200) {
-//             throw new Error('Failed to fetch group by name');
-//         }
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error fetching group by name:', error);
-//         throw new Error('Failed to fetch group by name');
-//     }
-// }
 function getGroupByPromotionId(promotionId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -142,7 +131,36 @@ function getGroupByProjectId(projectId) {
             if (response.status !== 200) {
                 throw new Error('Failed to fetch group by project ID');
             }
-            return response.data;
+            // Enrichir les données de chaque groupe avec les étudiants
+            const groups = response.data;
+            // const projectResponse = await apiClient.get<Project>(`${URL_PROJECTS}/${projectId}`);
+            // if (projectResponse.status !== 200) {
+            // throw new Error('Failed to fetch project');
+            // }
+            // const project = projectResponse.data;
+            //Remplacer chaque studentId par les données de l'étudiant
+            // for (const group of groups) {
+            //     for (const gs of group.groupStudent) {
+            //         const student = await getUserById(gs.studentId);
+            //         gs.student = student;
+            //         delete gs.studentId;
+            //     }
+            // }
+            // for (const group of groups) {
+            //     // Remplacer projectId par l'objet project
+            //     group.project = project;
+            //     delete group.projectId;
+            //     // Remplacer chaque studentId par l'objet student
+            //     await Promise.all(
+            //         group.groupStudent.map(async (gs: any) => {
+            //         const student = await getUserById(gs.studentId);
+            //         gs.student = student;
+            //         delete gs.studentId;
+            //         })
+            //     );
+            // }
+            return groups;
+            //return response.data as any[];
         }
         catch (error) {
             console.error('Error fetching group by project ID:', error);
@@ -268,7 +286,7 @@ function deleteGroup(groupId) {
         }
     });
 }
-function addStudentToGroup(groupId, studentId) {
+function JoinToGroup(groupId, studentId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const data = {
@@ -276,7 +294,7 @@ function addStudentToGroup(groupId, studentId) {
                 studentId: studentId
             };
             console.log("Adding student to group", data);
-            const response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/addStudent`, data);
+            const response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/add-student`, data);
             return response;
         }
         catch (error) {

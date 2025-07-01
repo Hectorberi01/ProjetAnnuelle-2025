@@ -1,12 +1,34 @@
 import { Router } from 'express';
 import { downloadDeliverable, getAllDeliverables, getDeliverableById, getDeliverablesByGroup, similarityCheck, similarityMatrix, submitDeliverable } from '../services/deliverableService';
-
+import multer from 'multer';
 const router = Router();
+const upload = multer({
+    limits: {
+        fileSize: 10 * 1024 * 1024, // 10 Mo
+    }
+}); 
 
-router.post('/', async (req, res) => {
+router.post('/', upload.single('file'),async (req, res) => {
+    const { name, description, githubUrl, groupId,projectId } = req.body;
+    const file = req.file;
+
+    if (!file) {
+        res.status(400).json({ message: "Le fichier est requis." });
+        return;
+    }
+
     try {
-        const formData = req.body; // Assuming the body contains FormData
-        const result = await submitDeliverable(formData);
+        const formData = req.body;
+        const deliverable = {
+            name,
+            description,
+            githubUrl,
+            groupId: parseInt(groupId),
+            projectId: parseInt(projectId),
+            file,
+        };
+
+        const result = await submitDeliverable(deliverable);
         res.status(201).json(result);
     } catch (error) {
         console.error('Error submitting deliverable:', error);

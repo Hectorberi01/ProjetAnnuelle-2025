@@ -36,6 +36,17 @@ class PromotionController {
             res.json(promotions);
         });
     }
+    static getByStudentId(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const studentId = Number(req.params.id);
+            const promotions = yield service.findByStudentId(studentId);
+            if (promotions.length === 0) {
+                res.status(404).json({ message: "Not found" });
+                return;
+            }
+            res.status(200).json(promotions);
+        });
+    }
     static getById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const id = Number(req.params.id);
@@ -44,14 +55,14 @@ class PromotionController {
                 res.status(404).json({ message: "Not found" });
                 return;
             }
-            res.json(promotion);
+            res.status(200).json(promotion);
         });
     }
     static update(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const id = Number(req.params.id);
             const updated = yield service.update(id, req.body);
-            res.json(updated);
+            res.status(200).json(updated);
         });
     }
     static delete(req, res) {

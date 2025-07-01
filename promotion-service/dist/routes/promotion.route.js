@@ -5,6 +5,7 @@ const promotion_controller_1 = require("../controllers/promotion.controller");
 const router = (0, express_1.Router)();
 router.post("/", promotion_controller_1.PromotionController.create);
 router.post("/:id/students", promotion_controller_1.PromotionController.addStudentToPromotion);
+router.get("/students/:id", promotion_controller_1.PromotionController.getByStudentId);
 router.get("/", promotion_controller_1.PromotionController.getAll);
 router.get("/:id", promotion_controller_1.PromotionController.getById);
 router.put("/:id", promotion_controller_1.PromotionController.update);

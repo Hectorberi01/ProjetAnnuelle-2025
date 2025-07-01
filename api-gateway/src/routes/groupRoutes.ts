@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { addStudentToGroup, createGroup, getAllGroups, getGroupById } from '../services/groupService';
+import { JoinToGroup, createGroup, getAllGroups, getGroupById, getGroupByProjectId } from '../services/groupService';
 import { getProjectById } from '../services/projectService';
 import { getPromotionById } from '../services/promotionService';
 import { shuffleArray } from '../utils/shuffle';
@@ -38,6 +38,19 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch group' });
     }
 })
+
+router.get('/project/:projectId', async (req, res) => {
+    const projectId = parseInt(req.params.projectId);
+    console.log("Fetching groups for project ID:", projectId);
+    try {
+        const groups = await getGroupByProjectId(projectId); // Replace with actual service call to fetch groups by project ID
+        
+        res.status(200).json(groups);
+    } catch (error) {
+        console.error('Error fetching groups for project:', error);
+        res.status(500).json({ message: 'Failed to fetch groups for project' });
+    }
+});
 
 // Create Group manually
 router.post('/:projectId/manual', async (req, res) => {
@@ -133,7 +146,7 @@ router.post('/:projectId/random', async (req, res) => {
             // add students to the group
             
             for (const studentId of students) {
-                const addStudentResponse = await addStudentToGroup(groupData.id, studentId);
+                const addStudentResponse = await JoinToGroup(groupData.id, studentId);
                 if (addStudentResponse.status !== 201) {
                     console.warn(`Failed to add student ${studentId} to group ${groupData.id}`);
                     failedStudents.push(studentId);
@@ -175,7 +188,7 @@ router.post('/:projectId/free', async (req, res) => {
 });
 
 // Add student to group
-router.post('/addStudent', async (req, res) => {
+router.post('/join-to-group', async (req, res) => {
     try {
         const { groupId, studentId } = req.body;
         if (!groupId || !studentId) {
@@ -183,8 +196,10 @@ router.post('/addStudent', async (req, res) => {
             return;
         }
         // Simulate adding a student to a group
-        const updatedGroup = await addStudentToGroup(groupId, studentId); // Replace with actual service call
-        res.status(200).json(updatedGroup);
+        const updatedGroup = await JoinToGroup(groupId, studentId); 
+        
+        const data = await updatedGroup.data; // Adjust based on your response structure
+        res.status(200).json(data);
     } catch (error) {
         console.error('Error adding student to group:', error);
         res.status(500).json({ message: 'Failed to add student to group' });

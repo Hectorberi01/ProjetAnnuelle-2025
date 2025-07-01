@@ -118,6 +118,9 @@ class GroupController {
     static addStudentToGroup(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { groupId, studentId } = req.body;
+            console.log('Adding student to group');
+            console.log('Group ID:', groupId);
+            console.log('Student ID:', studentId);
             try {
                 const result = yield service.addStudentToGroup(groupId, studentId);
                 res.status(201).json(result);

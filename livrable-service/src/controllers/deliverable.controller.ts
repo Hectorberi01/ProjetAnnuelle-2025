@@ -35,6 +35,7 @@ export const submitDeliverable = async (req: Request, res: Response) => {
         githubUrl: githubUrl || null,
         fileUrl,
       };
+      console.log("Data to submit:", data);
 
       const deliverable = await deliverableService.submitDeliverable(data);
 

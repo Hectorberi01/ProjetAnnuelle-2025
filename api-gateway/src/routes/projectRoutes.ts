@@ -66,7 +66,7 @@ router.post("/", async (req, res) => {
 
         // Check if the promotion ID is valid
         const promotion = await getPromotionById(promotionId);
-        if (promotion.status !== 200) {
+        if (!promotion) {
             res.status(404).json({ message: "Promotion not found" });
             return;
         }

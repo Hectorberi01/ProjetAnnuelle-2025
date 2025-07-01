@@ -1,7 +1,16 @@
 import { SERVICES } from "../config/services.config";
-
+import FormData from 'form-data';
+import fetch, { Headers } from 'node-fetch';
 const DELIVERABLES_URL  = SERVICES.deliverables || "http://localhost:3009/deliverables";
-
+interface submitDeliverableFormData {
+    name: string;
+    description: string;
+    githubUrl?: string;
+    groupId: number;
+    projectId: number;
+    file: Express.Multer.File;
+    
+}
 export async function getAllDeliverables(): Promise<any[]> {
     try {
         const response = await fetch(`${DELIVERABLES_URL}`);
@@ -56,11 +65,28 @@ export async function getDeliverablesByProjectId(projectId: number): Promise<any
 }
 
 
-export async function submitDeliverable(formData: FormData): Promise<any> {
+export async function submitDeliverable(formData: submitDeliverableFormData): Promise<any> {
+    console.log('Submitting deliverable with formData:', formData);
+    console.log('Deliverables URL:', DELIVERABLES_URL);
+
+    const form = new FormData();
+    form.append('name', formData.name);
+    form.append('description', formData.description);
+    if (formData.githubUrl) {
+        form.append('githubUrl', formData.githubUrl);
+    }
+    form.append('groupId', formData.groupId.toString());
+    form.append('projectId', formData.projectId.toString());
+    form.append('file', formData.file.buffer, {
+        filename: formData.file.originalname,
+        contentType: formData.file.mimetype,
+    });
     try {
         const response = await fetch(`${DELIVERABLES_URL}`, {
             method: 'POST',
-            body: formData,
+            body: form,
+            headers: form.getHeaders(),
+            
         });
         if (!response.ok) {
             throw new Error('Failed to submit deliverable');
@@ -72,13 +98,15 @@ export async function submitDeliverable(formData: FormData): Promise<any> {
     }
 }
 
-export async function downloadDeliverable(deliverableId: number): Promise<Blob> {
+export async function downloadDeliverable(deliverableId: number): Promise<Buffer> {
     try {
         const response = await fetch(`${DELIVERABLES_URL}/${deliverableId}/download`);
         if (!response.ok) {
             throw new Error(`Failed to download deliverable with ID ${deliverableId}`);
         }
-        return await response.blob();
+        const arrayBuffer = await response.arrayBuffer();
+        return Buffer.from(arrayBuffer);
+        //return await response.blob();
     } catch (error) {
         console.error(`Error downloading deliverable with ID ${deliverableId}:`, error);
         throw new Error(`Failed to download deliverable with ID ${deliverableId}`);

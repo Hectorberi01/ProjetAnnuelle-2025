@@ -40,6 +40,7 @@ const submitDeliverable = (req, res) => __awaiter(void 0, void 0, void 0, functi
             githubUrl: githubUrl || null,
             fileUrl,
         };
+        console.log("Data to submit:", data);
         const deliverable = yield deliverableService.submitDeliverable(data);
         res.status(201).json({ message: 'Deliverable created successfully', deliverable });
     }

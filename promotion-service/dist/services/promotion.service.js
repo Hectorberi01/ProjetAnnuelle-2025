@@ -43,6 +43,25 @@ class PromotionService {
             return this.promotionRepo.find({ relations: ["promotionStudents"] });
         });
     }
+    findByStudentId(studentId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const promos = yield this.promotionRepo
+                .createQueryBuilder("promotion")
+                .innerJoinAndSelect("promotion.promotionStudents", "promotionStudent")
+                .where("promotionStudent.studentId = :studentId", { studentId })
+                .getMany();
+            promos.forEach(promo => promo.promotionStudents.forEach(student => delete student.promotion));
+            return promos;
+            // return this.promotionRepo.find({
+            //   relations: ["promotionStudents"],
+            //   where: {
+            //     promotionStudents: {
+            //       studentId: studentId,
+            //     },
+            //   },
+            // });
+        });
+    }
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const promo = yield this.promotionRepo.findOne({ where: { id }, relations: ["promotionStudents"] });

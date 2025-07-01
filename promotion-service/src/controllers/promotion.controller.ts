@@ -24,20 +24,30 @@ export class PromotionController {
     res.json(promotions);
   }
 
+  static async getByStudentId(req: Request, res: Response) {
+    const studentId = Number(req.params.id);
+    const promotions = await service.findByStudentId(studentId);
+    if (promotions.length === 0) {
+      res.status(404).json({ message: "Not found" });
+      return;
+    }
+    res.status(200).json(promotions);
+  }
+
   static async getById(req: Request, res: Response) {
     const id = Number(req.params.id);
     const promotion = await service.findById(id);
-    if (!promotion){
-       res.status(404).json({ message: "Not found" });
-       return
-    } 
-    res.json(promotion);
+    if (!promotion) {
+      res.status(404).json({ message: "Not found" });
+      return;
+    }
+    res.status(200).json(promotion);
   }
 
   static async update(req: Request, res: Response) {
     const id = Number(req.params.id);
     const updated = await service.update(id, req.body);
-    res.json(updated);
+    res.status(200).json(updated);
   }
 
   static async delete(req: Request, res: Response) {

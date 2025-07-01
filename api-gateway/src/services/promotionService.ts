@@ -1,11 +1,13 @@
 import csvParser from "csv-parser";
 import { Readable } from "stream";
 import { apiClient } from "../utils/apiClient";
-import { createUser, getRoleIdByName, getStudents, getUserByEmail } from "./userService";
+import { createUser, getRoleIdByName, getStudents, getUserByEmail, getUserById } from "./userService";
 import * as env from "dotenv"
 import { SERVICES } from "../config/services.config";
 import { sendAccountCredentialsEmail, sendPromotionEnrollmentEmail } from "./notificationService";
 import { getProjectsByPromotionId } from "./projectService";
+import { getGroupByProjectId, getGroupByPromotionId } from "./groupService";
+import { connect } from "http2";
 env.config();
 
 
@@ -138,6 +140,13 @@ export async function addStudentToPromotion(promotionId: number, studentId: numb
         if (response.status !== 201) {
             throw new Error('Failed to add student to promotion');
         }
+        // on récupère l'étudiant ajouté
+        const studentResponse = await getUserById(studentId);
+
+        // On envoie un email à l'étudiant pour l'informer de son ajout à la promotion
+        if (studentResponse) {
+            await sendPromotionEnrollmentEmail(studentResponse.email, studentResponse.promotionName);
+        }
         return response.data;
     } catch (error) {
         console.error('Error adding student to promotion:', error);
@@ -185,6 +194,51 @@ export async function getPromotionById(promotionId: number): Promise<any> {
         throw new Error('Failed to fetch promotion by ID');
     }
 }
+
+export async function getPromotionByStudentId(studentId: number): Promise<any> {
+    try {
+        const response = await apiClient.get(`${URL_PROMOTIONS}/students/${studentId}`);
+        if (response.status !== 200) throw new Error('Failed to fetch promotion by student ID');
+    
+        const promotionData: any = response.data;   
+
+        const promotionIds = Array.isArray(promotionData) ? promotionData.map((promo: any) => promo.id) : [promotionData.id];
+        //const promotionIds = promotionData?.map((promo: any) => promo.id) || [];
+
+        console.log("promotionIds", promotionIds);
+
+        const projects = await Promise.all(promotionIds.map(async (promotionId: number) => {
+
+            const projectsList = await getProjectsByPromotionId(promotionId);
+
+            return await Promise.all(projectsList.map(async (project: any) => {
+                // Appel au service groupe
+                const groups = await getGroupByProjectId(project.id);
+
+                return { ...project, groups };
+            }));
+        }));
+    
+
+        // Si plusieurs promotions, on retourne un tableau enrichi
+        if (Array.isArray(promotionData)) {
+            return promotionData.map((promo: any, index: number) => ({
+                ...promo,
+                projects: projects[index]
+            }));
+        }
+
+        // Sinon, promotion unique
+        return {
+            ...promotionData,
+            projects: projects[0]
+        };
+    } catch (error) {
+        console.error('Error fetching promotion by student ID:', error);
+        throw new Error('Failed to fetch promotion by student ID');
+    }
+}
+
 export async function getAllPromotions(): Promise<any[]> {
     try {
         console.log("SERVICES.promotions", URL_PROMOTIONS);
