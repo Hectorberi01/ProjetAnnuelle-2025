@@ -109,3 +109,7 @@ Fonction : API Gateway
 cd gateway
 npm init -y
 npm install express axios dotenv cors
+
+export TAG=main
+docker compose -f compose.prod.yml pull
+docker compose -f compose.prod.yml up -d --remove-orphans

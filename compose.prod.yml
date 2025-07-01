@@ -1,0 +1,78 @@
+version: "3.9"
+
+x-service-base: &service-base
+  restart: unless-stopped
+  networks:
+    - backend
+
+services:
+  gateway:
+    <<: *service-base
+    image: ghcr.io/victoire-s/gateway:${TAG:-latest}
+    container_name: gateway
+    env_file: ./api-gateway/.env
+    depends_on:
+      - auth
+      - projets
+      - users
+      - groupes
+      - grades
+      - reports
+      - promotions
+      - livrables
+    ports:
+      - "3000:3000"
+
+  auth:
+    <<: *service-base
+    image: ghcr.io/victoire-s/auth-service:${TAG:-latest}
+    env_file: ./auth-service/.env 
+
+  projets:
+    <<: *service-base
+    image: ghcr.io/victoire-s/project-service:${TAG:-latest}
+    env_file: ./project-service/.env
+
+  users:
+    <<: *service-base
+    image: ghcr.io/victoire-s/user-service:${TAG:-latest}
+    env_file: ./user-service/.env
+
+  groupes:
+    <<: *service-base
+    image: ghcr.io/victoire-s/group-service:${TAG:-latest}
+    env_file: ./group-service/.env
+
+  notations:
+    <<: *service-base
+    image: ghcr.io/victoire-s/notation-service:${TAG:-latest}
+    env_file: ./notation-service/.env
+
+  grades:
+    <<: *service-base
+    image: ghcr.io/victoire-s/grade-service:${TAG:-latest}
+    env_file: ./grade-service/.env
+
+  reports:
+    <<: *service-base
+    image: ghcr.io/victoire-s/report-service:${TAG:-latest}
+    env_file: ./report-service/.env
+
+  promotions:
+    <<: *service-base
+    image: ghcr.io/victoire-s/promotion-service:${TAG:-latest}
+    env_file: ./promotion-service/.env
+
+  livrables:
+    <<: *service-base
+    image: ghcr.io/victoire-s/livrable-service:${TAG:-latest}
+    env_file: ./livrable-service/.env
+
+  soutenances:
+    <<: *service-base
+    image: ghcr.io/victoire-s/soutenance-service:${TAG:-latest}
+    env_file: ./soutenance-service/.env
+
+
+networks:
+  backend:
