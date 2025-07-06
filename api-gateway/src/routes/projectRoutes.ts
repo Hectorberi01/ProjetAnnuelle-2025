@@ -90,16 +90,15 @@ router.put("/:id", async (req, res) => {
     console.log("projectData", projectData);
     try {
         const response = await getProjectById(projectId);
-        if (response.status !== 200) {
+        if (!response) {
             res.status(404).json({ message: "Project not found" });
             return;
         }
         const updatedProject = await updateProject(projectId, projectData);
-        console.log("status", updatedProject.status);
-        if (updatedProject.status !== 200) {
+        if (!updatedProject) {
             res.status(400).json({ message: "Failed to update project" });
             return;
-        }
+        }       
         res.status(200).json(updatedProject.data);
     } catch (error) {
         res.status(500).json({ message: "Failed to update project" });
