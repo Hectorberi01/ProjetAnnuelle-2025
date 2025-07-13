@@ -28,7 +28,7 @@ __decorate([
     __metadata("design:type", Number)
 ], PromotionStudent.prototype, "studentId", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => Promotion_1.Promotion, (promotion) => promotion.promotionStudents),
+    (0, typeorm_1.ManyToOne)(() => Promotion_1.Promotion, (promotion) => promotion.promotionStudents, { onDelete: "CASCADE" }),
     __metadata("design:type", Promotion_1.Promotion)
 ], PromotionStudent.prototype, "promotion", void 0);
 exports.PromotionStudent = PromotionStudent = __decorate([

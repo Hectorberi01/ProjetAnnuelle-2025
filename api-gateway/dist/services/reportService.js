@@ -82,7 +82,6 @@ function getReportById(reportId) {
 }
 function getReportByGroup(groupId) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("url", `${URL_REPORTS}/groups/${groupId}`);
         try {
             const response = yield apiClient_1.apiClient.get(`${URL_REPORTS}/groups/${groupId}`);
             if (response.status !== 200) {

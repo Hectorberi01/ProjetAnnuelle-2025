@@ -65,10 +65,9 @@ class ProjetService {
     }
     createProject(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a;
+            var _a, _b;
             try {
-                const preparedData = Object.assign(Object.assign({}, data), { soutenanceDate: (_a = data.soutenanceDate) !== null && _a !== void 0 ? _a : undefined // Remplace null par undefined
-                 });
+                const preparedData = Object.assign(Object.assign({}, data), { soutenanceDate: (_a = data.soutenanceDate) !== null && _a !== void 0 ? _a : undefined, url: (_b = data.url) !== null && _b !== void 0 ? _b : undefined });
                 const project = projetRepo.create(preparedData);
                 return yield projetRepo.save(project);
             }

@@ -1,16 +1,13 @@
 import { Request, Response } from 'express';
 import { GroupService } from '../services/group.service';
 import { AppDataSource } from '../config/database';
-import { manualGroupSchema, groupConfigSchema } from '../validation/validation';
 
 const service = new GroupService(AppDataSource);
 export class GroupController {
 
     static async getAllGroups(req: Request, res: Response) {
       try {
-        console.log('Fetching all groups');
         const groups = await service.getAllGroups();
-        console.log(groups);
         res.status(200).json(groups);
       } catch (error) {
         console.error('Error fetching groups:', error);
@@ -34,7 +31,7 @@ export class GroupController {
     }
 
     static async createGroup(req: Request, res: Response) {
-        console.log('Creating group');
+        
         console.log(req.body);
         const {projectId,name} = req.body;
 
@@ -44,7 +41,7 @@ export class GroupController {
               res.status(400).json({ message: 'Group creation failed' });
               return;
             }
-            res.status(201).json({message : 'Group created successfully'});
+            res.status(201).json(group);
 
         } catch (e) {
             res.status(400).json({ message: 'Group creation failed' });
@@ -107,9 +104,6 @@ export class GroupController {
 
     static async addStudentToGroup(req: Request, res: Response) {
       const { groupId, studentId } = req.body;
-      console.log('Adding student to group');
-      console.log('Group ID:', groupId);
-      console.log('Student ID:', studentId);
       try {
         const result = await service.addStudentToGroup(groupId, studentId);
         res.status(201).json(result);
@@ -137,6 +131,16 @@ export class GroupController {
           return;
         }
         res.status(200).json({ message: 'Group deleted successfully' });
+      } catch (e) {
+        res.status(400).json({ error: e });
+      }
+    }
+
+    static async deleteGroupsByProject(req: Request, res: Response) {
+      const projectId = parseInt(req.params.projectId);
+      try {
+        const result = await service.deleteGroupByProjectId(projectId);
+        res.status(200).json(result);
       } catch (e) {
         res.status(400).json({ error: e });
       }

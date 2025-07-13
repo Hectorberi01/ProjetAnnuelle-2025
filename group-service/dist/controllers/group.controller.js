@@ -17,9 +17,7 @@ class GroupController {
     static getAllGroups(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Fetching all groups');
                 const groups = yield service.getAllGroups();
-                console.log(groups);
                 res.status(200).json(groups);
             }
             catch (error) {
@@ -47,7 +45,6 @@ class GroupController {
     }
     static createGroup(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('Creating group');
             console.log(req.body);
             const { projectId, name } = req.body;
             try {
@@ -56,7 +53,7 @@ class GroupController {
                     res.status(400).json({ message: 'Group creation failed' });
                     return;
                 }
-                res.status(201).json({ message: 'Group created successfully' });
+                res.status(201).json(group);
             }
             catch (e) {
                 res.status(400).json({ message: 'Group creation failed' });
@@ -118,9 +115,6 @@ class GroupController {
     static addStudentToGroup(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { groupId, studentId } = req.body;
-            console.log('Adding student to group');
-            console.log('Group ID:', groupId);
-            console.log('Student ID:', studentId);
             try {
                 const result = yield service.addStudentToGroup(groupId, studentId);
                 res.status(201).json(result);
@@ -152,6 +146,18 @@ class GroupController {
                     return;
                 }
                 res.status(200).json({ message: 'Group deleted successfully' });
+            }
+            catch (e) {
+                res.status(400).json({ error: e });
+            }
+        });
+    }
+    static deleteGroupsByProject(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const projectId = parseInt(req.params.projectId);
+            try {
+                const result = yield service.deleteGroupByProjectId(projectId);
+                res.status(200).json(result);
             }
             catch (e) {
                 res.status(400).json({ error: e });

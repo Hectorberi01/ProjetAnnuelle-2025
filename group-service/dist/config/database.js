@@ -47,7 +47,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
     port: parseInt(process.env.DB_PORT || '3306'),
     username: process.env.DB_USERNAME || 'hector',
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME || 'group-Service',
+    database: process.env.GROUP_DB_NAME || 'Group_Service',
     synchronize: true,
     logging: false,
     entities: [Group_1.Group, groupeStudent_1.GroupStudent],

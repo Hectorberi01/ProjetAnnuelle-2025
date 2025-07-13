@@ -3,13 +3,26 @@ import { User } from "../database/entities/User";
 import { Role } from "../database/entities/Role";
 import bcrypt from "bcrypt";
 
-
+interface CreateUserData {
+    nom: string;
+    prenom: string;
+    email: string;
+    phoneNumber?: string;
+    password?: string;
+    address?: string;
+    imageUrl?: string;
+    isActive?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+    lastLoginAt?: Date;
+    roleId: number;
+}
 export class UserService {
     private userRepo = AppDataSource.getRepository(User);
     private roleRepo = AppDataSource.getRepository(Role);
 
     // Create
-    async create(data: {nom: string; prenom: string; email: string; roleId: number;}): Promise<User> {
+    async create(data: CreateUserData): Promise<User> {
         const role = await this.roleRepo.findOneBy({ id: data.roleId });
         if (!role) throw new Error("Rôle non trouvé");
         const username =
@@ -22,10 +35,16 @@ export class UserService {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = this.userRepo.create({
-            username,
             nom: data.nom,
             prenom: data.prenom,
             email: data.email,
+            username: username,
+            phoneNumber: data.phoneNumber || "null",
+            address: data.address || "null",
+            imageUrl: data.imageUrl || "null",
+            isActive: data.isActive ?? true,
+            createdAt: data.createdAt ?? new Date(),
+            lastLoginAt: data.lastLoginAt ?? null,
             role,
             password: hashedPassword,
         });
@@ -55,8 +74,10 @@ export class UserService {
 
     // UserList
     async findAll(): Promise<User[]> {
-        console.log("findAll users");
-        return this.userRepo.find({ relations: ["role"] });
+        const data = await this.userRepo.find({
+            relations: ["role"],
+        });
+        return data;
     }
 
     // UserById
@@ -66,14 +87,17 @@ export class UserService {
 
     // UserByEmail
     async findByEmail(email: string): Promise<User | null> {
-        console.log("findByEmail", email);
-        const user = await this.userRepo.findOne({ where: { email }, relations: ["role"] });
-        console.log("findByEmail result", user);
-        return user;
+        try {
+            const user = await this.userRepo.findOne({ where: { email }, relations: ["role"] });
+            return user;
+        } catch (error) {
+            console.error("Error in findByEmail:", error);
+            return null;
+        }
     }
 
     // UserUpdate
-    async update(id: number, data: Partial<User>): Promise<User | null> {
+    async update(id: number, data: Partial<CreateUserData>): Promise<User | null> {
         const user = await this.userRepo.findOneBy({ id });
         if (!user) return null;
 
@@ -84,6 +108,14 @@ export class UserService {
         }
 
         Object.assign(user, data);
+        return this.userRepo.save(user);
+    }
+
+    async updateLastLogin(id: number): Promise<User | null> {
+        const user = await this.userRepo.findOneBy({ id });
+        if (!user) return null;
+
+        user.lastLoginAt = new Date();
         return this.userRepo.save(user);
     }
 

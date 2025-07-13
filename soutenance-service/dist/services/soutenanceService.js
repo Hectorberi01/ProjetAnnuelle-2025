@@ -15,6 +15,7 @@ const Soutenance_1 = require("../entities/Soutenance");
 class SoutenanceService {
     static generateSchedule(data) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('Generating schedule with data:', data);
             const repo = database_1.AppDataSource.getRepository(Soutenance_1.Soutenance);
             yield repo.delete({ projectId: data.projectId });
             const schedules = [];
@@ -50,6 +51,7 @@ class SoutenanceService {
                         endTime: end,
                         order: index + 1,
                     });
+                    console.log(`Generated schedule for group ${groupId}:`, schedule);
                     schedules.push(schedule);
                 }
             }

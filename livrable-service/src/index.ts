@@ -9,7 +9,7 @@ import {DeliverableService} from "./services/deliverable.service";
 const deliverableService = new DeliverableService();
 const app  = express()
 
-const PORT = process.env.PORT || 3009
+const PORT = process.env.LIVRABLE_PORT || 3009
 
 const main = async () => {
   

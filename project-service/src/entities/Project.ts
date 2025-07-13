@@ -16,9 +16,12 @@ export class Project {
 
   @Column({ type: 'int', default: 0 })
   soutenanceDuration!: number;
-
-  @Column()
+  
+  @Column({ nullable: true })
   lieuSoutenance!: string;
+
+  @Column({nullable: true})
+  url!: string;
 
   @Column({ default: 1 })
   minStudents!: number; 

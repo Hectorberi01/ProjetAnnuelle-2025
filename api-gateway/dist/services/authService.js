@@ -51,14 +51,17 @@ function LogoutUser(user) {
 }
 function RegisterUser(registerData) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { nom, prenom, email, roleId } = registerData;
+        const { nom, prenom, email, address, phoneNumber, roleId } = registerData;
+        const payload = {
+            nom,
+            prenom,
+            email,
+            roleId,
+            phoneNumber,
+            address,
+        };
         try {
-            const response = yield apiClient_1.apiClient.post(`${URL_AUTH}/register`, {
-                nom,
-                prenom,
-                email,
-                roleId,
-            });
+            const response = yield apiClient_1.apiClient.post(`${URL_AUTH}/register`, payload);
             if (response.status !== 201) {
                 throw new Error('Registration failed');
             }

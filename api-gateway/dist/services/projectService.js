@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createProject = createProject;
 exports.getAllProjects = getAllProjects;
@@ -17,6 +20,7 @@ exports.deleteProject = deleteProject;
 exports.getProjectsByPromotionId = getProjectsByPromotionId;
 exports.addSoutenanceInfo = addSoutenanceInfo;
 exports.updateSoutenanceInfo = updateSoutenanceInfo;
+exports.getPublicPDFUrl = getPublicPDFUrl;
 const apiClient_1 = require("../utils/apiClient");
 const services_config_1 = require("../config/services.config");
 const groupService_1 = require("./groupService");
@@ -24,6 +28,8 @@ const reportService_1 = require("./reportService");
 const soutenanceService_1 = require("./soutenanceService");
 const deliverableService_1 = require("./deliverableService");
 const userService_1 = require("./userService");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/projects";
 const URL_PROMOTIONS = services_config_1.SERVICES.promotions || "http://localhost:3007/promotions";
 const URL_GROUPS = services_config_1.SERVICES.groups || "http://localhost:3004/groups";
@@ -32,11 +38,9 @@ function createProject(projectData) {
         let response = {};
         try {
             response = yield apiClient_1.apiClient.post(`${URL_PROJECTS}`, projectData);
-            console.log("response", response);
             if (response.status !== 201) {
                 return response;
             }
-            const data = response.data;
             return response;
         }
         catch (error) {
@@ -184,4 +188,7 @@ function updateSoutenanceInfo(projectId, soutenanceData) {
             return response;
         }
     });
+}
+function getPublicPDFUrl(filename) {
+    return `${process.env.R2_ENDPOINT}/${process.env.R2_BUCKET}/${encodeURIComponent(filename)}`;
 }

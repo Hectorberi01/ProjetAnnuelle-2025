@@ -15,7 +15,7 @@ export const AppDataSource = new DataSource({
   port: parseInt(process.env.DB_PORT || '3306'),
   username: process.env.DB_USERNAME  || 'hector',
   password: process.env.DB_PASSWORD ,
-  database: process.env.DB_NAME || 'grade-Service',
+  database: process.env.GRADE_DB_NAME || 'Grade_Service',
   synchronize: true,
   logging: false,
   entities: [Grade,GradeCriterion, GradeComment, GradeGrid],

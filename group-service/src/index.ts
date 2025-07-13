@@ -6,7 +6,7 @@ import group from "./routes/group.routes";
 
 const app  = express()
 
-const PORT = process.env.PORT || 3004
+const PORT = process.env.GROUP_PORT || 3004
 
 const main = async () => {
 

@@ -99,10 +99,42 @@ class GroupService {
     }
     deleteGroup(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const group = yield this.groupRepo.findOneBy({ id });
-            if (!group)
-                throw new Error('Group not found');
-            return this.groupRepo.remove(group);
+            try {
+                const group = yield this.groupRepo.findOne({
+                    where: { id },
+                    relations: ['groupStudent']
+                });
+                if (!group)
+                    throw new Error('Group not found');
+                return this.groupRepo.remove(group);
+            }
+            catch (error) {
+                console.error('Error deleting group:', error);
+                throw new Error('Failed to delete group');
+            }
+        });
+    }
+    deleteGroupByProjectId(projectId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.dataSource.transaction((manager) => __awaiter(this, void 0, void 0, function* () {
+                    const groups = yield manager.find(Group_1.Group, {
+                        where: { projectId },
+                        relations: ['groupStudent'],
+                    });
+                    if (groups.length === 0)
+                        throw new Error('No groups found for this project');
+                    yield manager.remove(groups);
+                    return {
+                        deletedCount: groups.length,
+                        deletedIds: groups.map((g) => g.id),
+                    };
+                }));
+            }
+            catch (error) {
+                console.error('Error deleting groups by project ID:', error);
+                throw new Error('Failed to delete groups by project ID');
+            }
         });
     }
 }

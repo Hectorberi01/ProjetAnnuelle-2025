@@ -21,7 +21,7 @@ const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const role_routes_1 = __importDefault(require("./routes/role.routes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 3003;
+const PORT = process.env.USER_PORT || 3003;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database_1.AppDataSource.initialize();

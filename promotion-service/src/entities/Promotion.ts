@@ -21,6 +21,6 @@ export class Promotion {
   @Column( { default: () => "CURRENT_TIMESTAMP" })
   updatedAt!: Date;
   
-  @OneToMany(() => PromotionStudent, (ps) => ps.promotion)
+  @OneToMany(() => PromotionStudent, (ps) => ps.promotion, { cascade: ["remove"] })
   promotionStudents!: PromotionStudent[];
 }

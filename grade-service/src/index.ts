@@ -8,7 +8,7 @@ import grids from "./routes/grids";
 
 const app  = express()
 
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.GRADE_PORT || 3005;
 
 const main = async () => {
 

@@ -19,7 +19,7 @@ const database_1 = require("./config/database");
 const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 3010;
+const PORT = process.env.SOUTENANCE_PORT || 3010;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database_1.AppDataSource.initialize();

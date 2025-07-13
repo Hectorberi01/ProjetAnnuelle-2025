@@ -52,33 +52,32 @@ router.get('/project/:projectId', async (req, res) => {
     }
 });
 
-// Create Group manually
-router.post('/:projectId/manual', async (req, res) => {
-    try {
-        const groupData = req.body;
-        const ProjectId = parseInt(req.params.projectId);
-        if (!groupData) {
-            res.status(400).json({ message: 'Invalid group data' });
-            return;
-        }
-        // Get the project ID from the request parameters
-        const project =  await getProjectById(ProjectId);
-        // Simulate creating a group
-        const newGroup = await createGroup(groupData,ProjectId); // Replace with actual service call
-        res.status(201).json(newGroup);
-    } catch (error) {
-        console.error('Error creating group:', error);
-        res.status(500).json({ message: 'Failed to create group' });
-    }
-})
+// // Create Group manually
+// router.post('/:projectId/manual', async (req, res) => {
+//     try {
+//         const groupData = req.body;
+//         const ProjectId = parseInt(req.params.projectId);
+//         if (!groupData) {
+//             res.status(400).json({ message: 'Invalid group data' });
+//             return;
+//         }
+//         // Get the project ID from the request parameters
+//         const project =  await getProjectById(ProjectId);
+//         // Simulate creating a group
+//         const newGroup = await createGroup(groupData,ProjectId); // Replace with actual service call
+//         res.status(201).json(newGroup);
+//     } catch (error) {
+//         console.error('Error creating group:', error);
+//         res.status(500).json({ message: 'Failed to create group' });
+//     }
+// })
 
 // Create Group randomly
-router.post('/:projectId/random', async (req, res) => {
+router.post('/:projectId/create', async (req, res) => {
     try {
         console.log("Creating random group");
 
         const ProjectId = parseInt(req.params.projectId);
-        console.log("Project ID:", ProjectId);
 
 
         // Get the project ID from the request parameters
@@ -87,9 +86,7 @@ router.post('/:projectId/random', async (req, res) => {
             res.status(404).json({ message: 'Project not found' });
             return;
         }
-        const project = (projectResponse as any).data; 
-        console.log("Project Data:", project);
-
+        const project = (projectResponse as any).data;
         if(project.mode !== 'random') {
             res.status(400).json({ message: 'Project is not in random mode' });
             return;
@@ -101,11 +98,8 @@ router.post('/:projectId/random', async (req, res) => {
             return;
         }
         const promotion = (promotionResponse as any).data;
-        console.log("Promotion Data:", promotion);
 
         const studentsInPromotion = promotion.promotionStudents.map((ps: any) => ps.studentId);
-
-        console.log("Students in Promotion:", studentsInPromotion);
 
         const minStudents = project.minStudents;
         
@@ -167,25 +161,25 @@ router.post('/:projectId/random', async (req, res) => {
     }
 });
 
-// Create Group freely
-router.post('/:projectId/free', async (req, res) => {
-    try {
-        const groupData = req.body;
-        const ProjectId = parseInt(req.params.projectId);
-        if (!groupData) {
-            res.status(400).json({ message: 'Invalid group data' });
-            return;
-        }
-        // Get the project ID from the request parameters
-        const project =  await getProjectById(ProjectId);
-        // Simulate creating a group
-        const newGroup = await createGroup(groupData,ProjectId); // Replace with actual service call
-        res.status(201).json(newGroup);
-    } catch (error) {
-        console.error('Error creating group:', error);
-        res.status(500).json({ message: 'Failed to create group' });
-    }
-});
+// // Create Group freely
+// router.post('/:projectId/free', async (req, res) => {
+//     try {
+//         const groupData = req.body;
+//         const ProjectId = parseInt(req.params.projectId);
+//         if (!groupData) {
+//             res.status(400).json({ message: 'Invalid group data' });
+//             return;
+//         }
+//         // Get the project ID from the request parameters
+//         const project =  await getProjectById(ProjectId);
+//         // Simulate creating a group
+//         const newGroup = await createGroup(groupData,ProjectId); // Replace with actual service call
+//         res.status(201).json(newGroup);
+//     } catch (error) {
+//         console.error('Error creating group:', error);
+//         res.status(500).json({ message: 'Failed to create group' });
+//     }
+// });
 
 // Add student to group
 router.post('/join-to-group', async (req, res) => {

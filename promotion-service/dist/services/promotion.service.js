@@ -52,14 +52,6 @@ class PromotionService {
                 .getMany();
             promos.forEach(promo => promo.promotionStudents.forEach(student => delete student.promotion));
             return promos;
-            // return this.promotionRepo.find({
-            //   relations: ["promotionStudents"],
-            //   where: {
-            //     promotionStudents: {
-            //       studentId: studentId,
-            //     },
-            //   },
-            // });
         });
     }
     findById(id) {
@@ -84,7 +76,20 @@ class PromotionService {
     }
     delete(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.promotionRepo.delete(id);
+            try {
+                const promo = yield this.promotionRepo.findOne({
+                    where: { id },
+                    relations: ["promotionStudents"],
+                });
+                if (!promo) {
+                    throw new Error("Promotion not found");
+                }
+                return yield this.promotionRepo.remove(promo);
+            }
+            catch (error) {
+                console.error('Error deleting promotion:', error);
+                throw new Error('Failed to delete promotion');
+            }
         });
     }
 }

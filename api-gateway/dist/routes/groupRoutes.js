@@ -58,32 +58,30 @@ router.get('/project/:projectId', (req, res) => __awaiter(void 0, void 0, void 0
         res.status(500).json({ message: 'Failed to fetch groups for project' });
     }
 }));
-// Create Group manually
-router.post('/:projectId/manual', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const groupData = req.body;
-        const ProjectId = parseInt(req.params.projectId);
-        if (!groupData) {
-            res.status(400).json({ message: 'Invalid group data' });
-            return;
-        }
-        // Get the project ID from the request parameters
-        const project = yield (0, projectService_1.getProjectById)(ProjectId);
-        // Simulate creating a group
-        const newGroup = yield (0, groupService_1.createGroup)(groupData, ProjectId); // Replace with actual service call
-        res.status(201).json(newGroup);
-    }
-    catch (error) {
-        console.error('Error creating group:', error);
-        res.status(500).json({ message: 'Failed to create group' });
-    }
-}));
+// // Create Group manually
+// router.post('/:projectId/manual', async (req, res) => {
+//     try {
+//         const groupData = req.body;
+//         const ProjectId = parseInt(req.params.projectId);
+//         if (!groupData) {
+//             res.status(400).json({ message: 'Invalid group data' });
+//             return;
+//         }
+//         // Get the project ID from the request parameters
+//         const project =  await getProjectById(ProjectId);
+//         // Simulate creating a group
+//         const newGroup = await createGroup(groupData,ProjectId); // Replace with actual service call
+//         res.status(201).json(newGroup);
+//     } catch (error) {
+//         console.error('Error creating group:', error);
+//         res.status(500).json({ message: 'Failed to create group' });
+//     }
+// })
 // Create Group randomly
-router.post('/:projectId/random', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/:projectId/create', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("Creating random group");
         const ProjectId = parseInt(req.params.projectId);
-        console.log("Project ID:", ProjectId);
         // Get the project ID from the request parameters
         const projectResponse = yield (0, projectService_1.getProjectById)(ProjectId);
         if (projectResponse.status !== 200) {
@@ -91,7 +89,6 @@ router.post('/:projectId/random', (req, res) => __awaiter(void 0, void 0, void 0
             return;
         }
         const project = projectResponse.data;
-        console.log("Project Data:", project);
         if (project.mode !== 'random') {
             res.status(400).json({ message: 'Project is not in random mode' });
             return;
@@ -102,9 +99,7 @@ router.post('/:projectId/random', (req, res) => __awaiter(void 0, void 0, void 0
             return;
         }
         const promotion = promotionResponse.data;
-        console.log("Promotion Data:", promotion);
         const studentsInPromotion = promotion.promotionStudents.map((ps) => ps.studentId);
-        console.log("Students in Promotion:", studentsInPromotion);
         const minStudents = project.minStudents;
         const maxStudents = project.maxStudents;
         if (studentsInPromotion.length === 0) {
@@ -154,26 +149,25 @@ router.post('/:projectId/random', (req, res) => __awaiter(void 0, void 0, void 0
         res.status(500).json({ message: 'Failed to create group' });
     }
 }));
-// Create Group freely
-router.post('/:projectId/free', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const groupData = req.body;
-        const ProjectId = parseInt(req.params.projectId);
-        if (!groupData) {
-            res.status(400).json({ message: 'Invalid group data' });
-            return;
-        }
-        // Get the project ID from the request parameters
-        const project = yield (0, projectService_1.getProjectById)(ProjectId);
-        // Simulate creating a group
-        const newGroup = yield (0, groupService_1.createGroup)(groupData, ProjectId); // Replace with actual service call
-        res.status(201).json(newGroup);
-    }
-    catch (error) {
-        console.error('Error creating group:', error);
-        res.status(500).json({ message: 'Failed to create group' });
-    }
-}));
+// // Create Group freely
+// router.post('/:projectId/free', async (req, res) => {
+//     try {
+//         const groupData = req.body;
+//         const ProjectId = parseInt(req.params.projectId);
+//         if (!groupData) {
+//             res.status(400).json({ message: 'Invalid group data' });
+//             return;
+//         }
+//         // Get the project ID from the request parameters
+//         const project =  await getProjectById(ProjectId);
+//         // Simulate creating a group
+//         const newGroup = await createGroup(groupData,ProjectId); // Replace with actual service call
+//         res.status(201).json(newGroup);
+//     } catch (error) {
+//         console.error('Error creating group:', error);
+//         res.status(500).json({ message: 'Failed to create group' });
+//     }
+// });
 // Add student to group
 router.post('/join-to-group', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

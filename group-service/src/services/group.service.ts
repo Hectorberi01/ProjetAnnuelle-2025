@@ -1,6 +1,5 @@
 import { DataSource } from 'typeorm';
 import { Group } from '../entities/Group';
-import { GroupConfig } from '../entities/GroupConfig';
 import { GroupStudent } from '../entities/groupeStudent';
 
 export class GroupService {
@@ -83,9 +82,41 @@ export class GroupService {
   }
 
   async deleteGroup(id: number) {
-    const group = await this.groupRepo.findOneBy({ id });
-    if (!group) throw new Error('Group not found');
+    try {
+      const group = await this.groupRepo.findOne({ 
+        where: { id }, 
+        relations: ['groupStudent']
+      });
 
-    return this.groupRepo.remove(group);
+      if (!group) throw new Error('Group not found');
+
+      return this.groupRepo.remove(group);
+    }catch (error) {
+      console.error('Error deleting group:', error);
+      throw new Error('Failed to delete group');
+    }
+  }
+
+  async deleteGroupByProjectId(projectId: number) {
+    try {
+      return await this.dataSource.transaction(async (manager) => {
+      const groups = await manager.find(Group, {
+        where: { projectId },
+        relations: ['groupStudent'],
+      });
+
+      if (groups.length === 0) throw new Error('No groups found for this project');
+
+      await manager.remove(groups);
+
+      return {
+        deletedCount: groups.length,
+        deletedIds: groups.map((g) => g.id),
+      };
+    });
+    } catch (error) {
+      console.error('Error deleting groups by project ID:', error);
+      throw new Error('Failed to delete groups by project ID');
+    }
   }
 }

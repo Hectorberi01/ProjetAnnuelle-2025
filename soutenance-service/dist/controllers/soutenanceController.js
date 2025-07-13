@@ -14,6 +14,7 @@ const soutenanceService_1 = require("../services/soutenanceService");
 class SoutenanceController {
     static generate(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('Generating schedule with data:', req.body);
             try {
                 const schedules = yield soutenanceService_1.SoutenanceService.generateSchedule(req.body);
                 res.status(201).json(schedules);

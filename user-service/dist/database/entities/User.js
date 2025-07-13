@@ -13,15 +13,6 @@ exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const Role_1 = require("./Role");
 let User = class User {
-    constructor(id, username, nom, prenom, email, password, role) {
-        this.id = id;
-        this.username = username;
-        this.nom = nom;
-        this.prenom = prenom;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
 };
 exports.User = User;
 __decorate([
@@ -45,14 +36,41 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "phoneNumber", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "address", void 0);
+__decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => Role_1.Role, role => role.user, { eager: true }),
+    (0, typeorm_1.Column)({ default: true }),
+    __metadata("design:type", Boolean)
+], User.prototype, "isActive", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ type: "timestamp" }),
+    __metadata("design:type", Date)
+], User.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)({ type: "timestamp" }),
+    __metadata("design:type", Date)
+], User.prototype, "updatedAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: "timestamp", nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "lastLoginAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "imageUrl", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => Role_1.Role, (role) => role.user, { eager: true }),
     __metadata("design:type", Role_1.Role)
 ], User.prototype, "role", void 0);
 exports.User = User = __decorate([
-    (0, typeorm_1.Entity)(),
-    __metadata("design:paramtypes", [Number, String, String, String, String, String, Role_1.Role])
+    (0, typeorm_1.Entity)()
 ], User);

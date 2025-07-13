@@ -20,7 +20,7 @@ const deliverable_service_1 = require("./services/deliverable.service");
 //import submissionRoutes from "./routes/submission.routes";
 const deliverableService = new deliverable_service_1.DeliverableService();
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 3009;
+const PORT = process.env.LIVRABLE_PORT || 3009;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database_1.AppDataSource.initialize();

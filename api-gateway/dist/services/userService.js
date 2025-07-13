@@ -77,13 +77,12 @@ function getUserById(userId) {
 function getAllUsers() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log("avant le get all users");
             console.log(`${URL_USERS}`);
-            console.log("après le get all users");
             const response = yield apiClient_1.apiClient.get(`${URL_USERS}`);
             if (response.status !== 200) {
                 throw new Error('Failed to fetch users');
             }
+            console.log('Fetched users:', response.data);
             return response.data;
         }
         catch (error) {
@@ -155,7 +154,7 @@ function getStudents() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const allUsers = yield getAllUsers();
-            const studentsList = allUsers.filter((user) => user.role.name === "student");
+            const studentsList = allUsers.filter((user) => user.role.name === "student".toUpperCase);
             return studentsList;
         }
         catch (error) {

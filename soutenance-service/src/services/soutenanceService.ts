@@ -13,7 +13,9 @@ interface ISoutenanceService {
 
 export class SoutenanceService {
 
-    static async generateSchedule(data: ISoutenanceService): Promise<Soutenance[]> {
+    static async generateSchedule(data: any): Promise<Soutenance[]> {
+
+        console.log('Generating schedule with data:', data);
 
         const repo = AppDataSource.getRepository(Soutenance);
         await repo.delete({ projectId: data.projectId });
@@ -65,6 +67,8 @@ export class SoutenanceService {
                     endTime: end,
                 order: index + 1,
                 });
+
+                console.log(`Generated schedule for group ${groupId}:`, schedule);
                 schedules.push(schedule);
             }
         }

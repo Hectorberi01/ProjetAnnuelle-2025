@@ -4,6 +4,8 @@ export interface RegisterDTO {
   nom: string; 
   prenom: string; 
   email: string; 
+  address?: string;
+  phoneNumber?: string;
   roleId: number
 }
   

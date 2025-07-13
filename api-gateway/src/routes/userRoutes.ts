@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { deleteUser, getAllUsers, getStudents, getUserByEmail, getUserById } from '../services/userService';
+import { createUser, deleteUser, getAllUsers, getStudents, getUserByEmail, getUserById } from '../services/userService';
 const router = Router();
 
 router.get('/', async (req, res) => {
@@ -12,6 +12,27 @@ router.get('/', async (req, res) => {
         res.status(200).json(response);
     }
     catch (error) {
+        console.error('Error in user service:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// create user
+router.post('/', async (req, res) => {
+    const userData = req.body;
+    try {
+        const response = await getUserByEmail(userData.email);
+        if (response) {
+            res.status(400).json({ message: 'User with this email already exists' });
+            return;
+        }
+        const createdUser = await createUser(userData);
+        if (!createdUser) {
+            res.status(500).json({ message: 'Failed to create user' });
+            return;
+        }
+        res.status(201).json(createdUser);
+    } catch (error) {
         console.error('Error in user service:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
@@ -63,6 +84,7 @@ router.get('/email/:email', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 }); 
+
 
 //delete user
 router.delete('/:id', async (req, res) => {

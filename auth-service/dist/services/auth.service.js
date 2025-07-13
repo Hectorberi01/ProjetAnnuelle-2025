@@ -39,13 +39,11 @@ const register = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const requiredTextFields = ['nom', 'prenom', 'email'];
     for (const field of requiredTextFields) {
         const value = data[field];
-        if (!value || value.trim() === "") {
+        if (!value || value.trim() === "")
             return { status: 400, data: { error: `Le champ '${field}' est requis.` } };
-        }
     }
-    if (typeof data.roleId !== "number") {
+    if (typeof data.roleId !== "number")
         return { status: 400, data: { error: "Le champ 'roleId' est requis et doit être un nombre." } };
-    }
     const { error } = auth_validation_1.registerSchema.validate(data);
     if (error) {
         return {
@@ -53,9 +51,9 @@ const register = (data) => __awaiter(void 0, void 0, void 0, function* () {
             data: { error: error.details[0].message },
         };
     }
+    console.log("USER_SERVICE_URL", USER_SERVICE_URL);
     try {
         const response = yield axios_1.default.post(`${USER_SERVICE_URL}`, data);
-        console.log("response", response);
         return { status: 201, data: response.data };
     }
     catch (error) {

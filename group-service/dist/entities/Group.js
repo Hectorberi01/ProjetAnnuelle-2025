@@ -32,7 +32,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Group.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => groupeStudent_1.GroupStudent, (groupStudent) => groupStudent.groupStudent),
+    (0, typeorm_1.OneToMany)(() => groupeStudent_1.GroupStudent, (groupStudent) => groupStudent.groupStudent, { cascade: ["remove"] }),
     __metadata("design:type", Array)
 ], Group.prototype, "groupStudent", void 0);
 exports.Group = Group = __decorate([

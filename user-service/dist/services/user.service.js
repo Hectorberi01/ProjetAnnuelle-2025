@@ -25,6 +25,7 @@ class UserService {
     // Create
     create(data) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
             const role = yield this.roleRepo.findOneBy({ id: data.roleId });
             if (!role)
                 throw new Error("Rôle non trouvé");
@@ -34,10 +35,16 @@ class UserService {
             // Hasher le mot de passe
             const hashedPassword = yield bcrypt_1.default.hash(password, 10);
             const user = this.userRepo.create({
-                username,
                 nom: data.nom,
                 prenom: data.prenom,
                 email: data.email,
+                username: username,
+                phoneNumber: data.phoneNumber || "null",
+                address: data.address || "null",
+                imageUrl: data.imageUrl || "null",
+                isActive: (_a = data.isActive) !== null && _a !== void 0 ? _a : true,
+                createdAt: (_b = data.createdAt) !== null && _b !== void 0 ? _b : new Date(),
+                lastLoginAt: (_c = data.lastLoginAt) !== null && _c !== void 0 ? _c : null,
                 role,
                 password: hashedPassword,
             });
@@ -68,8 +75,10 @@ class UserService {
     // UserList
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("findAll users");
-            return this.userRepo.find({ relations: ["role"] });
+            const data = yield this.userRepo.find({
+                relations: ["role"],
+            });
+            return data;
         });
     }
     // UserById
@@ -81,10 +90,14 @@ class UserService {
     // UserByEmail
     findByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("findByEmail", email);
-            const user = yield this.userRepo.findOne({ where: { email }, relations: ["role"] });
-            console.log("findByEmail result", user);
-            return user;
+            try {
+                const user = yield this.userRepo.findOne({ where: { email }, relations: ["role"] });
+                return user;
+            }
+            catch (error) {
+                console.error("Error in findByEmail:", error);
+                return null;
+            }
         });
     }
     // UserUpdate
@@ -99,6 +112,15 @@ class UserService {
                 data.password = hashedPassword;
             }
             Object.assign(user, data);
+            return this.userRepo.save(user);
+        });
+    }
+    updateLastLogin(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.userRepo.findOneBy({ id });
+            if (!user)
+                return null;
+            user.lastLoginAt = new Date();
             return this.userRepo.save(user);
         });
     }

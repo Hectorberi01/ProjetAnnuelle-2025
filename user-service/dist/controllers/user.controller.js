@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.update = exports.getByEmail = exports.getById = exports.getAll = exports.createAdmin = exports.create = void 0;
+exports.deleteUser = exports.updateLastLogin = exports.update = exports.getByEmail = exports.getById = exports.getAll = exports.create = void 0;
 const user_service_1 = require("../services/user.service");
 const userService = new user_service_1.UserService();
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -22,22 +22,26 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.create = create;
-const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("req.body");
-    console.log(req.body);
+/*
+export const createAdmin = async (req: Request, res: Response) => {
+  console.log("req.body");
+  console.log(req.body);
+  try {
+    const user = await userService.createAdmin(req.body);
+    res.status(201).json(user);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+};*/
+const getAll = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield userService.createAdmin(req.body);
-        res.status(201).json(user);
+        console.log("getAll users");
+        const users = yield userService.findAll();
+        res.status(200).json(users);
     }
     catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: "Erreur lors de la récupération des utilisateurs" });
     }
-});
-exports.createAdmin = createAdmin;
-const getAll = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("getAll users");
-    const users = yield userService.findAll();
-    res.status(200).json(users);
 });
 exports.getAll = getAll;
 const getById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -87,6 +91,21 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json(updated);
 });
 exports.update = update;
+const updateLastLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const id = Number((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);
+    if (isNaN(id)) {
+        res.status(400).json({ message: "ID invalide" });
+        return;
+    }
+    const updated = yield userService.updateLastLogin(id);
+    if (!updated) {
+        res.status(404).json({ message: "Utilisateur non trouvé" });
+        return;
+    }
+    res.json(updated);
+});
+exports.updateLastLogin = updateLastLogin;
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const id = Number((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);

@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./app"));
 const env = __importStar(require("dotenv"));
 env.config();
+process.env.NODE_DEBUG = 'tls,http,net';
 const port = process.env.PORT || 3000;
 console.log(`API port ${port}`);
 app_1.default.listen(port, () => {
