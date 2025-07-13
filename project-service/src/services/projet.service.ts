@@ -114,6 +114,7 @@ export class ProjetService {
     async updateProject(id: number, updateData: any) {
         try {
             const project = await projetRepo.findOneByOrFail({ id });
+            console.log('Updating project with ID:', id, 'and data:', updateData);
             Object.assign(project, updateData);
             const updatedProject = await projetRepo.save(project);
             return updatedProject;

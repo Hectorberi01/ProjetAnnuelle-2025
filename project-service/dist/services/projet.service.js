@@ -117,6 +117,7 @@ class ProjetService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const project = yield projetRepo.findOneByOrFail({ id });
+                console.log('Updating project with ID:', id, 'and data:', updateData);
                 Object.assign(project, updateData);
                 const updatedProject = yield projetRepo.save(project);
                 return updatedProject;

@@ -19,7 +19,7 @@ router.get("/promotion/:promotionId", ProjectController.getProjectsByPromotionId
 router.post("/", ProjectController.createProject);
 
 // Mettre à jour un projet
-router.put("/:id", ProjectController.updateProject);
+router.put("/update/:id", ProjectController.updateProject);
 
 // Supprimer un projet
 router.delete("/:id", ProjectController.deleteProject);

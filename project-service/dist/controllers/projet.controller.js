@@ -109,6 +109,7 @@ class ProjectController {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             const projectData = req.body;
+            console.log('Updating project with ID:', id, 'and data:', projectData);
             try {
                 const project = yield projetService.updateProject(+id, projectData);
                 res.status(200).json(project);

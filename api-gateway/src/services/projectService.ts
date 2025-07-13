@@ -60,8 +60,6 @@ export async function getProjectById(projectId: number) {
             return { error: "Échec de récupération du projet", status: response.status };
         }
 
-        console.log('response', response);
-
         // récupérer la promotion par son ID
         const promotionId = response.data.promotionId;
 
@@ -127,9 +125,11 @@ export async function getProjectById(projectId: number) {
 }
 
 export async function updateProject(projectId: number, projectData: any) {
+    console.log('dans le servcie ');
     let response : any = {}
     try {
-        response = await apiClient.put(`${URL_PROJECTS}/${projectId}`, projectData);
+        console.log("dans updateProject", projectData);
+        response = await apiClient.put(`${URL_PROJECTS}/update/${projectId}`, projectData);
         if (response.status !== 200) {
             return response;
         }

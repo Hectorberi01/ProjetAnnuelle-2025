@@ -73,7 +73,6 @@ function getProjectById(projectId) {
             if (response.status !== 200) {
                 return { error: "Échec de récupération du projet", status: response.status };
             }
-            console.log('response', response);
             // récupérer la promotion par son ID
             const promotionId = response.data.promotionId;
             const promotionResponse = yield apiClient_1.apiClient.get(`${URL_PROMOTIONS}/${promotionId}`);
@@ -112,9 +111,11 @@ function getProjectById(projectId) {
 }
 function updateProject(projectId, projectData) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log('dans le servcie ');
         let response = {};
         try {
-            response = yield apiClient_1.apiClient.put(`${URL_PROJECTS}/${projectId}`, projectData);
+            console.log("dans updateProject", projectData);
+            response = yield apiClient_1.apiClient.put(`${URL_PROJECTS}/update/${projectId}`, projectData);
             if (response.status !== 200) {
                 return response;
             }

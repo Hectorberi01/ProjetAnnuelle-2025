@@ -172,10 +172,12 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     console.log("projectData", projectData);
     try {
         const response = yield (0, projectService_1.getProjectById)(projectId);
-        if (response.status !== 200) {
+        if (!response) {
             res.status(404).json({ message: "Project not found" });
             return;
         }
+        console.log("response");
+        console.log("avant le update");
         const updatedProject = yield (0, projectService_1.updateProject)(projectId, projectData);
         console.log("status", updatedProject.status);
         if (updatedProject.status !== 200) {

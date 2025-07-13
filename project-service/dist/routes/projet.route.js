@@ -13,7 +13,7 @@ router.get("/promotion/:promotionId", projet_controller_1.ProjectController.getP
 // ➕ Créer un projet
 router.post("/", projet_controller_1.ProjectController.createProject);
 // Mettre à jour un projet
-router.put("/:id", projet_controller_1.ProjectController.updateProject);
+router.put("/update/:id", projet_controller_1.ProjectController.updateProject);
 // Supprimer un projet
 router.delete("/:id", projet_controller_1.ProjectController.deleteProject);
 // Mettre à jour le statut d'un projet
