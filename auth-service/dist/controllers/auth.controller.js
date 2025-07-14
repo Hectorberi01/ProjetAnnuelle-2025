@@ -84,7 +84,10 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return;
     }
     const result = yield AuthService.login({ email, password });
-    console.log('Login result:', result);
+    if (result === null) {
+        res.status(401).json({ error: 'Invalid email or password' });
+        return;
+    }
     res.status(200).json(result.data);
 });
 exports.login = login;

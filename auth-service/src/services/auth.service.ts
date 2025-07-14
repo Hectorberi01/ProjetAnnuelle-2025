@@ -108,9 +108,7 @@ export const createAdminUser = async (data: createAdminUserDTO) => {
 };
 
 export const login = async ({ email, password }: { email: string; password: string }) => {
-    console.log("USER_SERVICE_URL", USER_SERVICE_URL);
-    console.log("email", email);
-    console.log("password", password);
+  
     try {
         if (!email || !password) {
           return {data: { error: 'Email et mot de passe requis' } };
@@ -122,8 +120,6 @@ export const login = async ({ email, password }: { email: string; password: stri
         }
 
         // Récupérer l'utilisateur par email
-        console.log("USER_SERVICE_URL", `${USER_SERVICE_URL}/email/${email}`);
-
         const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
 
         if(response.status !== 200) {
@@ -146,12 +142,10 @@ export const login = async ({ email, password }: { email: string; password: stri
         const isValid = await bcrypt.compare(password, user.password);
         console.log("isValid", isValid);
         if (isValid === false) {
-            return { data: { error: 'Mot de passe incorrect' } };
+          return null;
         }
         // Supprimer le champ password
       delete user.password;
-      //const encodedId = Buffer.from(user.id.toString()).toString('base64');
-      //user.id = encodedId;
       const token = jwt.sign({ user: user }, JWT_SECRET, {expiresIn: '1h',});
   
       return {data: { token, user } };

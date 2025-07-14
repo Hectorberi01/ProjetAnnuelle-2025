@@ -11,10 +11,10 @@ services:
       - projets
       - users
       - groupes
-      - grades
+      #- grades
       - reports
       - promotions
-      # - notations
+      - notations
       - livrables
       # - soutenances
     networks:
