@@ -87,8 +87,6 @@ function getDeliverablesByProjectId(projectId) {
 }
 function submitDeliverable(formData) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('Submitting deliverable with formData:', formData);
-        console.log('Deliverables URL:', DELIVERABLES_URL);
         const form = new form_data_1.default();
         form.append('name', formData.name);
         form.append('description', formData.description);
@@ -97,16 +95,15 @@ function submitDeliverable(formData) {
         }
         form.append('groupId', formData.groupId.toString());
         form.append('projectId', formData.projectId.toString());
-        form.append('file', formData.file.buffer, {
-            filename: formData.file.originalname,
-            contentType: formData.file.mimetype,
-        });
+        form.append('fileUrl', formData.fileUrl);
         try {
             const response = yield fetch(`${DELIVERABLES_URL}`, {
                 method: 'POST',
-                body: form,
-                headers: form.getHeaders(),
+                body: form
             });
+            const text = yield response.text(); // pour voir le contenu brut
+            console.log('Status:', response.status);
+            console.log('Response body:', text);
             if (!response.ok) {
                 throw new Error('Failed to submit deliverable');
             }

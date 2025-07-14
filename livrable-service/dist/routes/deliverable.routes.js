@@ -7,10 +7,12 @@ const express_1 = require("express");
 const multer_1 = __importDefault(require("multer"));
 const deliverable_controller_1 = require("../controllers/deliverable.controller");
 const router = (0, express_1.Router)();
-const upload = (0, multer_1.default)({
-    dest: 'uploads/'
-});
-router.post('/', upload.single('file'), deliverable_controller_1.submitDeliverable);
+// const upload = multer({
+//   dest: 'uploads/'
+// });
+const upload = (0, multer_1.default)();
+//router.post('/', upload.single('file'), submitDeliverable);
+router.post('/', upload.none(), deliverable_controller_1.submitDeliverable);
 router.get('/:id/download', deliverable_controller_1.downloadDeliverable);
 // All livrable routes
 router.get('/', deliverable_controller_1.getAllDeliverables);

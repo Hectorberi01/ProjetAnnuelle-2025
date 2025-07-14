@@ -21,17 +21,10 @@ const googleDriveService = new GoogleDriveService_1.GoogleDriveService();
 // Create a new deliverable
 const submitDeliverable = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { projectId, groupId, name, description, githubUrl } = req.body;
-        const file = req.file;
+        console.log("Received request to submit deliverable");
+        console.log("Request body:", req.body);
+        const { projectId, groupId, name, description, githubUrl, fileUrl } = req.body;
         console.log("dans submitDeliverable");
-        if (!file) {
-            res.status(400).json({ message: 'File is required' });
-            return;
-        }
-        let fileUrl = undefined;
-        if (file) {
-            fileUrl = yield googleDriveService.uploadFile(file);
-        }
         const data = {
             projectId,
             groupId,

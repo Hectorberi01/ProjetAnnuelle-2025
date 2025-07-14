@@ -66,9 +66,7 @@ export async function getDeliverablesByProjectId(projectId: number): Promise<any
 }
 
 
-export async function submitDeliverable(formData: submitDeliverableFormData): Promise<any> {
-    console.log('Submitting deliverable with formData:', formData);
-    console.log('Deliverables URL:', DELIVERABLES_URL);
+export async function submitDeliverable(formData: any): Promise<any> {
 
     const form = new FormData();
     form.append('name', formData.name);
@@ -78,17 +76,16 @@ export async function submitDeliverable(formData: submitDeliverableFormData): Pr
     }
     form.append('groupId', formData.groupId.toString());
     form.append('projectId', formData.projectId.toString());
-    form.append('file', formData.file.buffer, {
-        filename: formData.file.originalname,
-        contentType: formData.file.mimetype,
-    });
+    form.append('fileUrl', formData.fileUrl);
     try {
         const response = await fetch(`${DELIVERABLES_URL}`, {
             method: 'POST',
-            body: form,
-            headers: form.getHeaders(),
-            
+            body: form
         });
+
+        const text = await response.text(); // pour voir le contenu brut
+        console.log('Status:', response.status);
+        console.log('Response body:', text);
         if (!response.ok) {
             throw new Error('Failed to submit deliverable');
         }
@@ -98,6 +95,7 @@ export async function submitDeliverable(formData: submitDeliverableFormData): Pr
         throw new Error('Failed to submit deliverable');
     }
 }
+
 
 export async function downloadDeliverable(deliverableId: number): Promise<Buffer> {
     try {

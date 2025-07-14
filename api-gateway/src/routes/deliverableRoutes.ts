@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { downloadDeliverable, getAllDeliverables, getDeliverableById, getDeliverablesByGroup, similarityCheck, similarityMatrix, submitDeliverable } from '../services/deliverableService';
 import multer from 'multer';
+import { downloadFromS3, uploadPDFToR2 } from '../services/cloudfareService';
 const router = Router();
 const upload = multer({
     limits: {
@@ -11,22 +12,28 @@ const upload = multer({
 router.post('/', upload.single('file'),async (req, res) => {
     const { name, description, githubUrl, groupId,projectId } = req.body;
     const file = req.file;
+    console.log("Received file:", file);
 
     if (!file) {
         res.status(400).json({ message: "Le fichier est requis." });
         return;
     }
 
+    const fileUrl = await uploadPDFToR2(file);
+    console.log("File uploaded to R2:", fileUrl);
+
     try {
-        const formData = req.body;
+        //const formData = req.body;
         const deliverable = {
             name,
             description,
             githubUrl,
             groupId: parseInt(groupId),
             projectId: parseInt(projectId),
-            file,
+            fileUrl,
         };
+
+        console.log("Submitting deliverable:", deliverable);
 
         const result = await submitDeliverable(deliverable);
         res.status(201).json(result);
@@ -36,16 +43,19 @@ router.post('/', upload.single('file'),async (req, res) => {
     }
 });
 
-router.get('/:id/download', async (req, res) => {
-    const deliverableId = parseInt(req.params.id);
+router.get('/download', async (req, res) => {
+    const fileUrl = req.query.url as string;
+    console.log("Received request to download file from URL:", fileUrl);
+    if (!fileUrl) {
+        return res.status(400).json({ message: 'URL manquante dans les paramètres de la requête.' });
+    }
     try {
-        const blob = await downloadDeliverable(deliverableId);
-        res.setHeader('Content-Disposition', `attachment; filename=deliverable-${deliverableId}.zip`);
+        const fileBuffer = await downloadFromS3(fileUrl);
+        res.setHeader('Content-Disposition', `attachment; filename=deliverable-${fileUrl}.zip`);
         res.setHeader('Content-Type', 'application/zip');
-        res.send(blob);
+        res.send(fileBuffer);
     } catch (error) {
-        console.error(`Error downloading deliverable with ID ${deliverableId}:`, error);
-        res.status(500).json({ message: `Failed to download deliverable with ID ${deliverableId}`, error: error });
+        res.status(500).json({ message: `Failed to download deliverable with ID ${fileUrl}`, error: error });
     }
 });
 

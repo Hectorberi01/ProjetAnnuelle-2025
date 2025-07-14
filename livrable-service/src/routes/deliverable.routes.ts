@@ -9,11 +9,14 @@ import { detectSimilarityForDeliverable } from '../scripts/detectSimilarity';
 
 const router = Router();
 
-const upload = multer({
-  dest: 'uploads/'
-});
+// const upload = multer({
+//   dest: 'uploads/'
+// });
 
-router.post('/', upload.single('file'), submitDeliverable);
+const upload = multer()
+
+//router.post('/', upload.single('file'), submitDeliverable);
+router.post('/', upload.none(), submitDeliverable);
 router.get('/:id/download', downloadDeliverable);
 
 // All livrable routes
