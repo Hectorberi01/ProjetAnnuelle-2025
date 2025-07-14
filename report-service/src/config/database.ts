@@ -1,6 +1,5 @@
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
-import { ReportSection } from '../entities/ReportSection.entity';
 import { Report } from '../entities/Report.entity';
 
 
