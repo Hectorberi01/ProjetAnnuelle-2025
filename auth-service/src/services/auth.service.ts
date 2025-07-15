@@ -125,14 +125,17 @@ export const login = async ({ email, password }: { email: string; password: stri
 
     const user = await response.json();
 
+   
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
       return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
     }
+    console.log("isValid", isValid);
 
     delete user.password;
     const token = jwt.sign({ user }, JWT_SECRET, { expiresIn: '1h' });
 
+     console.log("user", user);
     return { status: 200, data: { token, user } };
   } catch (err: any) {
     console.error("Erreur login:", err.message);
