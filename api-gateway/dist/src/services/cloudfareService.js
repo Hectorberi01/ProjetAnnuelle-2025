@@ -21,7 +21,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadPDFToR2 = uploadPDFToR2;
 exports.downloadFromS3 = downloadFromS3;
+exports.getSignedPdfUrl = getSignedPdfUrl;
+exports.extractKeyFromS3Url = extractKeyFromS3Url;
 const client_s3_1 = require("@aws-sdk/client-s3");
+const s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const s3 = new client_s3_1.S3Client({
@@ -94,4 +97,17 @@ function downloadFromS3(url) {
             throw error;
         }
     });
+}
+function getSignedPdfUrl(key) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const command = new client_s3_1.GetObjectCommand({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: key,
+        });
+        return yield (0, s3_request_presigner_1.getSignedUrl)(s3, command, { expiresIn: 3600 }); // 1h
+    });
+}
+function extractKeyFromS3Url(url) {
+    const { pathname } = new URL(url);
+    return decodeURIComponent(pathname.slice(1));
 }

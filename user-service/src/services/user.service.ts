@@ -2,6 +2,7 @@ import { AppDataSource } from "../database/database";
 import { User } from "../database/entities/User";
 import { Role } from "../database/entities/Role";
 import bcrypt from "bcrypt";
+import e from "express";
 
 interface CreateUserData {
     nom: string;
@@ -88,11 +89,12 @@ export class UserService {
     // UserByEmail
     async findByEmail(email: string): Promise<User | null> {
         try {
+            console.log("avant appel repo");
             const user = await this.userRepo.findOne({ where: { email }, relations: ["role"] });
-            return user ?? null;
+            console.log("après appel repo");
+            return user;
         } catch (error) {
-            console.error("Error in findByEmail:", error);
-            return null;
+            throw error;
         }
     }
 

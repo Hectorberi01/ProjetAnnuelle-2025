@@ -54,21 +54,28 @@ export const getById = async (req: Request, res: Response) => {
 };
 
 export const getByEmail = async (req: Request, res: Response) => {
-  console.log("getByEmail user");
+  
   const email = req.params?.email;
   if (!email) {
     res.status(400).json({ message: "Email invalide" });
     return;
   }
 
-  const user = await userService.findByEmail(email);
-  console.log("user", user);
-  if (!user) {
-    res.status(404).json({ message: "Utilisateur non trouvé" });
-    return;
-  }
+  try {
+    console.log("getByEmail user");
+    const user = await userService.findByEmail(email);
+    
+    console.log("user trouvé :", user);
+    if (!user) {
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
+    }
 
-  res.status(200).json(user);
+    res.status(200).json(user);
+  } catch (error: any) {
+    console.error("Erreur lors de la récupération de l'utilisateur par email:", error.message);
+    res.status(500).json({ message: "Erreur serveur lors de la récupération de l'utilisateur" });
+  }
 };
 
 export const update = async (req: Request, res: Response) => {

@@ -69,6 +69,7 @@ const getByEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return;
     }
     const user = yield userService.findByEmail(email);
+    console.log("user", user);
     if (!user) {
         res.status(404).json({ message: "Utilisateur non trouvé" });
         return;

@@ -70,3 +70,17 @@ export async function downloadFromS3(url : string): Promise<Buffer | void> {
         throw error;
     }
 }
+
+export async function getSignedPdfUrl(key: string): Promise<string> {
+  const command = new GetObjectCommand({
+    Bucket: process.env.AWS_BUCKET_NAME!,
+    Key: key,
+  });
+
+  return await getSignedUrl(s3, command, { expiresIn: 3600 }); // 1h
+}
+
+export function extractKeyFromS3Url(url: string): string {
+  const { pathname } = new URL(url);
+  return decodeURIComponent(pathname.slice(1));
+}

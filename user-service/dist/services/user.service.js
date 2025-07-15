@@ -92,7 +92,7 @@ class UserService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const user = yield this.userRepo.findOne({ where: { email }, relations: ["role"] });
-                return user;
+                return user !== null && user !== void 0 ? user : null;
             }
             catch (error) {
                 console.error("Error in findByEmail:", error);
