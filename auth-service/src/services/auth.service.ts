@@ -11,7 +11,7 @@ import { Buffer } from 'buffer';
 dotenv.config();
 
 
-const isDocker = process.env.IS_DOCKER === 'true';
+const isDocker = process.env.AUTH_IS_DOCKER === 'true';
 
 
 console.log("isDocker", isDocker);
