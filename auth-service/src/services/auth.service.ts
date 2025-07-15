@@ -7,6 +7,7 @@ import { registerSchema } from '../validations/auth.validation';
 import Mailjet from 'node-mailjet';
 
 import { Buffer } from 'buffer';
+import e from 'express';
 dotenv.config();
 
 console.log("AUTH_PORT", process.env.AUTH_PORT);
@@ -133,17 +134,24 @@ export const login = async ({ email, password }: { email: string; password: stri
     console.log("isValid", isValid);
     if (!isValid) {
       return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+    }else{
+      try{
+
+         console.log("isValid", isValid);
+
+        delete user.password;
+        const token = jwt.sign({ user }, JWT_SECRET, { expiresIn: '1h' });
+
+        console.log("user", user);
+        return { status: 200, data: { token, user } };
+      }catch(err: any){
+        throw err;
+      }
     }
-    console.log("isValid", isValid);
-
-    delete user.password;
-    const token = jwt.sign({ user }, JWT_SECRET, { expiresIn: '1h' });
-
-     console.log("user", user);
-    return { status: 200, data: { token, user } };
   } catch (err: any) {
-    console.error("Erreur login:", err.message);
-    return { status: 500, data: { error: 'Erreur serveur lors de la connexion' } };
+    throw new Error(`Erreur lors de la connexion : ${err.message}`);
+    //console.error("Erreur login:", err.message);
+    //return { status: 500, data: { error: 'Erreur serveur lors de la connexion' } };
   }
 };
 
