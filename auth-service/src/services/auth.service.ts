@@ -7,9 +7,10 @@ import { registerSchema } from '../validations/auth.validation';
 import Mailjet from 'node-mailjet';
 
 import { Buffer } from 'buffer';
-
 dotenv.config();
 
+console.log("AUTH_PORT", process.env.AUTH_PORT);
+console.log("AUTH_IS_DOCKER", process.env.AUTH_IS_DOCKER);
 const isDocker = process.env.AUTH_IS_DOCKER === 'true';
 
 
@@ -17,11 +18,11 @@ console.log("isDocker", isDocker);
 console.log("USER_SERVICE_URL", process.env.USER_SERVICE_URL);
 
 const USER_SERVICE_URL: string =
-  process.env.USER_SERVICE_URL !== undefined
-    ? process.env.USER_SERVICE_URL
-    : isDocker
-      ? "http://users:3003/users"
-      : "http://localhost:3003/users";
+  process.env.USER_SERVICE_URL ??
+  (isDocker
+    ? "http://users:3003/users"
+    : "http://localhost:3003/users");
+
 
 
 console.log("Final USER_SERVICE_URL =", USER_SERVICE_URL);
