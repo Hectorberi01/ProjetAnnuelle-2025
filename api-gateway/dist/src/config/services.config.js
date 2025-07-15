@@ -72,7 +72,7 @@ exports.SERVICES = {
         ? 'http://auth:3001/auth'
         : process.env.AUTH || 'http://localhost:3001/auth',
     deliverables: isDocker
-        ? 'http://deliverables:3009/deliverables'
+        ? 'http://livrables:3009/deliverables'
         : process.env.DELIVERABLES || 'http://localhost:3009/deliverables',
     reports: isDocker
         ? 'http://reports:3006/reports'

@@ -91,12 +91,13 @@ class UserService {
     findByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log("avant appel repo");
                 const user = yield this.userRepo.findOne({ where: { email }, relations: ["role"] });
-                return user !== null && user !== void 0 ? user : null;
+                console.log("après appel repo");
+                return user;
             }
             catch (error) {
-                console.error("Error in findByEmail:", error);
-                return null;
+                throw error;
             }
         });
     }

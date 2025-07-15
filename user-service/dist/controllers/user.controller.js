@@ -62,19 +62,25 @@ const getById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.getById = getById;
 const getByEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    console.log("getByEmail user");
     const email = (_a = req.params) === null || _a === void 0 ? void 0 : _a.email;
     if (!email) {
         res.status(400).json({ message: "Email invalide" });
         return;
     }
-    const user = yield userService.findByEmail(email);
-    console.log("user", user);
-    if (!user) {
-        res.status(404).json({ message: "Utilisateur non trouvé" });
-        return;
+    try {
+        console.log("getByEmail user");
+        const user = yield userService.findByEmail(email);
+        console.log("user trouvé :", user);
+        if (!user) {
+            res.status(404).json({ message: "Utilisateur non trouvé" });
+            return;
+        }
+        res.status(200).json(user);
     }
-    res.status(200).json(user);
+    catch (error) {
+        console.error("Erreur lors de la récupération de l'utilisateur par email:", error.message);
+        res.status(500).json({ message: "Erreur serveur lors de la récupération de l'utilisateur" });
+    }
 });
 exports.getByEmail = getByEmail;
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

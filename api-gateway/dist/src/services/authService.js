@@ -18,7 +18,6 @@ exports.changePassword = changePassword;
 const services_config_1 = require("../config/services.config");
 const apiClient_1 = require("../utils/apiClient");
 const URL_AUTH = services_config_1.SERVICES.auth;
-console.log("URL_AUTH", URL_AUTH);
 function LoginUser(loginData) {
     return __awaiter(this, void 0, void 0, function* () {
         const { email, password } = loginData;

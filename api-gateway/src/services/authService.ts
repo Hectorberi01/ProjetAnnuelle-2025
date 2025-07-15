@@ -23,7 +23,6 @@ interface registerAdmin{
 
 const URL_AUTH = SERVICES.auth;
 
-console.log("URL_AUTH", URL_AUTH);
 
 export async function LoginUser(loginData: login) {
     const { email, password } = loginData;
