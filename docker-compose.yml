@@ -30,10 +30,11 @@ services:
     ports:
       - "3001:3001"
     container_name: auth
-    networks:
-      - backend
     env_file:
       - ./auth-service/.env
+    networks:
+      - backend
+   
 
 
   projets:
