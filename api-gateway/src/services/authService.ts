@@ -21,7 +21,7 @@ interface registerAdmin{
     password: string;
 }
 
-const URL_AUTH = SERVICES.auth || "http://localhost:3001/auth";
+const URL_AUTH = SERVICES.auth || "http://auth:3001/auth";
 
 export async function LoginUser(loginData: login) {
     const { email, password } = loginData;
