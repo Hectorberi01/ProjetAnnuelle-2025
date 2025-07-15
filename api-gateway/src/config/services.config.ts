@@ -1,7 +1,7 @@
 
 import * as dotenv from 'dotenv';
 import path from 'path';
-//dotenv.config();
+dotenv.config();
   
 const isDocker = process.env.DOCKER === 'true';
 
@@ -13,7 +13,19 @@ if (!isDocker) {
   dotenv.config();
 }
 
-export const SERVICES = {
+interface ServiceMap {
+  projects: string;
+  groups: string;
+  users: string;
+  roles: string;
+  promotions: string;
+  auth: string;
+  deliverables: string;
+  reports: string;
+  soutenances: string;
+}
+
+export const SERVICES: ServiceMap = {
   projects: isDocker
     ? 'http://projets:3002/projects'
     : process.env.PROJETS || 'http://localhost:3002/projects',

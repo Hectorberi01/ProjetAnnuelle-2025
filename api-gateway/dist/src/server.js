@@ -32,23 +32,16 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppDataSource = void 0;
-const typeorm_1 = require("typeorm");
-const dotenv = __importStar(require("dotenv"));
-const Report_entity_1 = require("../entities/Report.entity");
-// Spécifiez le chemin vers le fichier .env
-dotenv.config();
-exports.AppDataSource = new typeorm_1.DataSource({
-    type: 'mysql',
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT || '3306'),
-    username: process.env.DB_USERNAME || 'hector',
-    password: process.env.DB_PASSWORD,
-    database: process.env.REPORT_DB_NAME || 'Report_Service',
-    synchronize: true,
-    logging: false,
-    entities: [Report_entity_1.Report],
-    migrations: [],
-    subscribers: [],
+const app_1 = __importDefault(require("./app"));
+const env = __importStar(require("dotenv"));
+env.config();
+process.env.NODE_DEBUG = 'tls,http,net';
+const port = process.env.PORT || 3000;
+console.log(`API port ${port}`);
+app_1.default.listen(port, () => {
+    console.log(`API Gateway is running on port ${port}`);
 });

@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendResetEmail = exports.changePassword = exports.verifyRoleMiddleware = exports.verifyTokenMiddleware = exports.verifyToken = exports.logout = exports.forgotPassword = exports.loginWithGoogleOrAzure = exports.login = exports.createAdminUser = exports.register = void 0;
 const axios_1 = __importDefault(require("axios"));
@@ -21,14 +22,14 @@ const auth_validation_1 = require("../validations/auth.validation");
 const node_mailjet_1 = __importDefault(require("node-mailjet"));
 const buffer_1 = require("buffer");
 dotenv_1.default.config();
-const isDocker = process.env.IS_DOCKER === 'true';
+console.log("AUTH_PORT", process.env.AUTH_PORT);
+console.log("AUTH_IS_DOCKER", process.env.AUTH_IS_DOCKER);
+const isDocker = process.env.AUTH_IS_DOCKER === 'true';
 console.log("isDocker", isDocker);
 console.log("USER_SERVICE_URL", process.env.USER_SERVICE_URL);
-const USER_SERVICE_URL = process.env.USER_SERVICE_URL !== undefined
-    ? process.env.USER_SERVICE_URL
-    : isDocker
-        ? "http://users:3003/users"
-        : "http://localhost:3003/users";
+const USER_SERVICE_URL = (_a = process.env.USER_SERVICE_URL) !== null && _a !== void 0 ? _a : (isDocker
+    ? "http://users:3003/users"
+    : "http://localhost:3003/users");
 console.log("Final USER_SERVICE_URL =", USER_SERVICE_URL);
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!USER_SERVICE_URL) {

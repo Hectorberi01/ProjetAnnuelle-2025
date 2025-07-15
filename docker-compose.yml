@@ -17,13 +17,13 @@ services:
       - notations
       - livrables
       # - soutenances
-    networks:
-      - backend
-
     environment:
       - DOCKER=true
     env_file:
       - ./api-gateway/.env
+    networks:
+      - backend
+
 
   auth:
     build: ./auth-service
