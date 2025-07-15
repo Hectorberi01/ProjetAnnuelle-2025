@@ -119,14 +119,18 @@ export const login = async ({ email, password }: { email: string; password: stri
     }
 
     const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
+
+    console.log("response", response);
     if (response.status !== 200) {
       return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
     }
 
     const user = await response.json();
+    
 
    
     const isValid = await bcrypt.compare(password, user.password);
+    console.log("isValid", isValid);
     if (!isValid) {
       return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
     }

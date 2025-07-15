@@ -89,7 +89,7 @@ export class UserService {
     async findByEmail(email: string): Promise<User | null> {
         try {
             const user = await this.userRepo.findOne({ where: { email }, relations: ["role"] });
-            return user;
+            return user ?? null;
         } catch (error) {
             console.error("Error in findByEmail:", error);
             return null;

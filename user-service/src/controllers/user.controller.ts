@@ -62,6 +62,7 @@ export const getByEmail = async (req: Request, res: Response) => {
   }
 
   const user = await userService.findByEmail(email);
+  console.log("user", user);
   if (!user) {
     res.status(404).json({ message: "Utilisateur non trouvé" });
     return;
