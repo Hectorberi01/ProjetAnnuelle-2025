@@ -98,25 +98,39 @@ const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, passwo
             return { status: 400, data: { error: 'Email invalide' } };
         }
         const response = yield fetch(`${USER_SERVICE_URL}/email/${email}`);
-        console.log("response", response);
         if (response.status !== 200) {
             return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
         }
         const user = yield response.json();
         const isValid = yield bcrypt_1.default.compare(password, user.password);
-        console.log("isValid", isValid);
         if (!isValid) {
             return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
         }
-        console.log("isValid", isValid);
-        delete user.password;
-        const token = jsonwebtoken_1.default.sign({ user }, JWT_SECRET, { expiresIn: '1h' });
-        console.log("user", user);
-        return { status: 200, data: { token, user } };
+        else {
+            try {
+                delete user.password;
+                console.log("avant le token");
+                const token = jsonwebtoken_1.default.sign({ user }, JWT_SECRET, { expiresIn: '1h' });
+                console.log("après le token");
+                const result = {
+                    status: 200,
+                    data: {
+                        user: user,
+                        token: token
+                    }
+                };
+                console.log("result", result);
+                return result;
+            }
+            catch (err) {
+                throw err;
+            }
+        }
     }
     catch (err) {
-        console.error("Erreur login:", err.message);
-        return { status: 500, data: { error: 'Erreur serveur lors de la connexion' } };
+        throw new Error(`Erreur lors de la connexion : ${err.message}`);
+        //console.error("Erreur login:", err.message);
+        //return { status: 500, data: { error: 'Erreur serveur lors de la connexion' } };
     }
 });
 exports.login = login;

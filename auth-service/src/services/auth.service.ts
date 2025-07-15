@@ -121,29 +121,31 @@ export const login = async ({ email, password }: { email: string; password: stri
 
     const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
 
-    console.log("response", response);
     if (response.status !== 200) {
       return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
     }
 
-    const user = await response.json();
-    
-
+    const user = await response.json();    
    
     const isValid = await bcrypt.compare(password, user.password);
-    console.log("isValid", isValid);
     if (!isValid) {
       return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
     }else{
       try{
 
-         console.log("isValid", isValid);
-
         delete user.password;
+        console.log("avant le token");
         const token = jwt.sign({ user }, JWT_SECRET, { expiresIn: '1h' });
-
-        console.log("user", user);
-        return { status: 200, data: { token, user } };
+        console.log("après le token");
+        const result = {
+          status: 200,
+          data: {
+            user: user,
+            token: token
+          }
+        };
+        console.log("result", result);
+        return result;
       }catch(err: any){
         throw err;
       }
