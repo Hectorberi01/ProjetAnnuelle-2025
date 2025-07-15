@@ -91,39 +91,28 @@ exports.createAdminUser = createAdminUser;
 const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, password }) {
     try {
         if (!email || !password) {
-            return { data: { error: 'Email et mot de passe requis' } };
+            return { status: 400, data: { error: 'Email et mot de passe requis' } };
         }
-        // Vérifier si l'email est valide
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            return { data: { error: 'Email invalide' } };
+            return { status: 400, data: { error: 'Email invalide' } };
         }
-        // Récupérer l'utilisateur par email
         const response = yield fetch(`${USER_SERVICE_URL}/email/${email}`);
         if (response.status !== 200) {
-            console.log("response.status", response.status);
-            return { data: { error: 'Email ou mot de passe invalide' } };
+            return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
         }
-        console.log("response", response);
-        const data = yield response.json();
-        console.log("data", data);
-        const user = data;
-        // if (!user) {
-        //   return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
-        // }
-        console.log("user", user);
+        const user = yield response.json();
         const isValid = yield bcrypt_1.default.compare(password, user.password);
-        console.log("isValid", isValid);
-        if (isValid === false) {
-            return null;
+        if (!isValid) {
+            return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
         }
-        // Supprimer le champ password
         delete user.password;
-        const token = jsonwebtoken_1.default.sign({ user: user }, JWT_SECRET, { expiresIn: '1h', });
-        return { data: { token, user } };
+        const token = jsonwebtoken_1.default.sign({ user }, JWT_SECRET, { expiresIn: '1h' });
+        return { status: 200, data: { token, user } };
     }
     catch (err) {
-        return { data: { error: 'Email ou mot de passe invalide' } };
+        console.error("Erreur login:", err.message);
+        return { status: 500, data: { error: 'Erreur serveur lors de la connexion' } };
     }
 });
 exports.login = login;

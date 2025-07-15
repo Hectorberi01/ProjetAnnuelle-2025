@@ -108,47 +108,38 @@ export const createAdminUser = async (data: createAdminUserDTO) => {
 };
 
 export const login = async ({ email, password }: { email: string; password: string }) => {
-  
-    try {
-        if (!email || !password) {
-          return {data: { error: 'Email et mot de passe requis' } };
-        }
-        // Vérifier si l'email est valide
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          return {data: { error: 'Email invalide' } };
-        }
-
-        // Récupérer l'utilisateur par email
-        const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
-
-        if(response.status !== 200) {
-          return { data: { error: 'Email ou mot de passe invalide' } };
-        }
-
-        const data = await response.json();
-
-        const user = data;
-        // if (!user) {
-        //   return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
-        // }
-
-        console.log("user", user);
-
-        const isValid = await bcrypt.compare(password, user.password);
-        console.log("isValid", isValid);
-        if (isValid === false) {
-          return null;
-        }
-        // Supprimer le champ password
-      delete user.password;
-      const token = jwt.sign({ user: user }, JWT_SECRET, {expiresIn: '1h',});
-  
-      return {data: { token, user } };
-    } catch (err: any) {
-      return {data: { error: 'Email ou mot de passe invalide' } };
+  try {
+    if (!email || !password) {
+      return { status: 400, data: { error: 'Email et mot de passe requis' } };
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return { status: 400, data: { error: 'Email invalide' } };
+    }
+
+    const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
+    if (response.status !== 200) {
+      return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+    }
+
+    const user = await response.json();
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+    }
+
+    delete user.password;
+    const token = jwt.sign({ user }, JWT_SECRET, { expiresIn: '1h' });
+
+    return { status: 200, data: { token, user } };
+  } catch (err: any) {
+    console.error("Erreur login:", err.message);
+    return { status: 500, data: { error: 'Erreur serveur lors de la connexion' } };
+  }
 };
+
 
 export const loginWithGoogleOrAzure = async (email: string) => {
     try {

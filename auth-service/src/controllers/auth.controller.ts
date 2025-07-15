@@ -31,26 +31,12 @@ export const registerAdmin = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  console.log('Login request received:', { email, password });
-  if (!email || !password) {
-    res.status(400).json({ error: 'Email and password are required' });
-    return;
-  }
-  // Validate email format
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    res.status(400).json({ error: 'Invalid email format' });
-    return;
-  }
-
-
   const result = await AuthService.login({ email, password });
-  console.log('Login result:', result);
-  if(result === null) {
-    res.status(401).json({ error: 'Invalid email or password' });
-    return;
-  }
-  res.status(200).json(result.data);
+
+  // Log pour debug
+  console.log('🔐 Résultat login:', result);
+
+  res.status(result.status).json(result.data);
 };
 
 // Logout
