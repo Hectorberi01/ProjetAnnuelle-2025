@@ -28,6 +28,7 @@ class ProjectController {
     static getProjectById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            console.log('Fetching project with ID:', id);
             try {
                 const project = yield projetService.getProjectById(+id);
                 res.status(200).json(project);

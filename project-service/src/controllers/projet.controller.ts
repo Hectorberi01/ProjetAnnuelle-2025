@@ -16,6 +16,7 @@ export class ProjectController {
 
     static async getProjectById(req: Request, res: Response) {
         const { id } = req.params;
+        console.log('Fetching project with ID:', id);
         try {
             const project = await projetService.getProjectById(+id);
             res.status(200).json(project);
