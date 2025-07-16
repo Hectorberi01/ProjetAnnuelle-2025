@@ -33,15 +33,16 @@ router.get("/:id", async (req, res) => {
     try {
         const result = await getProjectById(projectId);
 
-        if ('error' in result) {
-        res.status(result.status || 500).json({ message: result.error });
-        return;
+        if (!result || result.status !== 200) {
+            res.status(404).json({ message: "Project not found" });
+            return;
         }
 
         res.status(200).json(result);
     } catch (error) {
-        res.status(500).json({ message: "Failed to fetch project" });
-        return;
+        throw error;
+        //res.status(500).json({ message: "Failed to fetch project" });
+        //return;
     }
 });
 

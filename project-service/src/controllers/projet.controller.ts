@@ -19,6 +19,7 @@ export class ProjectController {
         console.log('Fetching project with ID:', id);
         try {
             const project = await projetService.getProjectById(+id);
+            console.log('Fetched project:', project);
             res.status(200).json(project);
         } catch (error) {
             console.error('Error fetching project by ID:', error);
