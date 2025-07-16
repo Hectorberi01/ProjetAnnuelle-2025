@@ -20,4 +20,4 @@ COPY dist ./dist
 EXPOSE 3000
 
 # Lancer le code compilé
-CMD ["node", "dist/server.js"]
+CMD ["node", "dist/src/server.js"]

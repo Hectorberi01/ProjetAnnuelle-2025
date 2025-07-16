@@ -55,7 +55,9 @@ class ProjetService {
                 throw new Error('Project ID is required');
             }
             try {
-                return yield projetRepo.findOneByOrFail({ id });
+                const projet = yield projetRepo.findOneBy({ id });
+                console.log('Fetched project:', projet);
+                return projet;
             }
             catch (error) {
                 console.error('Error fetching project by ID:', error);

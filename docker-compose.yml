@@ -112,7 +112,7 @@ services:
     build: ./livrable-service
     ports:
       - "3009:3009"
-    container_name: deliverables
+    container_name: livrables
     env_file:
       - ./livrable-service/.env
     networks:

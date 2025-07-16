@@ -20,7 +20,7 @@ interface ServiceMap {
   roles: string;
   promotions: string;
   auth: string;
-  deliverables: string;
+  livrables: string;
   reports: string;
   soutenances: string;
 }
@@ -54,7 +54,7 @@ export const SERVICES: ServiceMap = {
     ? 'http://auth:3001/auth'
     : process.env.AUTH || 'http://localhost:3001/auth',
 
-  deliverables: isDocker
+  livrables: isDocker
     ? 'http://livrables:3009/deliverables'
     : process.env.DELIVERABLES || 'http://localhost:3009/deliverables',
 

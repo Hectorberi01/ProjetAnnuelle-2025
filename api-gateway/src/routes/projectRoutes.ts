@@ -33,7 +33,7 @@ router.get("/:id", async (req, res) => {
     try {
         const result = await getProjectById(projectId);
 
-        if (!result || result.status !== 200) {
+        if (!result) {
             res.status(404).json({ message: "Project not found" });
             return;
         }

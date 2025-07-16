@@ -4,7 +4,7 @@
   "description": "📡 API Gateway – Gestionnaire de projets étudiants",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node dist/server.js",
+    "start": "node dist/src/server.js",
     "build": "tsc",
     "dev": "ts-node-dev --respawn src/server.ts"
   },
