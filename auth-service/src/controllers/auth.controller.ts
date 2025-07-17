@@ -5,8 +5,8 @@ import { AuthenticatedRequest } from '../middlewares/auth.middleware';
 //OK
 export const register = async (req: Request, res: Response) => {
   try {
-
     console.log('Register request received:', req.body);
+    
     const result = await AuthService.register(req.body);
 
     res.status(result.status).json(result.data);

@@ -8,7 +8,7 @@ import roleRoutes from "./routes/role.routes";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3003;
+const PORT = process.env.USER_PORT || 3003;
 
 const main = async () => {
 

@@ -12,6 +12,6 @@ export class PromotionStudent {
   @Column()
   studentId!: number;
 
-  @ManyToOne(() => Promotion, (promotion) => promotion.promotionStudents)
+  @ManyToOne(() => Promotion, (promotion) => promotion.promotionStudents,{ onDelete: "CASCADE" })
   promotion?: Promotion;
 }

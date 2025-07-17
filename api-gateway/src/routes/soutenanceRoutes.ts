@@ -3,11 +3,14 @@ import { generateSoutenanceSchedule, getSoutenanceSchedule, updateSoutenanceSlot
 
 const router = Router();
 
-router.post('/', async (req, res) => {
+router.post('/project/:projectId', async (req, res) => {
     try {
-        const schedules = await generateSoutenanceSchedule(req.body);
-        res.status(201).json(schedules);    
-    } catch (e) {       
+        console.log('Generating schedule with data:', req.body);
+        const projectId = parseInt(req.params.projectId);
+        console.log('Project ID:', projectId);
+        const schedules = await generateSoutenanceSchedule(projectId);
+        res.status(201).json(schedules);
+    } catch (e) {
         console.error('Error generating schedule:', e);
         res.status(500).json({ message: 'Erreur de génération', error: e });
     }

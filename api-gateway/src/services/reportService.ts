@@ -60,7 +60,6 @@ export async function getReportById(reportId: number): Promise<any> {
 }
 
 export async function getReportByGroup(groupId: number): Promise<any[]> {
-    console.log("url", `${URL_REPORTS}/groups/${groupId}`);
     try {
         const response = await apiClient.get<any[]>(`${URL_REPORTS}/groups/${groupId}`);
         if (response.status !== 200) {

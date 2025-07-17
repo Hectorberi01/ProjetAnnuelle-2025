@@ -17,6 +17,13 @@ export const registerSchema = Joi.object({
     'string.empty': "L'email est requis",
     'string.email': "L'email n'est pas valide",
   }),
+  address: Joi.string().optional().allow('').label("Adresse").messages({
+    'string.empty': "L'adresse est requise",
+  }),
+  phoneNumber: Joi.string().optional().allow('').pattern(/^\+?[0-9\s\-()]+$/).label("Numéro de téléphone").messages({
+    'string.empty': "Le numéro de téléphone est requis",
+    'string.pattern.base': "Le numéro de téléphone n'est pas valide",
+  }),
   roleId: Joi.number().integer().min(1).required().messages({
     'number.base': "Le rôle est requis",
     'number.integer': "Le rôle doit être un entier",

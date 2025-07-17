@@ -4,6 +4,7 @@ import { SoutenanceService } from '../services/soutenanceService';
 
 export class SoutenanceController {
   static async generate(req: Request, res: Response) {
+    console.log('Generating schedule with data:', req.body);
     try {
       const schedules = await SoutenanceService.generateSchedule(req.body);
       res.status(201).json(schedules);

@@ -2,19 +2,21 @@ import { Router } from "express";
 //import { userControllerInstance } from "../controllers/user.controller";
 import { validateBody } from "../middlewares/validate.middleware";
 import { createUserSchema, updateUserSchema } from "../validators/user.validator";
-import { create, createAdmin, deleteUser, getAll, getByEmail, getById, update } from "../controllers/user.controller";
+import { create, deleteUser, getAll, getByEmail, getById, update, updateLastLogin } from "../controllers/user.controller";
 //import { createRoleSchema, updateRoleSchema } from "../validators/role.validator";
 //import { createRole, deleteRole, getAllRoles, getRoleByName, updateRole } from "../controllers/role.controller";
 
 
 const router = Router();
 
-router.post("/", validateBody(createUserSchema),create);
-router.post("/admin", createAdmin);
+//router.post("/", validateBody(createUserSchema),create);
+router.post("/",create);
+//router.post("/admin", createAdmin);
 router.get("/", getAll);
 router.get("/:id", getById);
 router.get("/email/:email", getByEmail);
 router.put("/:id", validateBody(updateUserSchema), update);
+router.put("/last-login/:id", updateLastLogin)
 router.delete("/:id", deleteUser);
 
 // role routes

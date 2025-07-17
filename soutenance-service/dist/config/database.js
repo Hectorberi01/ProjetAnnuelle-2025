@@ -39,21 +39,13 @@ const dotenv = __importStar(require("dotenv"));
 const Soutenance_1 = require("../entities/Soutenance");
 // Spécifiez le chemin vers le fichier .env
 dotenv.config();
-console.log('Database configuration:', {
-    type: process.env.DB_TYPE,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-});
 exports.AppDataSource = new typeorm_1.DataSource({
     type: 'mysql',
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT || '3306'),
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME || 'soutenance-Service',
+    database: process.env.SOUTENANCE_DB_NAME || 'Soutenance_Service',
     synchronize: true,
     logging: false,
     entities: [Soutenance_1.Soutenance],

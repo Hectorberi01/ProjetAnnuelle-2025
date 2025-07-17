@@ -35,9 +35,13 @@ __decorate([
     __metadata("design:type", Number)
 ], Project.prototype, "soutenanceDuration", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Project.prototype, "lieuSoutenance", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Project.prototype, "url", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: 1 }),
     __metadata("design:type", Number)

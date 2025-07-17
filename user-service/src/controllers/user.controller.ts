@@ -5,7 +5,7 @@ import e, { Request, Response } from 'express';
 
 const userService = new UserService();
 
-export const  create = async (req:Request, res:Response)=> {
+export const create = async (req:Request, res:Response)=> {
   try {
     const user = await userService.create(req.body);
     res.status(201).json(user);
@@ -14,6 +14,7 @@ export const  create = async (req:Request, res:Response)=> {
   }
 };
 
+/*
 export const createAdmin = async (req: Request, res: Response) => {
   console.log("req.body");
   console.log(req.body);
@@ -23,12 +24,16 @@ export const createAdmin = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(400).json({ message: error.message });
   }
-};
+};*/
 
 export const getAll = async (req: Request, res: Response) => {
-  console.log("getAll users");
-  const users = await userService.findAll();
-  res.status(200).json(users);
+  try {
+    console.log("getAll users");
+    const users = await userService.findAll();
+    res.status(200).json(users);
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la récupération des utilisateurs" });
+  }
 };
 
 export const getById = async (req: Request, res: Response) => {
@@ -76,6 +81,22 @@ export const update = async (req: Request, res: Response) => {
     res.status(404).json({ message: "Utilisateur non trouvé" });
     return;
   }
+  res.json(updated);
+};
+
+export const updateLastLogin = async (req: Request, res: Response) => {
+  const id = Number(req.params?.id);
+  if (isNaN(id)) {
+    res.status(400).json({ message: "ID invalide" });
+    return;
+  }
+
+  const updated = await userService.updateLastLogin(id);
+  if (!updated) {
+    res.status(404).json({ message: "Utilisateur non trouvé" });
+    return;
+  }
+
   res.json(updated);
 };
 

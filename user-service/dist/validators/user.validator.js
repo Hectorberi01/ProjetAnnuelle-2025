@@ -10,6 +10,12 @@ exports.createUserSchema = joi_1.default.object({
     prenom: joi_1.default.string().required(),
     email: joi_1.default.string().email().required(),
     roleId: joi_1.default.number().integer().required(),
+    phoneNumber: joi_1.default.string().allow(null, "").optional(),
+    adresse: joi_1.default.string().allow(null, "").optional(),
+    isActive: joi_1.default.boolean().default(true),
+    // Pour gérer les étudiants avec promotion
+    //promotionId: Joi.number().integer().optional(),
+    statut: joi_1.default.boolean().optional(), // utilisé pour 
 });
 exports.updateUserSchema = joi_1.default.object({
     nom: joi_1.default.string().optional(),

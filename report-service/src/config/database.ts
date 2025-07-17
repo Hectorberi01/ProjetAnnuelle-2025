@@ -13,7 +13,7 @@ export const AppDataSource = new DataSource({
   port: parseInt(process.env.DB_PORT || '3306'),
   username: process.env.DB_USERNAME || 'hector',
   password: process.env.DB_PASSWORD ,
-  database: process.env.DB_NAME || 'report-Service',
+  database: process.env.REPORT_DB_NAME || 'Report-Service',
   synchronize: true,
   logging: false,
   entities: [Report],

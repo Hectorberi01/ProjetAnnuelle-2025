@@ -22,13 +22,12 @@ export async function getUserById(userId: number): Promise<any> {
 }
 export async function getAllUsers(): Promise<any[]> {
     try {
-        console.log("avant le get all users");
         console.log(`${URL_USERS}`);
-        console.log("après le get all users");
         const response = await apiClient.get<User[]>(`${URL_USERS}`);
         if (response.status !== 200) {
             throw new Error('Failed to fetch users');
         }
+        console.log('Fetched users:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching users:', error);
@@ -48,7 +47,7 @@ export async function getUserByEmail(email: string): Promise<User | null> {
     }
 }
 
-export async function createUser(userData: CreateUser): Promise<User> {
+export async function createUser(userData: any): Promise<User> {
     try {
         const response = await apiClient.post<User>(`${URL_USERS}`, userData);
         if (response.status !== 201) {
@@ -91,7 +90,7 @@ export async function deleteUser(userId: number): Promise<any> {
 export async function getStudents(): Promise<any[]> {
     try {
         const allUsers = await getAllUsers();
-        const studentsList = allUsers.filter((user: any) => user.role.name === "student");
+        const studentsList = allUsers.filter((user: any) => user.role.name === "student".toUpperCase);
         return studentsList;
     } catch (error) {
         console.error('Error fetching students:', error);

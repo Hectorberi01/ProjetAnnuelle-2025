@@ -1,10 +1,38 @@
 import { SERVICES } from "../config/services.config";
+import { getProjectById } from "./projectService";
 
 
 const SOUTENANCES_URL = SERVICES.soutenances;
 
-export async function generateSoutenanceSchedule(data: any): Promise<any> {
+export async function generateSoutenanceSchedule(projectId: number): Promise<any> {
     try {
+        const project:any = await getProjectById(projectId);
+
+        if (!project || !Array.isArray((project as any).groups)) {
+            throw new Error(
+                (project && (project as any).error)
+                    ? `Project fetch error: ${(project as any).error}`
+                    : 'Project does not contain groups'
+            );
+        }
+
+        const projectIds = (project as any).groups.map((group: any) => group.id);
+
+        console.log('Project IDs:', projectIds);
+
+        const startTime = new Date(project.soutenanceDate) as any;
+        const endTime = new Date(startTime.getTime() + 3 * 60 * 60 * 1000);
+        const data = {
+            projectId: projectId,
+            groupIds: projectIds,
+            mode: 'auto', 
+            durationInMinutes: project.soutenanceDuration,
+            startTime,
+            endTime
+        };
+
+        console.log('Data to send:', data);
+        
         const response = await fetch(`${SOUTENANCES_URL}`, {
             method: 'POST',
             headers: {

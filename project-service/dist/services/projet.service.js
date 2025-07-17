@@ -65,10 +65,9 @@ class ProjetService {
     }
     createProject(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a;
+            var _a, _b;
             try {
-                const preparedData = Object.assign(Object.assign({}, data), { soutenanceDate: (_a = data.soutenanceDate) !== null && _a !== void 0 ? _a : undefined // Remplace null par undefined
-                 });
+                const preparedData = Object.assign(Object.assign({}, data), { soutenanceDate: (_a = data.soutenanceDate) !== null && _a !== void 0 ? _a : undefined, url: (_b = data.url) !== null && _b !== void 0 ? _b : undefined });
                 const project = projetRepo.create(preparedData);
                 return yield projetRepo.save(project);
             }
@@ -118,6 +117,7 @@ class ProjetService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const project = yield projetRepo.findOneByOrFail({ id });
+                console.log('Updating project with ID:', id, 'and data:', updateData);
                 Object.assign(project, updateData);
                 const updatedProject = yield projetRepo.save(project);
                 return updatedProject;

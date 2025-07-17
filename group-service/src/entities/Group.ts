@@ -15,6 +15,6 @@ export class Group {
   @Column( {default: () => "CURRENT_TIMESTAMP"})
   createdAt!: Date;
 
-  @OneToMany(() => GroupStudent, (groupStudent) => groupStudent.groupStudent)
+  @OneToMany(() => GroupStudent, (groupStudent) => groupStudent.groupStudent,{ cascade: ["remove"] })
   groupStudent!: GroupStudent[];
 }

@@ -28,7 +28,7 @@ __decorate([
     __metadata("design:type", Date)
 ], GroupStudent.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => Group_1.Group, (group) => group.groupStudent),
+    (0, typeorm_1.ManyToOne)(() => Group_1.Group, (group) => group.groupStudent, { onDelete: "CASCADE" }),
     __metadata("design:type", Group_1.Group)
 ], GroupStudent.prototype, "groupStudent", void 0);
 exports.GroupStudent = GroupStudent = __decorate([

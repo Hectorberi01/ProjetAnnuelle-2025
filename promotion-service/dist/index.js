@@ -17,7 +17,7 @@ const database_1 = require("./config/database");
 const promotion_route_1 = __importDefault(require("./routes/promotion.route"));
 const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 3007;
+const PORT = process.env.PROMOTION_PORT || 3007;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database_1.AppDataSource.initialize();

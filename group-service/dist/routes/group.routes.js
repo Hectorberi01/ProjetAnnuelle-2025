@@ -15,4 +15,5 @@ router.post('/add-student', group_controller_1.GroupController.addStudentToGroup
 router.delete('/remove-student', group_controller_1.GroupController.removeStudentFromGroup);
 router.get('/students/:id', group_controller_1.GroupController.getStudentsInGroup);
 router.delete('/:id', group_controller_1.GroupController.deleteGroup);
+router.delete('/project/:projectId', group_controller_1.GroupController.deleteGroupsByProject);
 exports.default = router;

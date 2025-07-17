@@ -1,6 +1,7 @@
 import { SERVICES } from "../config/services.config";
 import FormData from 'form-data';
-import fetch, { Headers } from 'node-fetch';
+const fetch = require('node-fetch');
+
 const DELIVERABLES_URL  = SERVICES.deliverables || "http://localhost:3009/deliverables";
 interface submitDeliverableFormData {
     name: string;

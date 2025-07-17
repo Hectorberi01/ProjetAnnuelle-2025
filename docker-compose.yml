@@ -67,15 +67,15 @@ services:
     networks:
       - backend
 
-  grades:
-    build: ./grade-service
-    ports:
-      - "3005:3005"
-    container_name: grades
-    env_file:
-      - ./grade-service/.env
-    networks:
-      - backend
+  #grades:
+  #  build: ./grade-service
+  #  ports:
+  #    - "3005:3005"
+  #  container_name: grades
+  #  env_file:
+  #    - ./grade-service/.env
+  #  networks:
+  #    - backend
 
   reports:
     build: ./report-service
@@ -97,13 +97,15 @@ services:
     networks:
       - backend
 
-  # notations:
-  #   build: ./notation-service
-  #   ports:
-  #     - "3008:3008"
-  #   container_name: notations
-  #   networks:
-  #     - backend
+  notations:
+    build: ./notation-service
+    ports:
+      - "3005:3005"
+    container_name: notations
+    env_file:
+      - ./notation-service/.env
+    networks:
+      - backend
 
   livrables:
     build: ./livrable-service

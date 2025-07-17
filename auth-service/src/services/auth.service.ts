@@ -42,24 +42,24 @@ interface createAdminUserDTO {
   nom: string;
   prenom: string;
   email: string;
+  address?: string;
+  phoneNumber?: string;
+  roleId?: number;
   password: string;
 }
 
 
-export const register = async (data: RegisterDTO) => {
+export const register = async (data: any) => {
 
   const requiredTextFields = ['nom', 'prenom', 'email'];
   for (const field of requiredTextFields) {
     
     const value = (data as any)[field];
-    if (!value || value.trim() === "") {
-      return { status: 400, data: { error: `Le champ '${field}' est requis.` } };
-    }
+    if (!value || value.trim() === "") return { status: 400, data: { error: `Le champ '${field}' est requis.` } };
   }
 
-  if (typeof data.roleId !== "number") {
-    return { status: 400, data: { error: "Le champ 'roleId' est requis et doit être un nombre." } };
-  }
+  if (typeof data.roleId !== "number")  return { status: 400, data: { error: "Le champ 'roleId' est requis et doit être un nombre." } };
+  
 
   const { error } = registerSchema.validate(data);
   if (error) {
@@ -69,9 +69,9 @@ export const register = async (data: RegisterDTO) => {
     };
   }
 
+  console.log("USER_SERVICE_URL", USER_SERVICE_URL);
   try {
     const response = await axios.post(`${USER_SERVICE_URL}`,data);
-    console.log("response", response);
     return { status: 201, data: response.data };
   } catch (error: any) {
     return { status: 400, data: { error: error.message } };

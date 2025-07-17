@@ -17,11 +17,10 @@ const database_1 = require("./config/database");
 const report_routes_1 = __importDefault(require("./routes/report.routes"));
 const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 3006;
+const PORT = process.env.REPORT_PORT || 3006;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database_1.AppDataSource.initialize();
-        console.log('Database connection established');
         // 2. Middleware
         app.use((0, cors_1.default)());
         app.use(express_1.default.json());

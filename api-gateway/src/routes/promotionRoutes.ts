@@ -1,14 +1,26 @@
 import { Router } from "express";
 import multer from 'multer';
-import { addStudentToPromotion, createPromotion, deletePromotion, getAllPromotions, getPromotionById, getPromotionByStudentId, updatePromotion } from "../services/promotionService";
+import { addStudentToPromotion,getAll, createPromotion, deletePromotion, getAllPromotions, getPromotionById, getPromotionByStudentId, updatePromotion, addStudentUsingCSV } from "../services/promotionService";
+import { deleteProject, getProjectsByPromotionId } from "../services/projectService";
+import { deleteGroupsByProjectId } from "../services/groupService";
 const upload = multer();
 const router = Router();
 
 // Get all promotions
 router.get("/", async (req, res) => {
     const promotions = await getAllPromotions();
-    console.log("promotions", promotions);
     res.json(promotions);
+});
+
+// Get all
+router.get("/all", async (req, res) => {
+    try {
+        const promotions = await getAll();
+        res.status(200).json(promotions);
+    } catch (error) {
+        console.error('Error fetching promotions:', error);
+        res.status(500).json({ message: "Failed to fetch promotions" });
+    }
 });
 
 // Get a promotion by ID
@@ -37,12 +49,25 @@ router.post("/", upload.single('file'), async (req, res) => {
     }
 });
 
+// Add students to a promotion using CSV
+router.post("/:id/students/csv", upload.single('file'), async (req, res) => {
+    const promotionId = parseInt(req.params.id);
+    const file = req.file;
+
+    try {
+        await addStudentUsingCSV(promotionId, file);
+        res.status(200).json({ message: "Students added successfully" });
+    } catch (error) {
+        console.error('Error adding students from CSV:', error);
+        res.status(500).json({ message: "Failed to add students from CSV" });
+    }
+});
+
 // Add a student to a promotion
 router.post("/:id/students", async (req, res) => {
     const promotionId =parseInt(req.params.id);
     const studentId = parseInt(req.body.studentId);
-    console.log("promotionId", promotionId);
-    console.log("studentId", studentId);
+    
     try {
         const response = await addStudentToPromotion(promotionId, studentId);
         res.status(200).json(response);
@@ -51,6 +76,7 @@ router.post("/:id/students", async (req, res) => {
         res.status(500).json({ message: "Failed to add student to promotion" });
     }
 });
+
 // Get promotions by student ID
 router.get("/students/:id", async (req, res) => {
     const studentId = parseInt(req.params.id);
@@ -83,6 +109,24 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
     const promotionId = parseInt(req.params.id);
     try {
+        // projet rattaché à la promotion
+        const projects = await getProjectsByPromotionId(promotionId);
+
+        let projectIds = [];
+        if (projects.length != 0) {
+            projectIds = projects.map(project => project.id);
+        }
+
+        for (const projectId of projectIds) {
+            // Delete the project associated with the promotion
+            await deleteGroupsByProjectId(projectId);
+
+            // Assuming you have a function to delete projects by ID
+            await deleteProject(projectId);
+        }
+        
+
+        // Delete the promotion
         const response = await deletePromotion(promotionId);
         res.status(200).json(response);
     } catch (error) {

@@ -7,13 +7,12 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 const app  = express()
 
-const PORT = process.env.PORT || 3002
+const PORT = process.env.PROJECT_PORT || 3002
 
 const main = async () => {
 
     try {
         await AppDataSource.initialize();
-        console.log('Database connection established');
 
         // 2. Middleware
         app.use(cors());

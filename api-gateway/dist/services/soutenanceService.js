@@ -13,10 +13,30 @@ exports.generateSoutenanceSchedule = generateSoutenanceSchedule;
 exports.getSoutenanceSchedule = getSoutenanceSchedule;
 exports.updateSoutenanceSlot = updateSoutenanceSlot;
 const services_config_1 = require("../config/services.config");
+const projectService_1 = require("./projectService");
 const SOUTENANCES_URL = services_config_1.SERVICES.soutenances;
-function generateSoutenanceSchedule(data) {
+function generateSoutenanceSchedule(projectId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            const project = yield (0, projectService_1.getProjectById)(projectId);
+            if (!project || !Array.isArray(project.groups)) {
+                throw new Error((project && project.error)
+                    ? `Project fetch error: ${project.error}`
+                    : 'Project does not contain groups');
+            }
+            const projectIds = project.groups.map((group) => group.id);
+            console.log('Project IDs:', projectIds);
+            const startTime = new Date(project.soutenanceDate);
+            const endTime = new Date(startTime.getTime() + 3 * 60 * 60 * 1000);
+            const data = {
+                projectId: projectId,
+                groupIds: projectIds,
+                mode: 'auto',
+                durationInMinutes: project.soutenanceDuration,
+                startTime,
+                endTime
+            };
+            console.log('Data to send:', data);
             const response = yield fetch(`${SOUTENANCES_URL}`, {
                 method: 'POST',
                 headers: {

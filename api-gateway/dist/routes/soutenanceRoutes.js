@@ -12,9 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const soutenanceService_1 = require("../services/soutenanceService");
 const router = (0, express_1.Router)();
-router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/project/:projectId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const schedules = yield (0, soutenanceService_1.generateSoutenanceSchedule)(req.body);
+        console.log('Generating schedule with data:', req.body);
+        const projectId = parseInt(req.params.projectId);
+        console.log('Project ID:', projectId);
+        const schedules = yield (0, soutenanceService_1.generateSoutenanceSchedule)(projectId);
         res.status(201).json(schedules);
     }
     catch (e) {

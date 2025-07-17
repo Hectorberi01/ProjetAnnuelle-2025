@@ -42,20 +42,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getGroupByIdWitoutEnriching = getGroupByIdWitoutEnriching;
 exports.getGroupById = getGroupById;
 exports.getAllGroups = getAllGroups;
 exports.getGroupByPromotionId = getGroupByPromotionId;
 exports.getGroupByProjectId = getGroupByProjectId;
-exports.createManualGroup = createManualGroup;
-exports.createFreeGroup = createFreeGroup;
-exports.createRandomGroup = createRandomGroup;
 exports.createGroup = createGroup;
 exports.updateGroup = updateGroup;
 exports.deleteGroup = deleteGroup;
+exports.deleteGroupsByProjectId = deleteGroupsByProjectId;
 exports.JoinToGroup = JoinToGroup;
 const services_config_1 = require("../config/services.config");
 const apiClient_1 = require("../utils/apiClient");
-const projectService_1 = require("./projectService");
 const env = __importStar(require("dotenv"));
 const userService_1 = require("./userService");
 const reportService_1 = require("./reportService");
@@ -63,6 +61,29 @@ const deliverableService_1 = require("./deliverableService");
 env.config();
 const URL_GROUPS = services_config_1.SERVICES.groups || "http://localhost:3004/groups";
 const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/projects";
+function getGroupByIdWitoutEnriching(groupId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield apiClient_1.apiClient.get(`${URL_GROUPS}/${groupId}`);
+            if (response.status !== 200) {
+                throw new Error('Failed to fetch group');
+            }
+            const groupData = response.data;
+            // Récupère tous les étudiants associés à groupStudent
+            const studentObjects = yield Promise.all(groupData.groupStudent.map((gs) => __awaiter(this, void 0, void 0, function* () {
+                const user = yield (0, userService_1.getUserById)(gs.studentId);
+                return Object.assign(Object.assign({}, gs), { student: user });
+            })));
+            groupData.groupStudent = studentObjects;
+            response.data = groupData;
+            return response;
+        }
+        catch (error) {
+            console.error('Error fetching group:', error);
+            throw new Error('Failed to fetch group');
+        }
+    });
+}
 function getGroupById(groupId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -168,85 +189,66 @@ function getGroupByProjectId(projectId) {
         }
     });
 }
-function createManualGroup(groupData, projectId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const project = yield (0, projectService_1.getProjectById)(projectId);
-            if (project.status !== 200) {
-                throw new Error('Project not found');
-            }
-            const response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/manual`, groupData);
-            if (response.status !== 201) {
-                throw new Error('Failed to create manual group');
-            }
-            return response.data;
-        }
-        catch (error) {
-            console.error('Error creating manual group:', error);
-            throw new Error('Failed to create manual group');
-        }
-    });
-}
-function createFreeGroup(groupData, projectId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const project = yield (0, projectService_1.getProjectById)(projectId);
-            if (project.status !== 200) {
-                throw new Error('Project not found');
-            }
-            const response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/free/${projectId}`, groupData);
-            if (response.status !== 201) {
-                throw new Error('Failed to create free group');
-            }
-            return response.data;
-        }
-        catch (error) {
-            console.error('Error creating free group:', error);
-            throw new Error('Failed to create free group');
-        }
-    });
-}
-function createRandomGroup(groupData, projectId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const project = yield (0, projectService_1.getProjectById)(projectId);
-            if (project.status !== 200) {
-                throw new Error('Project not found');
-            }
-            const response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/random/${projectId}`, groupData);
-            if (response.status !== 201) {
-                throw new Error('Failed to create random group');
-            }
-            return response.data;
-        }
-        catch (error) {
-            console.error('Error creating random group:', error);
-            throw new Error('Failed to create random group');
-        }
-    });
-}
+// export async function createManualGroup(groupData: any, projectId: number) {
+//     try {
+//         const project = await getProjectById(projectId);
+//         if (project.status !== 200) {
+//             throw new Error('Project not found');
+//         }
+//         const response = await apiClient.post(`${URL_GROUPS}/manual`, groupData);
+//         if (response.status !== 201) {
+//             throw new Error('Failed to create manual group');
+//         }
+//         return response.data;
+//     } catch (error) {
+//         console.error('Error creating manual group:', error);
+//         throw new Error('Failed to create manual group');
+//     }
+// }
+// export async function createFreeGroup(groupData: any, projectId: number) {
+//     try {
+//         const project = await getProjectById(projectId);
+//         if (project.status !== 200) {
+//             throw new Error('Project not found');
+//         }
+//         const response = await apiClient.post(`${URL_GROUPS}/free/${projectId}`, groupData);
+//         if (response.status !== 201) {
+//             throw new Error('Failed to create free group');
+//         }
+//         return response.data;
+//     } catch (error) {
+//         console.error('Error creating free group:', error);
+//         throw new Error('Failed to create free group');
+//     }
+// }
+// export async function createRandomGroup(groupData: any, projectId: number) {
+//     try {
+//         const project = await getProjectById(projectId);
+//         if (project.status !== 200) {
+//             throw new Error('Project not found');
+//         }
+//         const response = await apiClient.post(`${URL_GROUPS}/random/${projectId}`, groupData);
+//         if (response.status !== 201) {
+//             throw new Error('Failed to create random group');
+//         }
+//         return response.data;
+//     } catch (error) {
+//         console.error('Error creating random group:', error);
+//         throw new Error('Failed to create random group');
+//     }
+// }
 function createGroup(name, projectId) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log("Creating group with name:", name, "and projectId:", projectId);
+        const payload = {
+            projectId: projectId,
+            name: name
+        };
+        console.log(URL_GROUPS);
         try {
-            let response = {};
-            const projectResponse = yield (0, projectService_1.getProjectById)(projectId);
-            if (projectResponse.status !== 200) {
-                throw new Error('Project not found');
-            }
-            const project = projectResponse.data;
-            if (project.mode == 'manual') {
-                response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/${projectId}/manual`, name);
-            }
-            if (project.mode == 'random') {
-                console.log("Creating random group", `${URL_GROUPS}/random/${projectId}`);
-                const data = {
-                    name: name
-                };
-                console.log("Data", data);
-                response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/random/${projectId}`, data);
-            }
-            if (project.mode == 'free') {
-                response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/free/${projectId}`, name);
+            const response = yield apiClient_1.apiClient.post(`${URL_GROUPS}`, payload);
+            if (response.status !== 201) {
+                throw new Error('Failed to create group');
             }
             return response;
         }
@@ -286,6 +288,21 @@ function deleteGroup(groupId) {
         }
     });
 }
+function deleteGroupsByProjectId(projectId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield apiClient_1.apiClient.delete(`${URL_GROUPS}/project/${projectId}`);
+            if (response.status !== 200) {
+                throw new Error('Failed to delete groups by project ID');
+            }
+            return response.data;
+        }
+        catch (error) {
+            console.error('Error deleting groups by project ID:', error);
+            throw new Error('Failed to delete groups by project ID');
+        }
+    });
+}
 function JoinToGroup(groupId, studentId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -295,6 +312,9 @@ function JoinToGroup(groupId, studentId) {
             };
             console.log("Adding student to group", data);
             const response = yield apiClient_1.apiClient.post(`${URL_GROUPS}/add-student`, data);
+            if (response.status !== 201) {
+                throw new Error('Failed to add student to group');
+            }
             return response;
         }
         catch (error) {

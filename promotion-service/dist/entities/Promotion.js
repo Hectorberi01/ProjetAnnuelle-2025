@@ -40,7 +40,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Promotion.prototype, "updatedAt", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => PromotionStudent_1.PromotionStudent, (ps) => ps.promotion),
+    (0, typeorm_1.OneToMany)(() => PromotionStudent_1.PromotionStudent, (ps) => ps.promotion, { cascade: ["remove"] }),
     __metadata("design:type", Array)
 ], Promotion.prototype, "promotionStudents", void 0);
 exports.Promotion = Promotion = __decorate([

@@ -26,6 +26,27 @@ router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).json({ message: 'Internal server error' });
     }
 }));
+// create user
+router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userData = req.body;
+    try {
+        const response = yield (0, userService_1.getUserByEmail)(userData.email);
+        if (response) {
+            res.status(400).json({ message: 'User with this email already exists' });
+            return;
+        }
+        const createdUser = yield (0, userService_1.createUser)(userData);
+        if (!createdUser) {
+            res.status(500).json({ message: 'Failed to create user' });
+            return;
+        }
+        res.status(201).json(createdUser);
+    }
+    catch (error) {
+        console.error('Error in user service:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}));
 // get students
 router.get('/students', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

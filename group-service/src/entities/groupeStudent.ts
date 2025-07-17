@@ -10,6 +10,6 @@ export class GroupStudent {
     @Column()
     createdAt!: Date;
 
-    @ManyToOne(() => Group, (group) => group.groupStudent)
+    @ManyToOne(() => Group, (group) => group.groupStudent, { onDelete: "CASCADE" })
     groupStudent!: Group;
 }

@@ -5,7 +5,8 @@ export interface CreateProject {
     name: string;
     description: string;
     soutenanceDate?: Date | null;
-    soutenanceDuration?: number;
+    soutenanceDuration?: number | 0;
+    url?: string;
     minStudents: number;
     maxStudents: number;
     deadline: Date;
@@ -67,7 +68,8 @@ export class ProjetService {
         try {
             const preparedData = {
                 ...data,
-                soutenanceDate: data.soutenanceDate ?? undefined  // Remplace null par undefined
+                soutenanceDate: data.soutenanceDate ?? undefined,  // Remplace null par undefined
+                url: data.url ?? undefined
             };
             const project = projetRepo.create(preparedData);
             return await projetRepo.save(project);
@@ -112,6 +114,7 @@ export class ProjetService {
     async updateProject(id: number, updateData: any) {
         try {
             const project = await projetRepo.findOneByOrFail({ id });
+            console.log('Updating project with ID:', id, 'and data:', updateData);
             Object.assign(project, updateData);
             const updatedProject = await projetRepo.save(project);
             return updatedProject;

@@ -47,10 +47,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseCSV = parseCSV;
 exports.createPromotion = createPromotion;
+exports.addStudentUsingCSV = addStudentUsingCSV;
 exports.addStudentToPromotion = addStudentToPromotion;
 exports.getPromotionById = getPromotionById;
 exports.getPromotionByStudentId = getPromotionByStudentId;
 exports.getAllPromotions = getAllPromotions;
+exports.getAll = getAll;
 exports.updatePromotion = updatePromotion;
 exports.deletePromotion = deletePromotion;
 const csv_parser_1 = __importDefault(require("csv-parser"));
@@ -65,6 +67,7 @@ const groupService_1 = require("./groupService");
 env.config();
 const URL_PROMOTIONS = services_config_1.SERVICES.promotions || "http://localhost:3007/promotions";
 const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/projects";
+const URL_USERS = services_config_1.SERVICES.users || "http://localhost:3003/users";
 function parseCSV(file) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
@@ -81,9 +84,8 @@ function parseCSV(file) {
 function createPromotion(promotion, file) {
     return __awaiter(this, void 0, void 0, function* () {
         let students = [];
-        if (!file) {
+        if (!file)
             throw new Error("File is required");
-        }
         try {
             if (file.mimetype === "application/json") {
                 const fileContent = file.buffer.toString("utf-8");
@@ -94,7 +96,6 @@ function createPromotion(promotion, file) {
             }
         }
         catch (err) {
-            console.error("Erreur pendant la lecture du fichier : ", err);
             throw new Error("Impossible de lire le fichier étudiants");
         }
         // récupère l'id du role étudiant
@@ -123,15 +124,13 @@ function createPromotion(promotion, file) {
                 linkedUsers.push(user.id);
             }
             const response = yield apiClient_1.apiClient.post(`${URL_PROMOTIONS}`, promotion);
-            if (response.status !== 201) {
+            if (response.status !== 201)
                 throw new Error("Failed to create promotion");
-            }
             // On récupère la promotion
             const promo = response.data;
             // On ajoute les étudiants à la promotion
             for (const studentId of linkedUsers) {
-                const etudentResponse = yield addStudentToPromotion(promo.id, studentId);
-                console.log("etudentResponse", etudentResponse);
+                yield addStudentToPromotion(promo.id, studentId);
             }
             yield Promise.all(newStudents.map((student) => __awaiter(this, void 0, void 0, function* () {
                 yield (0, notificationService_1.sendAccountCredentialsEmail)(student.email, student.username);
@@ -147,16 +146,70 @@ function createPromotion(promotion, file) {
         }
     });
 }
+function addStudentUsingCSV(promotionId, file) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!file)
+            throw new Error("File is required");
+        let students = [];
+        const existStudents = [];
+        const newStudents = [];
+        const linkedUsers = [];
+        try {
+            const promoRes = yield apiClient_1.apiClient.get(`${URL_PROMOTIONS}/${promotionId}`);
+            if (promoRes.status !== 200)
+                throw new Error("Failed to fetch promotion");
+            const promo = promoRes.data;
+            if (file.mimetype === "application/json") {
+                const fileContent = file.buffer.toString("utf-8");
+                students = JSON.parse(fileContent);
+            }
+            else {
+                students = yield parseCSV(file);
+            }
+            const role = yield (0, userService_1.getRoleIdByName)("student".toUpperCase());
+            for (const student of students) {
+                const response = yield (0, userService_1.getUserByEmail)(student.email);
+                let user;
+                if (response !== null) {
+                    user = response;
+                    existStudents.push(user);
+                }
+                else {
+                    student.roleId = role.id;
+                    const createResponse = yield (0, userService_1.createUser)(student);
+                    if (!createResponse) {
+                        throw new Error("Failed to create user");
+                    }
+                    newStudents.push(createResponse);
+                    user = createResponse;
+                }
+                linkedUsers.push(user.id);
+            }
+            for (const studentId of linkedUsers) {
+                yield addStudentToPromotion(promotionId, studentId);
+            }
+            yield Promise.all(newStudents.map((student) => __awaiter(this, void 0, void 0, function* () {
+                yield (0, notificationService_1.sendAccountCredentialsEmail)(student.email, student.username);
+                yield (0, notificationService_1.sendPromotionEnrollmentEmail)(student.email, promo.name);
+            })));
+            yield Promise.all(existStudents.map((student) => __awaiter(this, void 0, void 0, function* () {
+                yield (0, notificationService_1.sendPromotionEnrollmentEmail)(student.email, promo.name);
+            })));
+        }
+        catch (error) {
+            throw new Error("Failed to parse CSV");
+        }
+        const promises = students.map(student => addStudentToPromotion(promotionId, student.id));
+        return Promise.all(promises);
+    });
+}
 // Add a student to a promotion
 function addStudentToPromotion(promotionId, studentId) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(`${URL_PROMOTIONS}/${promotionId}/students`);
         try {
             const response = yield apiClient_1.apiClient.post(`${URL_PROMOTIONS}/${promotionId}/students`, { studentId });
-            if (response.status !== 201) {
+            if (response.status !== 201)
                 throw new Error('Failed to add student to promotion');
-            }
-            // on récupère l'étudiant ajouté
             const studentResponse = yield (0, userService_1.getUserById)(studentId);
             // On envoie un email à l'étudiant pour l'informer de son ajout à la promotion
             if (studentResponse) {
@@ -165,7 +218,6 @@ function addStudentToPromotion(promotionId, studentId) {
             return response.data;
         }
         catch (error) {
-            console.error('Error adding student to promotion:', error);
             throw new Error('Failed to add student to promotion');
         }
     });
@@ -173,30 +225,27 @@ function addStudentToPromotion(promotionId, studentId) {
 function getPromotionById(promotionId) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a;
-        console.log('URL', `${URL_PROMOTIONS}/${promotionId}`);
         try {
-            const response = yield apiClient_1.apiClient.get(`${URL_PROMOTIONS}/${promotionId}`);
-            if (response.status !== 200) {
+            const [promoRes, usersRes, projectsRes] = yield Promise.all([
+                apiClient_1.apiClient.get(`${URL_PROMOTIONS}/${promotionId}`),
+                apiClient_1.apiClient.get(`${URL_USERS}`),
+                apiClient_1.apiClient.get(`${URL_PROJECTS}/promotion/${promotionId}`)
+            ]);
+            if (promoRes.status !== 200)
                 throw new Error('Failed to fetch promotion');
-            }
-            const promotionData = response.data;
-            console.log("promotionData", promotionData);
-            // on récupère les étudiants de la promotion
-            const students = yield (0, userService_1.getStudents)();
-            console.log("students", students);
-            // on récupère les projets de la promotion
-            const projects = yield (0, projectService_1.getProjectsByPromotionId)(promotionId);
-            console.log("projects", projects);
+            if (usersRes.status !== 200)
+                throw new Error('Failed to fetch users');
+            if (projectsRes.status !== 200)
+                throw new Error('Failed to fetch projects');
+            const students = usersRes.data.filter((user) => user.role.name === "student".toUpperCase());
             // Associer les étudiants à partir de promotionStudents
-            const studentList = (yield Promise.all(((_a = promotionData.promotionStudents) === null || _a === void 0 ? void 0 : _a.map((ps) => __awaiter(this, void 0, void 0, function* () {
+            const studentList = (yield Promise.all(((_a = promoRes.data.promotionStudents) === null || _a === void 0 ? void 0 : _a.map((ps) => __awaiter(this, void 0, void 0, function* () {
                 return students.find((student) => student.id === ps.studentId);
             }))) || [])).filter(Boolean);
-            console.log("studentList", studentList);
-            delete promotionData.promotionStudents;
-            return Object.assign(Object.assign({}, promotionData), { Students: studentList, Projects: projects });
+            delete promoRes.data.promotionStudents;
+            return Object.assign(Object.assign({}, promoRes.data), { Students: studentList, Projects: projectsRes.data || [] });
         }
         catch (error) {
-            console.error('Error fetching promotion by ID:', error);
             throw new Error('Failed to fetch promotion by ID');
         }
     });
@@ -209,8 +258,6 @@ function getPromotionByStudentId(studentId) {
                 throw new Error('Failed to fetch promotion by student ID');
             const promotionData = response.data;
             const promotionIds = Array.isArray(promotionData) ? promotionData.map((promo) => promo.id) : [promotionData.id];
-            //const promotionIds = promotionData?.map((promo: any) => promo.id) || [];
-            console.log("promotionIds", promotionIds);
             const projects = yield Promise.all(promotionIds.map((promotionId) => __awaiter(this, void 0, void 0, function* () {
                 const projectsList = yield (0, projectService_1.getProjectsByPromotionId)(promotionId);
                 return yield Promise.all(projectsList.map((project) => __awaiter(this, void 0, void 0, function* () {
@@ -235,41 +282,44 @@ function getPromotionByStudentId(studentId) {
 function getAllPromotions() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log("SERVICES.promotions", URL_PROMOTIONS);
+            const [promotionRes, users, projectRes] = yield Promise.all([
+                apiClient_1.apiClient.get(URL_PROMOTIONS),
+                apiClient_1.apiClient.get(`${URL_USERS}`),
+                apiClient_1.apiClient.get(URL_PROJECTS),
+            ]);
+            if (promotionRes.status !== 200)
+                throw new Error('1 Échec récupération promotions');
+            if (projectRes.status !== 200)
+                throw new Error('2 Échec récupération projets');
+            if (users.status !== 200)
+                throw new Error('3 Échec récupération utilisateurs');
+            const projectList = projectRes.data.projects;
+            if (!Array.isArray(projectList))
+                throw new Error('4 Liste de projets invalide');
+            const students = users.data.filter((user) => user.role.name === "student".toUpperCase());
+            const enrichedPromotions = yield Promise.all(promotionRes.data.map((promotion) => __awaiter(this, void 0, void 0, function* () {
+                const projects = yield (0, projectService_1.getProjectsByPromotionId)(promotion.id);
+                const studentList = (promotion.promotionStudents || [])
+                    .map((ps) => students.find((s) => s.id === ps.studentId))
+                    .filter(Boolean);
+                return Object.assign(Object.assign({}, promotion), { students: studentList, projects: projects });
+            })));
+            return enrichedPromotions;
+        }
+        catch (error) {
+            console.error('Error fetching promotions:', error);
+            throw new Error('4Failed to fetch promotions');
+        }
+    });
+}
+function getAll() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
             const response = yield apiClient_1.apiClient.get(`${URL_PROMOTIONS}`);
             if (response.status !== 200) {
                 throw new Error('Failed to fetch promotions');
             }
-            // on récupère les étudiants de la promotion
-            const students = yield (0, userService_1.getStudents)();
-            // on récupère le nombre de projets de chaque promotion
-            const projects = yield apiClient_1.apiClient.get(`${URL_PROJECTS}`);
-            if (projects.status !== 200) {
-                throw new Error('Failed to fetch projects');
-            }
-            const projectList = projects.data.projects;
-            if (!Array.isArray(projectList)) {
-                throw new Error('Projects is not an array');
-            }
-            console.log("data", projectList);
-            // Regroupement des projets par ID de promotion
-            const projectsByPromotionId = projectList.reduce((acc, project) => {
-                if (!acc[project.promotionId]) {
-                    acc[project.promotionId] = 0;
-                }
-                acc[project.promotionId]++;
-                return acc;
-            }, {});
-            // Enrichir les promotions avec les étudiants et le nombre de projets
-            const promotionsWithStudents = response.data.map(promotion => {
-                var _a;
-                const studentList = ((_a = promotion.promotionStudents) === null || _a === void 0 ? void 0 : _a.map((ps) => {
-                    return students.find(student => student.id === ps.studentId);
-                }).filter(Boolean)) || [];
-                return Object.assign(Object.assign({}, promotion), { students: studentList, numberOfProjects: projectsByPromotionId[promotion.id] || 0, promotionStudents: undefined // Nettoyage éventuel
-                 });
-            });
-            return promotionsWithStudents;
+            return response.data;
         }
         catch (error) {
             console.error('Error fetching promotions:', error);
@@ -307,15 +357,3 @@ function deletePromotion(promotionId) {
         }
     });
 }
-// export async function getPromotionByName(promotionName: string): Promise<any> {
-//     try {
-//         const response = await apiClient.get(`${SERVICES.promotions}/name/${promotionName}`);
-//         if (response.status !== 200) {
-//             throw new Error('Failed to fetch promotion by name');
-//         }
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error fetching promotion by name:', error);
-//         throw new Error('Failed to fetch promotion by name');
-//     }
-// }

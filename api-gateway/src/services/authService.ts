@@ -9,6 +9,8 @@ interface register{
     nom: string;
     prenom: string;
     email: string;
+    address?: string;
+    phoneNumber?: string;
     roleId: number;
 }
 
@@ -52,14 +54,20 @@ export async function LogoutUser(user: any) {
 }
 
 export async function RegisterUser(registerData: register) {
-    const { nom, prenom, email, roleId } = registerData;
+    const { nom, prenom, email, address, phoneNumber, roleId } = registerData;
+
+    const payload = {
+        nom,
+        prenom,
+        email,
+        roleId,
+        phoneNumber,
+        address,
+    };
+
     try {
-        const response = await apiClient.post(`${URL_AUTH}/register`, {
-            nom,
-            prenom,
-            email,
-            roleId,
-        });
+        const response = await apiClient.post(`${URL_AUTH}/register`, payload);
+           
         if (response.status !== 201) {
             throw new Error('Registration failed');
         }

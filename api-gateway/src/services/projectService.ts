@@ -2,32 +2,40 @@ import { Project } from "../types/project";
 import { apiClient } from "../utils/apiClient";
 import { SERVICES } from "../config/services.config";
 import { response } from "express";
-import { getGroupByProjectId } from "./groupService";
+import { createGroup, getGroupByProjectId, JoinToGroup } from "./groupService";
 import { getReportByProject } from "./reportService";
 import { getSoutenanceSchedule } from "./soutenanceService";
 import { getDeliverableById, getDeliverablesByProjectId,similarityMatrix } from "./deliverableService";
 import { getUserById } from "./userService";
 
+
+import dotenv from "dotenv";
+
+dotenv.config();
+
+
 const URL_PROJECTS = SERVICES.projects || "http://localhost:3002/projects";
 const URL_PROMOTIONS = SERVICES.promotions || "http://localhost:3007/promotions";
 const URL_GROUPS = SERVICES.groups || "http://localhost:3004/groups";
 
-export async function createProject(projectData: any) {
+
+export async function createProject(projectData: any ) {
     let response : any = {}
     try {
         response = await apiClient.post(`${URL_PROJECTS}`, projectData);
-        console.log("response", response);
+       
         if (response.status !== 201) {
             return response;
         }
-        const data = response.data;
-
+       
         return response;
     } catch (error) {
         console.error('Error creating project:', error);
        return response;
     }
 }
+
+
 
 export async function getAllProjects() {
     let response : any = {}
@@ -51,8 +59,6 @@ export async function getProjectById(projectId: number) {
         if (response.status !== 200) {
             return { error: "Échec de récupération du projet", status: response.status };
         }
-
-        console.log('response', response);
 
         // récupérer la promotion par son ID
         const promotionId = response.data.promotionId;
@@ -119,9 +125,11 @@ export async function getProjectById(projectId: number) {
 }
 
 export async function updateProject(projectId: number, projectData: any) {
+    console.log('dans le servcie ');
     let response : any = {}
     try {
-        response = await apiClient.put(`${URL_PROJECTS}/${projectId}`, projectData);
+        console.log("dans updateProject", projectData);
+        response = await apiClient.put(`${URL_PROJECTS}/update/${projectId}`, projectData);
         if (response.status !== 200) {
             return response;
         }
@@ -186,4 +194,8 @@ export async function updateSoutenanceInfo(projectId: number, soutenanceData: an
         console.error('Error updating soutenance info:', error);
         return response;
     }
+}
+
+export function getPublicPDFUrl(filename: string): string {
+    return `${process.env.R2_ENDPOINT}/${process.env.R2_BUCKET}/${encodeURIComponent(filename)}`;
 }

@@ -8,13 +8,12 @@ import cors from 'cors';
 
 const app  = express()
 
-const PORT = process.env.PORT || 3006
+const PORT = process.env.REPORT_PORT || 3006
 
 const main = async () => {
 
     try {
         await AppDataSource.initialize();
-        console.log('Database connection established');
 
         // 2. Middleware
         app.use(cors());

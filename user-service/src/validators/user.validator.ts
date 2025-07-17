@@ -5,6 +5,16 @@ export const createUserSchema = Joi.object({
   prenom: Joi.string().required(),
   email: Joi.string().email().required(),
   roleId: Joi.number().integer().required(),
+
+  phoneNumber: Joi.string().allow(null, "").optional(), 
+  adresse: Joi.string().allow(null, "").optional(), 
+
+  isActive: Joi.boolean().default(true),
+
+  // Pour gérer les étudiants avec promotion
+  //promotionId: Joi.number().integer().optional(),
+
+  statut: Joi.boolean().optional(),       // utilisé pour 
 });
 
 export const updateUserSchema = Joi.object({
