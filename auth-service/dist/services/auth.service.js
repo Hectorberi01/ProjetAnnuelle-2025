@@ -88,9 +88,6 @@ const createAdminUser = (data) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.createAdminUser = createAdminUser;
 const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, password }) {
-    console.log("USER_SERVICE_URL", USER_SERVICE_URL);
-    console.log("email", email);
-    console.log("password", password);
     try {
         if (!email || !password) {
             return { data: { error: 'Email et mot de passe requis' } };
@@ -101,7 +98,6 @@ const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, passwo
             return { data: { error: 'Email invalide' } };
         }
         // Récupérer l'utilisateur par email
-        console.log("USER_SERVICE_URL", `${USER_SERVICE_URL}/email/${email}`);
         const response = yield fetch(`${USER_SERVICE_URL}/email/${email}`);
         if (response.status !== 200) {
             console.log("response.status", response.status);
@@ -118,12 +114,10 @@ const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, passwo
         const isValid = yield bcrypt_1.default.compare(password, user.password);
         console.log("isValid", isValid);
         if (isValid === false) {
-            return { data: { error: 'Mot de passe incorrect' } };
+            return null;
         }
         // Supprimer le champ password
         delete user.password;
-        //const encodedId = Buffer.from(user.id.toString()).toString('base64');
-        //user.id = encodedId;
         const token = jsonwebtoken_1.default.sign({ user: user }, JWT_SECRET, { expiresIn: '1h', });
         return { data: { token, user } };
     }
