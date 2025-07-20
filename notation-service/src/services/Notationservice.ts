@@ -108,14 +108,12 @@ export class NotationService {
     if (notation) {
       notation.commentaireProjet = data.commentaireProjet;
       notation.noteFinale = noteFinale;
-      notation.finaliseeBy = userId;
     } else {
       notation = this.notationFinaliseeRepository.create({
         projectId,
         groupId,
         commentaireProjet: data.commentaireProjet,
-        noteFinale,
-        finaliseeBy: userId
+        noteFinale
       });
     }
 

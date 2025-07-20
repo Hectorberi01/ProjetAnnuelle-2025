@@ -22,27 +22,25 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database_1.AppDataSource.initialize();
         console.log('Database connection established');
-        // Middlewares
+        // 2. Middleware
         app.use((0, cors_1.default)());
         app.use(express_1.default.json());
         app.use(express_1.default.urlencoded({ extended: true }));
-        // ✅ Ajoute cette ligne pour activer les routes de notation :
-        app.use('/grading', gradingRoutes_1.default);
+        // 3. Routes
+        app.use('/notations', gradingRoutes_1.default);
         app.get('/health', (req, res) => {
             res.json({ status: 'OK', service: 'notation-service' });
         });
-        // Lancer le serveur
+        // 5. Lancement serveur
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
-        });
-        app.use((req, res) => {
-            res.status(404).json({ error: "Endpoint not found" });
         });
     }
     catch (error) {
         console.error('Error establishing database connection:', error);
     }
 });
-main().catch((err) => {
+main()
+    .catch((err) => {
     console.error('Error starting the server:', err);
 });

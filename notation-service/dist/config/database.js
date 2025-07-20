@@ -26,9 +26,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppDataSource = void 0;
 const typeorm_1 = require("typeorm");
 const dotenv = __importStar(require("dotenv"));
-const Grade_1 = require("../entities/Grade");
-const GradingGrid_1 = require("../entities/GradingGrid");
-const GradingCriteria_1 = require("../entities/GradingCriteria");
+const CommentaireGlobal_1 = require("../entities/CommentaireGlobal");
+const CritereNotation_1 = require("../entities/CritereNotation");
+const GrilleNotation_1 = require("../entities/GrilleNotation");
+const NotationFinalisee_1 = require("../entities/NotationFinalisee");
+const NoteGroupe_1 = require("../entities/NoteGroupe");
 dotenv.config();
 exports.AppDataSource = new typeorm_1.DataSource({
     type: 'mysql',
@@ -39,7 +41,11 @@ exports.AppDataSource = new typeorm_1.DataSource({
     database: process.env.DB_NAME || 'Notation-Service',
     synchronize: true,
     logging: false,
-    entities: [GradingCriteria_1.GradingCriteria, GradingGrid_1.GradingGrid, Grade_1.Grade],
+    entities: [GrilleNotation_1.GrilleNotation,
+        CritereNotation_1.CritereNotation,
+        NoteGroupe_1.NoteGroupe,
+        CommentaireGlobal_1.CommentaireGlobal,
+        NotationFinalisee_1.NotationFinalisee],
     migrations: [],
     subscribers: [],
 });
