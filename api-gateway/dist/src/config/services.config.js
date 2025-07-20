@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SERVICES = void 0;
 const dotenv = __importStar(require("dotenv"));
 const path_1 = __importDefault(require("path"));
-//dotenv.config();
+dotenv.config();
 const isDocker = process.env.DOCKER === 'true';
 if (!isDocker) {
     console.log('Loading local environment variables');
@@ -71,8 +71,8 @@ exports.SERVICES = {
     auth: isDocker
         ? 'http://auth:3001/auth'
         : process.env.AUTH || 'http://localhost:3001/auth',
-    deliverables: isDocker
-        ? 'http://deliverables:3009/deliverables'
+    livrables: isDocker
+        ? 'http://livrables:3009/deliverables'
         : process.env.DELIVERABLES || 'http://localhost:3009/deliverables',
     reports: isDocker
         ? 'http://reports:3006/reports'

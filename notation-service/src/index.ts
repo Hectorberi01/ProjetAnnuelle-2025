@@ -5,7 +5,7 @@ import { AppDataSource } from './config/database';
 
 
 const app = express();
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.NOTATIONS_PORT || 3005;
 
 
 

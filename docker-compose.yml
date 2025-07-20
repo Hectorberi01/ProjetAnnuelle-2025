@@ -17,23 +17,24 @@ services:
       - notations
       - livrables
       # - soutenances
-    networks:
-      - backend
-
     environment:
       - DOCKER=true
     env_file:
       - ./api-gateway/.env
+    networks:
+      - backend
+
 
   auth:
     build: ./auth-service
     ports:
       - "3001:3001"
     container_name: auth
-    networks:
-      - backend
     env_file:
       - ./auth-service/.env
+    networks:
+      - backend
+   
 
 
   projets:
@@ -111,7 +112,7 @@ services:
     build: ./livrable-service
     ports:
       - "3009:3009"
-    container_name: deliverables
+    container_name: livrables
     env_file:
       - ./livrable-service/.env
     networks:
@@ -140,4 +141,4 @@ volumes:
 
 networks:
   backend:
-    # driver: bridge
+    driver: bridge

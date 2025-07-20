@@ -17,7 +17,7 @@ const cors_1 = __importDefault(require("cors"));
 const gradingRoutes_1 = __importDefault(require("./routes/gradingRoutes"));
 const database_1 = require("./config/database");
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.NOTATIONS_PORT || 3005;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database_1.AppDataSource.initialize();

@@ -96,12 +96,16 @@ export async function getProjectById(projectId: number) {
 
         // on récupère les livrables du projet
         const livrablesResponse = await getDeliverablesByProjectId(projectId);
+        console.log("livrablesResponse", livrablesResponse);
 
         // on écupère les rapports du projet
         const reportsResponse = await getReportByProject(projectId);
+        console.log("reportsResponse", reportsResponse);
         
         // on récupère les soutenances du projet
         const soutenancesResponse = await getSoutenanceSchedule(projectId);
+
+        console.log("soutenancesResponse", soutenancesResponse);
 
         // on récupère la similarité entre les livrables
 
@@ -116,6 +120,8 @@ export async function getProjectById(projectId: number) {
             soutenances: soutenancesResponse,
             similarity: similarity
         };
+
+        console.log("Project details:", result);
 
         return result;
     } catch (error) {

@@ -72,23 +72,10 @@ exports.registerAdmin = registerAdmin;
 // Login
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
-    console.log('Login request received:', { email, password });
-    if (!email || !password) {
-        res.status(400).json({ error: 'Email and password are required' });
-        return;
-    }
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        res.status(400).json({ error: 'Invalid email format' });
-        return;
-    }
     const result = yield AuthService.login({ email, password });
-    if (result === null) {
-        res.status(401).json({ error: 'Invalid email or password' });
-        return;
-    }
-    res.status(200).json(result.data);
+    // Log pour debug
+    console.log('🔐 Résultat login:', result);
+    res.status(result.status).json(result.data);
 });
 exports.login = login;
 // Logout

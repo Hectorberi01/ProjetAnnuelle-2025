@@ -1,7 +1,8 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'; 
-
+import * as fs from 'fs';
 import dotenv from "dotenv";
+import { Readable } from "stream";
 dotenv.config();
 
 
@@ -38,6 +39,38 @@ export async function uploadPDFToR2(file: Express.Multer.File): Promise<string> 
 
 }
 
+
+export async function downloadFromS3(url : string): Promise<Buffer | void> {
+
+    const parsedUrl = new URL(url);
+
+    console.log("Parsed URL:", parsedUrl);
+    const bucketName = parsedUrl.hostname.split('.')[0];
+    console.log("Bucket Name:", bucketName);
+    const key = decodeURIComponent(parsedUrl.pathname.slice(1));
+    console.log("Key:", key);
+
+    const command = new GetObjectCommand({
+        Bucket: bucketName,
+        Key: key,
+    });
+
+    try {
+      const response = await s3.send(command);
+      const stream = response.Body as Readable;
+
+      console.log("Response Body Type:", typeof stream);
+      const chunks: Buffer[] = [];
+      for await (const chunk of stream) {
+        chunks.push(chunk instanceof Buffer ? chunk : Buffer.from(chunk));
+      }
+      return Buffer.concat(chunks);
+    } catch (error) {
+        console.error("Erreur lors du téléchargement depuis S3:", error);
+        throw error;
+    }
+}
+
 export async function getSignedPdfUrl(key: string): Promise<string> {
   const command = new GetObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME!,
@@ -50,8 +83,4 @@ export async function getSignedPdfUrl(key: string): Promise<string> {
 export function extractKeyFromS3Url(url: string): string {
   const { pathname } = new URL(url);
   return decodeURIComponent(pathname.slice(1));
-}
-
-export function getPublicPDFUrl(filename: string): string {
-    return `${process.env.R2_ENDPOINT}/${process.env.R2_BUCKET}/${encodeURIComponent(filename)}`;
 }

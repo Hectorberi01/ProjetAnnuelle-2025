@@ -1,7 +1,7 @@
 
 import * as dotenv from 'dotenv';
 import path from 'path';
-//dotenv.config();
+dotenv.config();
   
 const isDocker = process.env.DOCKER === 'true';
 
@@ -13,7 +13,19 @@ if (!isDocker) {
   dotenv.config();
 }
 
-export const SERVICES = {
+interface ServiceMap {
+  projects: string;
+  groups: string;
+  users: string;
+  roles: string;
+  promotions: string;
+  auth: string;
+  livrables: string;
+  reports: string;
+  soutenances: string;
+}
+
+export const SERVICES: ServiceMap = {
   projects: isDocker
     ? 'http://projets:3002/projects'
     : process.env.PROJETS || 'http://localhost:3002/projects',
@@ -42,8 +54,8 @@ export const SERVICES = {
     ? 'http://auth:3001/auth'
     : process.env.AUTH || 'http://localhost:3001/auth',
 
-  deliverables: isDocker
-    ? 'http://deliverables:3009/deliverables'
+  livrables: isDocker
+    ? 'http://livrables:3009/deliverables'
     : process.env.DELIVERABLES || 'http://localhost:3009/deliverables',
 
   reports: isDocker

@@ -27,6 +27,25 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Get project by ID
+router.get("/:id", async (req, res) => {
+    const projectId =parseInt(req.params.id);
+    try {
+        const result = await getProjectById(projectId);
+
+        if (!result) {
+            res.status(404).json({ message: "Project not found" });
+            return;
+        }
+
+        res.status(200).json(result);
+    } catch (error) {
+        throw error;
+        //res.status(500).json({ message: "Failed to fetch project" });
+        //return;
+    }
+});
+
 router.get('/url', async (req, res) => {
   const { fileUrl } = req.query;
 
@@ -54,23 +73,7 @@ router.get('/url', async (req, res) => {
 });
 
 
-// Get project by ID
-router.get("/:id", async (req, res) => {
-    const projectId =parseInt(req.params.id);
-    try {
-        const result = await getProjectById(projectId);
 
-        if ('error' in result) {
-        res.status(result.status || 500).json({ message: result.error });
-        return;
-        }
-
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(500).json({ message: "Failed to fetch project" });
-        return;
-    }
-});
 
 router.get("/promotion/:id", async (req, res) => {
     const promotionId = parseInt(req.params.id);

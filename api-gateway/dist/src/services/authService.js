@@ -17,10 +17,11 @@ exports.forgotPassword = forgotPassword;
 exports.changePassword = changePassword;
 const services_config_1 = require("../config/services.config");
 const apiClient_1 = require("../utils/apiClient");
-const URL_AUTH = services_config_1.SERVICES.auth || "http://localhost:3001/auth";
+const URL_AUTH = services_config_1.SERVICES.auth;
 function LoginUser(loginData) {
     return __awaiter(this, void 0, void 0, function* () {
         const { email, password } = loginData;
+        console.log(`auth url ${URL_AUTH}/login`);
         try {
             const response = yield apiClient_1.apiClient.post(`${URL_AUTH}/login`, { email, password });
             if (response.status !== 200) {

@@ -21,10 +21,12 @@ interface registerAdmin{
     password: string;
 }
 
-const URL_AUTH = SERVICES.auth || "http://localhost:3001/auth";
+const URL_AUTH = SERVICES.auth;
+
 
 export async function LoginUser(loginData: login) {
     const { email, password } = loginData;
+    console.log(`auth url ${URL_AUTH}/login`)
     try {
         const response = await apiClient.post(`${URL_AUTH}/login`, {email,password});
 

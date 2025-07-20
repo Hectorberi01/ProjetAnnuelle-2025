@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendResetEmail = exports.changePassword = exports.verifyRoleMiddleware = exports.verifyTokenMiddleware = exports.verifyToken = exports.logout = exports.forgotPassword = exports.loginWithGoogleOrAzure = exports.login = exports.createAdminUser = exports.register = void 0;
 const axios_1 = __importDefault(require("axios"));
@@ -21,14 +22,14 @@ const auth_validation_1 = require("../validations/auth.validation");
 const node_mailjet_1 = __importDefault(require("node-mailjet"));
 const buffer_1 = require("buffer");
 dotenv_1.default.config();
-const isDocker = process.env.IS_DOCKER === 'true';
+console.log("AUTH_PORT", process.env.AUTH_PORT);
+console.log("AUTH_IS_DOCKER", process.env.AUTH_IS_DOCKER);
+const isDocker = process.env.AUTH_IS_DOCKER === 'true';
 console.log("isDocker", isDocker);
 console.log("USER_SERVICE_URL", process.env.USER_SERVICE_URL);
-const USER_SERVICE_URL = process.env.USER_SERVICE_URL !== undefined
-    ? process.env.USER_SERVICE_URL
-    : isDocker
-        ? "http://users:3003/users"
-        : "http://localhost:3003/users";
+const USER_SERVICE_URL = (_a = process.env.USER_SERVICE_URL) !== null && _a !== void 0 ? _a : (isDocker
+    ? "http://users:3003/users"
+    : "http://localhost:3003/users");
 console.log("Final USER_SERVICE_URL =", USER_SERVICE_URL);
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!USER_SERVICE_URL) {
@@ -90,39 +91,46 @@ exports.createAdminUser = createAdminUser;
 const login = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, password }) {
     try {
         if (!email || !password) {
-            return { data: { error: 'Email et mot de passe requis' } };
+            return { status: 400, data: { error: 'Email et mot de passe requis' } };
         }
-        // Vérifier si l'email est valide
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            return { data: { error: 'Email invalide' } };
+            return { status: 400, data: { error: 'Email invalide' } };
         }
-        // Récupérer l'utilisateur par email
         const response = yield fetch(`${USER_SERVICE_URL}/email/${email}`);
         if (response.status !== 200) {
-            console.log("response.status", response.status);
-            return { data: { error: 'Email ou mot de passe invalide' } };
+            return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
         }
-        console.log("response", response);
-        const data = yield response.json();
-        console.log("data", data);
-        const user = data;
-        // if (!user) {
-        //   return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
-        // }
-        console.log("user", user);
+        const user = yield response.json();
         const isValid = yield bcrypt_1.default.compare(password, user.password);
-        console.log("isValid", isValid);
-        if (isValid === false) {
-            return null;
+        if (!isValid) {
+            return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
         }
-        // Supprimer le champ password
-        delete user.password;
-        const token = jsonwebtoken_1.default.sign({ user: user }, JWT_SECRET, { expiresIn: '1h', });
-        return { data: { token, user } };
+        else {
+            try {
+                delete user.password;
+                console.log("avant le token");
+                const token = jsonwebtoken_1.default.sign({ user }, JWT_SECRET, { expiresIn: '1h' });
+                console.log("après le token");
+                const result = {
+                    status: 200,
+                    data: {
+                        user: user,
+                        token: token
+                    }
+                };
+                console.log("result", result);
+                return result;
+            }
+            catch (err) {
+                throw err;
+            }
+        }
     }
     catch (err) {
-        return { data: { error: 'Email ou mot de passe invalide' } };
+        throw new Error(`Erreur lors de la connexion : ${err.message}`);
+        //console.error("Erreur login:", err.message);
+        //return { status: 500, data: { error: 'Erreur serveur lors de la connexion' } };
     }
 });
 exports.login = login;

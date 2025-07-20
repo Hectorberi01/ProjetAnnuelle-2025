@@ -7,22 +7,23 @@ import { registerSchema } from '../validations/auth.validation';
 import Mailjet from 'node-mailjet';
 
 import { Buffer } from 'buffer';
-
+import e from 'express';
 dotenv.config();
 
-
-const isDocker = process.env.IS_DOCKER === 'true';
+console.log("AUTH_PORT", process.env.AUTH_PORT);
+console.log("AUTH_IS_DOCKER", process.env.AUTH_IS_DOCKER);
+const isDocker = process.env.AUTH_IS_DOCKER === 'true';
 
 
 console.log("isDocker", isDocker);
 console.log("USER_SERVICE_URL", process.env.USER_SERVICE_URL);
 
 const USER_SERVICE_URL: string =
-  process.env.USER_SERVICE_URL !== undefined
-    ? process.env.USER_SERVICE_URL
-    : isDocker
-      ? "http://users:3003/users"
-      : "http://localhost:3003/users";
+  process.env.USER_SERVICE_URL ??
+  (isDocker
+    ? "http://users:3003/users"
+    : "http://localhost:3003/users");
+
 
 
 console.log("Final USER_SERVICE_URL =", USER_SERVICE_URL);
@@ -108,51 +109,54 @@ export const createAdminUser = async (data: createAdminUserDTO) => {
 };
 
 export const login = async ({ email, password }: { email: string; password: string }) => {
-  
-    try {
-        if (!email || !password) {
-          return {data: { error: 'Email et mot de passe requis' } };
-        }
-        // Vérifier si l'email est valide
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          return {data: { error: 'Email invalide' } };
-        }
-
-        // Récupérer l'utilisateur par email
-        const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
-
-        if(response.status !== 200) {
-          console.log("response.status", response.status);
-          return { data: { error: 'Email ou mot de passe invalide' } };
-        }
-
-        console.log("response", response);
-        const data = await response.json();
-
-        console.log("data", data);
-
-        const user = data;
-        // if (!user) {
-        //   return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
-        // }
-
-        console.log("user", user);
-
-        const isValid = await bcrypt.compare(password, user.password);
-        console.log("isValid", isValid);
-        if (isValid === false) {
-          return null;
-        }
-        // Supprimer le champ password
-      delete user.password;
-      const token = jwt.sign({ user: user }, JWT_SECRET, {expiresIn: '1h',});
-  
-      return {data: { token, user } };
-    } catch (err: any) {
-      return {data: { error: 'Email ou mot de passe invalide' } };
+  try {
+    if (!email || !password) {
+      return { status: 400, data: { error: 'Email et mot de passe requis' } };
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return { status: 400, data: { error: 'Email invalide' } };
+    }
+
+    const response = await fetch(`${USER_SERVICE_URL}/email/${email}`);
+
+    if (response.status !== 200) {
+      return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+    }
+
+    const user = await response.json();    
+   
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return { status: 401, data: { error: 'Email ou mot de passe invalide' } };
+    }else{
+      try{
+
+        delete user.password;
+        console.log("avant le token");
+        const token = jwt.sign({ user }, JWT_SECRET, { expiresIn: '1h' });
+        console.log("après le token");
+        const result = {
+          status: 200,
+          data: {
+            user: user,
+            token: token
+          }
+        };
+        console.log("result", result);
+        return result;
+      }catch(err: any){
+        throw err;
+      }
+    }
+  } catch (err: any) {
+    throw new Error(`Erreur lors de la connexion : ${err.message}`);
+    //console.error("Erreur login:", err.message);
+    //return { status: 500, data: { error: 'Erreur serveur lors de la connexion' } };
+  }
 };
+
 
 export const loginWithGoogleOrAzure = async (email: string) => {
     try {

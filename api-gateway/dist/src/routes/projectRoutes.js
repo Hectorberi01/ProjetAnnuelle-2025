@@ -34,6 +34,23 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).json({ message: "Failed to fetch projects" });
     }
 }));
+// Get project by ID
+router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const projectId = parseInt(req.params.id);
+    try {
+        const result = yield (0, projectService_1.getProjectById)(projectId);
+        if (!result) {
+            res.status(404).json({ message: "Project not found" });
+            return;
+        }
+        res.status(200).json(result);
+    }
+    catch (error) {
+        throw error;
+        //res.status(500).json({ message: "Failed to fetch project" });
+        //return;
+    }
+}));
 router.get('/url', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { fileUrl } = req.query;
     console.log('Received fileUrl:', fileUrl);
@@ -54,22 +71,6 @@ router.get('/url', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     catch (error) {
         console.error('Erreur lors de la génération de l’URL signée :', error);
         return res.status(500).json({ message: 'Erreur interne du serveur' });
-    }
-}));
-// Get project by ID
-router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const projectId = parseInt(req.params.id);
-    try {
-        const result = yield (0, projectService_1.getProjectById)(projectId);
-        if ('error' in result) {
-            res.status(result.status || 500).json({ message: result.error });
-            return;
-        }
-        res.status(200).json(result);
-    }
-    catch (error) {
-        res.status(500).json({ message: "Failed to fetch project" });
-        return;
     }
 }));
 router.get("/promotion/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

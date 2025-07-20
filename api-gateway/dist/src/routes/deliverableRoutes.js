@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const deliverableService_1 = require("../services/deliverableService");
 const multer_1 = __importDefault(require("multer"));
+const cloudfareService_1 = require("../services/cloudfareService");
 const router = (0, express_1.Router)();
 const upload = (0, multer_1.default)({
     limits: {
@@ -24,20 +25,24 @@ const upload = (0, multer_1.default)({
 router.post('/', upload.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, description, githubUrl, groupId, projectId } = req.body;
     const file = req.file;
+    console.log("Received file:", file);
     if (!file) {
         res.status(400).json({ message: "Le fichier est requis." });
         return;
     }
+    const fileUrl = yield (0, cloudfareService_1.uploadPDFToR2)(file);
+    console.log("File uploaded to R2:", fileUrl);
     try {
-        const formData = req.body;
+        //const formData = req.body;
         const deliverable = {
             name,
             description,
             githubUrl,
             groupId: parseInt(groupId),
             projectId: parseInt(projectId),
-            file,
+            fileUrl,
         };
+        console.log("Submitting deliverable:", deliverable);
         const result = yield (0, deliverableService_1.submitDeliverable)(deliverable);
         res.status(201).json(result);
     }
@@ -46,17 +51,20 @@ router.post('/', upload.single('file'), (req, res) => __awaiter(void 0, void 0, 
         res.status(500).json({ message: 'Failed to submit deliverable', error: error });
     }
 }));
-router.get('/:id/download', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const deliverableId = parseInt(req.params.id);
+router.get('/download', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const fileUrl = req.query.url;
+    console.log("Received request to download file from URL:", fileUrl);
+    if (!fileUrl) {
+        return res.status(400).json({ message: 'URL manquante dans les paramètres de la requête.' });
+    }
     try {
-        const blob = yield (0, deliverableService_1.downloadDeliverable)(deliverableId);
-        res.setHeader('Content-Disposition', `attachment; filename=deliverable-${deliverableId}.zip`);
+        const fileBuffer = yield (0, cloudfareService_1.downloadFromS3)(fileUrl);
+        res.setHeader('Content-Disposition', `attachment; filename=deliverable-${fileUrl}.zip`);
         res.setHeader('Content-Type', 'application/zip');
-        res.send(blob);
+        res.send(fileBuffer);
     }
     catch (error) {
-        console.error(`Error downloading deliverable with ID ${deliverableId}:`, error);
-        res.status(500).json({ message: `Failed to download deliverable with ID ${deliverableId}`, error: error });
+        res.status(500).json({ message: `Failed to download deliverable with ID ${fileUrl}`, error: error });
     }
 }));
 router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

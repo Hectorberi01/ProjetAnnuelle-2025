@@ -94,13 +94,17 @@ function getProjectById(projectId) {
             })));
             // on récupère les livrables du projet
             const livrablesResponse = yield (0, deliverableService_1.getDeliverablesByProjectId)(projectId);
+            console.log("livrablesResponse", livrablesResponse);
             // on écupère les rapports du projet
             const reportsResponse = yield (0, reportService_1.getReportByProject)(projectId);
+            console.log("reportsResponse", reportsResponse);
             // on récupère les soutenances du projet
             const soutenancesResponse = yield (0, soutenanceService_1.getSoutenanceSchedule)(projectId);
+            console.log("soutenancesResponse", soutenancesResponse);
             // on récupère la similarité entre les livrables
             const similarity = yield (0, deliverableService_1.similarityMatrix)(projectId);
             const result = Object.assign(Object.assign({}, response.data), { promotion: promotion, groups: enrichedGroups, reports: reportsResponse, livrables: livrablesResponse, soutenances: soutenancesResponse, similarity: similarity });
+            console.log("Project details:", result);
             return result;
         }
         catch (error) {

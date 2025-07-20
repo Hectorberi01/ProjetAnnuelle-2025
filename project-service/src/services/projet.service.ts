@@ -57,7 +57,9 @@ export class ProjetService {
             throw new Error('Project ID is required');
         }
         try {
-            return await projetRepo.findOneByOrFail({ id });
+            const projet = await projetRepo.findOneBy({ id });
+            console.log('Fetched project:', projet);
+            return projet;
         } catch (error) {
             console.error('Error fetching project by ID:', error);
             throw new Error('Failed to fetch project by ID');
