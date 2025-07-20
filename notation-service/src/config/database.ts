@@ -1,9 +1,11 @@
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
-import { Grade } from '../entities/Grade';
 
-import {  GradingGrid } from '../entities/GradingGrid';
-import {  GradingCriteria } from '../entities/GradingCriteria';
+import { CommentaireGlobal } from '../entities/CommentaireGlobal';
+import { CritereNotation } from '../entities/CritereNotation';
+import { GrilleNotation } from '../entities/GrilleNotation';
+import { NotationFinalisee } from '../entities/NotationFinalisee';
+import { NoteGroupe } from '../entities/NoteGroupe';
 dotenv.config();
 
 export const AppDataSource = new DataSource({
@@ -15,7 +17,13 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || 'Notation-Service',
   synchronize: true,
   logging: false,
-  entities: [GradingCriteria, GradingGrid, Grade],
+entities: [GrilleNotation,
+    CritereNotation,
+    NoteGroupe,
+    CommentaireGlobal,
+    NotationFinalisee],
   migrations: [],
   subscribers: [],
 });
+
+

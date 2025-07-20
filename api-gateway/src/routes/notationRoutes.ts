@@ -1,172 +1,144 @@
-
 import { Router } from 'express';
-import {
-  getProjectGradingGrids,
-  createGradingGrid,
-  calculateFinalScore,
-  publishGrades,
-  getStudentGrades,
-  getProjectGrades,
-  getGradingGrid,
-  updateGradingGrid,
-  validateGradingGrid,
-  createCriteria,
-  getCriteriaByProject,
-  updateCriteria,
-  deleteCriteria,
-  submitGradesForGrid,
-  updateStudentGrade,
-  getGradingGridById
-} from '../services/notationService';
+import { addGradingCriteria, createGrille, deleteGradingCriteria, finalizeGroupNotation, getGradingCriteria, getGradingGridByProjectAndGroup, getGrillesCritere, publishProjectGrades, saveCritereNote, saveGlobalComment, updateGradingCriteria, validateGradingGrid, validateSpecificGrille } from '../services/notationService';
 
 const router = Router();
 
-// --- Critères ---
-router.post('/criteria', async (req, res) => {
+// --- GRILLES DE NOTATION (avec critères) ---
+router.get('/:projectId/grilles', async (req, res) => {
   try {
-    const result = await createCriteria(req.body);
+    const result = await getGradingCriteria(req.params.projectId);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la récupération des grilles.' });
+  }
+});
+
+router.post('/:projectId/grilles', async (req, res) => {
+  try {
+    const result = await addGradingCriteria(req.params.projectId, req.body);
     res.status(201).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to create criteria' });
+    res.status(500).json({ message: 'Erreur lors de la création de la grille.' });
   }
 });
 
-router.get('/criteria/project/:projectId', async (req, res) => {
+router.put('/grilles/:grilleId', async (req, res) => {
   try {
-    const result = await getCriteriaByProject(req.params.projectId);
+    const result = await updateGradingCriteria(req.params.grilleId, req.body);
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch criteria' });
+    res.status(500).json({ message: 'Erreur lors de la mise à jour de la grille.' });
   }
 });
 
-router.put('/criteria/:criteriaId', async (req, res) => {
+router.get('/:projectId/groups/:groupId/grilles/criteres', async (req, res) => {
   try {
-    const result = await updateCriteria(req.params.criteriaId, req.body);
+    const result = await getGrillesCritere(req.params.projectId, req.params.groupId);
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to update criteria' });
+    res.status(500).json({ message: 'Erreur lors de la récupération des critères de grille.' });
   }
 });
 
-router.delete('/criteria/:criteriaId', async (req, res) => {
+router.post('/:projectId/groups/:groupId/criteres', async (req, res) =>  {
   try {
-    await deleteCriteria(req.params.criteriaId);
-    res.status(200).json({ message: 'Criteria deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to delete criteria' });
-  }
-});
-
-// --- Grilles de notation ---
-router.post('/grids', async (req, res) => {
-  try {
-    const result = await createGradingGrid(req.body);
-    res.status(201).json(result);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to create grading grid' });
-  }
-});
-
-router.get('/grids/:projectId/:groupId/:type/:referenceId', async (req, res) => {
-  const { projectId, groupId, type, referenceId } = req.params;
-  try {
-    const result = await getGradingGrid(projectId, groupId, type, referenceId);
+    const result = await createGrille(req.params.projectId, req.params.groupId, req.body);
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch grading grid' });
+    res.status(500).json({ message: 'Erreur lors de la mise à jour de la grille.' });
   }
 });
 
-router.put('/grids/:gridId', async (req, res) => {
+
+
+
+router.delete('/grilles/:grilleId', async (req, res) => {
   try {
-    const result = await updateGradingGrid(req.params.gridId, req.body);
-    res.status(200).json(result);
+    await deleteGradingCriteria(req.params.grilleId);
+    res.status(200).json({ message: 'Grille supprimée avec succès.' });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to update grading grid' });
+    res.status(500).json({ message: 'Erreur lors de la suppression de la grille.' });
   }
 });
 
-router.put('/grids/:gridId/validate', async (req, res) => {
+router.post('/:projectId/grilles/:grilleId/validate', async (req, res) => {
   try {
-    const result = await validateGradingGrid(req.params.gridId, req.body.teacherId);
+    const result = await validateGradingGrid(req.params.grilleId);
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to validate grading grid' });
+    res.status(500).json({ message: 'Erreur lors de la validation de la grille.' });
   }
 });
 
-router.get('/grids/project/:projectId', async (req, res) => {
+// --- NOTATION GROUPE ---
+router.get('/:projectId/groups/:groupId/notation', async (req, res) => {
   try {
-    const result = await getProjectGradingGrids(req.params.projectId);
+    const result = await getGradingGridByProjectAndGroup(req.params.projectId, req.params.groupId);
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch project grading grids' });
+    res.status(500).json({ message: 'Erreur lors de la récupération de la notation.' });
   }
 });
 
-// --- Notes finales ---
-router.get('/score/:projectId/:groupId', async (req, res) => {
+router.post('/:projectId/groups/:groupId/notation/critere', async (req, res) => {
   try {
-    const score = await calculateFinalScore(req.params.projectId, req.params.groupId);
-    res.status(200).json({ finalScore: score });
+    const result = await saveCritereNote(req.params.projectId, req.params.groupId, req.body);
+    res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to calculate final score' });
+    res.status(500).json({ message: 'Erreur lors de la sauvegarde de la note de critère.' });
   }
 });
 
-router.put('/publish/:projectId', async (req, res) => {
+router.post('/:projectId/groups/:groupId/notation/commentaire-global', async (req, res) => {
   try {
-    await publishGrades(req.params.projectId);
-    res.status(200).json({ message: 'Grades published successfully' });
+    const result = await saveGlobalComment(req.params.projectId, req.params.groupId, req.body);
+    res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to publish grades' });
+    res.status(500).json({ message: 'Erreur lors de l\'enregistrement du commentaire global.' });
   }
 });
 
-router.get('/student/:studentId/project/:projectId', async (req, res) => {
+router.post('/:projectId/groups/:groupId/notation/finalize', async (req, res) => {
   try {
-    const result = await getStudentGrades(req.params.studentId, req.params.projectId);
+    const userId = req.body.userId; // À extraire proprement du token plus tard
+    const result = await finalizeGroupNotation(req.params.projectId, req.params.groupId, req.body, userId);
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch student grades' });
+    res.status(500).json({ message: 'Erreur lors de la finalisation de la notation.' });
   }
 });
 
-router.get('/grades/project/:projectId', async (req, res) => {
+
+
+
+
+
+
+
+router.post('/:projectId/groups/:groupId/notation/grilles/:grilleId/validate', async (req, res) => {
   try {
-    const result = await getProjectGrades(req.params.projectId);
+    const result = await validateSpecificGrille(
+      req.params.projectId, 
+      req.params.groupId, 
+      req.params.grilleId
+    );
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch project grades' });
+    res.status(500).json({ message: 'Erreur lors de la validation de la grille.' });
   }
 });
-router.post('/grids/:gridId/submit', async (req, res) => {
+
+// Publier les notes d'un projet (les rendre visibles aux étudiants)
+router.post('/:projectId/publish', async (req, res) => {
   try {
-     const result = await submitGradesForGrid(req.params.gridId, req.body);
-     res.status(200).json(result);
-  } catch (error) {
-    console.error('Erreur route submitGradesForGrid:', error);
-    res.status(500).json({ message: 'Erreur serveur lors de la soumission des notes' });
-  }
-});
-router.get('/grids/id/:gridId', async (req, res) => {
-  try {
-    const result = await getGradingGridById(req.params.gridId);
+    const result = await publishProjectGrades(req.params.projectId);
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch grading grid by ID' });
+    res.status(500).json({ message: 'Erreur lors de la publication des notes.' });
   }
 });
-router.put('/final-score', async (req, res) => {
-  const { projectId, studentId, groupId } = req.body;
-  try {
-    const result = await updateStudentGrade(projectId, studentId, groupId);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to update student final score' });
-  }
-});
+
+
 
 
 export default router;

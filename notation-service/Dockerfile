@@ -10,4 +10,7 @@ COPY dist ./dist
 
 EXPOSE 3005
 
-CMD ["node", "dist/src/index.js"]
+CMD ["node", "dist/index.js"]
+
+
+

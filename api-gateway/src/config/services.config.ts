@@ -53,4 +53,9 @@ export const SERVICES = {
   soutenances: isDocker
     ? 'http://soutenances:3010/soutenances'
     : process.env.SOUTENANCES || 'http://localhost:3010/soutenances',
+
+  notations: isDocker
+    ? 'http://notations:3005/notations'
+    : process.env.NOTATIONS || 'http://localhost:3005/notations',
+
 };
