@@ -23,6 +23,7 @@ interface ServiceMap {
   livrables: string;
   reports: string;
   soutenances: string;
+  notations: string;
 }
 
 export const SERVICES: ServiceMap = {
