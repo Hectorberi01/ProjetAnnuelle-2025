@@ -180,9 +180,17 @@ export class ProjetService {
         }
     }
     
-    async deleteProject(id: number) {
-        const project = await projetRepo.findOneByOrFail({ id });
-        if(!project) throw new Error('Project not found');
-        return await projetRepo.remove(project);
+async deleteProject(id: number) {
+    console.log('Recherche du projet avec ID:', id, 'Type:', typeof id);
+    
+    const project = await projetRepo.findOneBy({ id });
+    console.log('Projet trouvé:', project);
+    
+    if (!project) {
+        throw new Error("Project not found");
     }
+    
+    return await projetRepo.remove(project);
+}
+
 }

@@ -71,16 +71,27 @@ export class ProjectController {
         }
     }
 
-    static async deleteProject(req: Request, res: Response) {
-        const { id } = req.params;
-        try {
-            const project = await projetService.deleteProject(+id);
-            res.status(200).json(project);
-        } catch (error) {
-            console.error('Error deleting project:', error);
-            res.status(500).json({ message: 'Failed to delete project' });
-        }
+  static async deleteProject(req: Request, res: Response) {
+    const { id } = req.params;
+    
+    // Ajoutez cette vérification pour déboguer
+    console.log('ID reçu:', id, 'Type:', typeof id);
+    const numericId = +id;
+    console.log('ID converti:', numericId, 'Type:', typeof numericId);
+    
+    if (isNaN(numericId)) {
+         res.status(400).json({ message: 'Invalid project ID' });
     }
+    
+    try {
+        const project = await projetService.deleteProject(numericId);
+        res.status(200).json(project);
+    } catch (error) {
+        console.error('Error deleting project:', error);
+        const errorMessage = (error instanceof Error) ? error.message : 'Failed to delete project';
+        res.status(500).json({ message: errorMessage });
+    }
+}
 
     
     static async updateProject(req: Request, res: Response) {

@@ -35,13 +35,13 @@ export class NotationService {
         relations: ['criteres']
       })
     ]);
-
+ 
     return {
       notes,
       commentairesGlobaux,
       commentaireProjet: notationFinalisee?.commentaireProjet,
       grillesValidees,
-      notationFinalisee: !!notationFinalisee
+      notationFinalisee: notationFinalisee
     };
   }
 
@@ -108,14 +108,12 @@ export class NotationService {
     if (notation) {
       notation.commentaireProjet = data.commentaireProjet;
       notation.noteFinale = noteFinale;
-      notation.finaliseeBy = userId;
     } else {
       notation = this.notationFinaliseeRepository.create({
         projectId,
         groupId,
         commentaireProjet: data.commentaireProjet,
         noteFinale,
-        finaliseeBy: userId
       });
     }
 
@@ -163,9 +161,32 @@ export class NotationService {
     grille.validee = true;
     return await this.grilleRepository.save(grille);
   }
-  private calculateNoteFinale(notes: any[]): number {
-    // Logique de calcul de la note finale basée sur les pondérations
-    // À adapter selon vos besoins spécifiques
-    return 0;
+private calculateNoteFinale(notes: any[]): number {
+  if (!notes || notes.length === 0) return 0;
+
+  let totalPoids = 0;
+  let sommePonderee = 0;
+
+  for (const noteItem of notes) {
+    const poids = noteItem.poids ?? 1; // défaut si poids non fourni
+    let moyenneCritere = 0;
+
+    const sousNotes = Object.values(noteItem).filter((val) => val !== null && typeof val === 'object' && 'note' in val);
+
+    if (sousNotes.length > 0) {
+      const total = sousNotes.reduce((sum, subNote: any) => sum + subNote.note, 0);
+      moyenneCritere = total / sousNotes.length;
+    } else if ('note' in noteItem) {
+      moyenneCritere = noteItem.note;
+    }
+
+    sommePonderee += moyenneCritere * poids;
+    totalPoids += poids;
   }
+
+  if (totalPoids === 0) return 0;
+
+  return parseFloat((sommePonderee / totalPoids).toFixed(2)); // arrondi à 2 décimales
+}
+
 }

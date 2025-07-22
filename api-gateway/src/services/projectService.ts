@@ -144,9 +144,7 @@ export async function deleteProject(projectId: number) {
     let response : any = {}
     try {
         response = await apiClient.delete(`${URL_PROJECTS}/${projectId}`);
-        if (response.status !== 200) {
-            return response;
-        }
+     
         return response;
     } catch (error) {
         console.error('Error deleting project:', error);

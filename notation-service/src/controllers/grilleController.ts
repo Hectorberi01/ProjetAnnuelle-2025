@@ -71,15 +71,36 @@ createCritere = async (req: Request, res: Response) => {
       res.status(400).json({ error: errorMessage });
     }
   };
-
-  validateGrille = async (req: Request, res: Response) => {
-    try {
-      const { grilleId } = req.params;
-      const grille = await this.grilleService.validateGrille(grilleId);
-      res.json(grille);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      res.status(400).json({ error: errorMessage });
+  deleteCritere = async (req: Request, res: Response) => {
+      try {
+        const { grilleId } = req.params;
+        await this.grilleService.deleteCritere(grilleId, req.params.critereId);
+        res.status(204).send();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        res.status(400).json({ error: errorMessage });
+      }
     }
-  };
+    validateGrille = async (req: Request, res: Response) => {
+      try {
+        const { grilleId } = req.params;
+        const grille = await this.grilleService.validateGrille(grilleId);
+        res.json(grille);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        res.status(400).json({ error: errorMessage });
+      }
+    };
+  updateCritere = async (req: Request, res: Response) => {
+    try {
+      const { grilleId, critereId } = req.params;
+      const updated = await this.grilleService.updateCritere(grilleId, parseInt(critereId), req.body);
+      res.status(200).json(updated);
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
+    }
+  }
+
+
 }
+
