@@ -171,22 +171,23 @@ private calculateNoteFinale(notes: any[]): number {
     const poids = noteItem.poids ?? 1; // défaut si poids non fourni
     let moyenneCritere = 0;
 
-    const sousNotes = Object.values(noteItem).filter((val) => val !== null && typeof val === 'object' && 'note' in val);
+    const sousNotes = Object.values(noteItem).filter(
+      (val) => val !== null && typeof val === 'object' && 'note' in val
+    );
 
     if (sousNotes.length > 0) {
-      const total = sousNotes.reduce((sum, subNote: any) => sum + subNote.note, 0);
+      const total = sousNotes.reduce((sum: number, subNote: any) => sum + subNote.note, 0);
       moyenneCritere = total / sousNotes.length;
     } else if ('note' in noteItem) {
       moyenneCritere = noteItem.note;
     }
 
-    sommePonderee += moyenneCritere * poids;
     totalPoids += poids;
+    sommePonderee += moyenneCritere * poids;
   }
 
-  if (totalPoids === 0) return 0;
-
-  return parseFloat((sommePonderee / totalPoids).toFixed(2)); // arrondi à 2 décimales
+  return totalPoids > 0 ? sommePonderee / totalPoids : 0;
 }
+
 
 }
