@@ -27,6 +27,27 @@ class GrilleService {
             });
         });
     }
+    deleteCritere(grilleId, critereId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const grille = yield this.grilleRepository.findOne({
+                where: { id: grilleId },
+                relations: ['criteres']
+            });
+            if (!grille) {
+                throw new Error(`La grille avec l'ID ${grilleId} n'existe pas`);
+            }
+            const critere = yield this.critereRepository.findOne({
+                where: {
+                    id: Number(critereId),
+                    grilleId: grilleId // si grilleId est un string dans l'entité, sinon mettre Number(grilleId)
+                }
+            });
+            if (!critere) {
+                throw new Error(`Le critère avec l'ID ${critereId} n'existe pas dans la grille ${grilleId}`);
+            }
+            yield this.critereRepository.remove(critere);
+        });
+    }
     createCritere(projectId, groupId, critereData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -117,9 +138,6 @@ class GrilleService {
             if (!grille) {
                 throw new Error('Grille non trouvée');
             }
-            if (grille.validee) {
-                throw new Error('Impossible de modifier une grille validée');
-            }
             // Mise à jour des propriétés de la grille
             grille.titre = data.titre;
             grille.type = data.type;
@@ -155,9 +173,6 @@ class GrilleService {
             if (!grille) {
                 throw new Error('Grille non trouvée');
             }
-            if (grille.validee) {
-                throw new Error('Impossible de supprimer une grille validée');
-            }
             yield this.grilleRepository.remove(grille);
         });
     }
@@ -169,6 +184,21 @@ class GrilleService {
             }
             grille.validee = true;
             return yield this.grilleRepository.save(grille);
+        });
+    }
+    updateCritere(grilleId, critereId, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d;
+            const critere = yield this.critereRepository.findOneBy({ id: critereId, grilleId });
+            if (!critere) {
+                throw new Error(`Le critère ${critereId} n'existe pas dans la grille ${grilleId}`);
+            }
+            // Mise à jour des champs autorisés
+            critere.nom = (_a = data.nom) !== null && _a !== void 0 ? _a : critere.nom;
+            critere.poids = (_b = data.poids) !== null && _b !== void 0 ? _b : critere.poids;
+            critere.description = (_c = data.description) !== null && _c !== void 0 ? _c : critere.description;
+            critere.typeEvaluation = (_d = data.typeEvaluation) !== null && _d !== void 0 ? _d : critere.typeEvaluation;
+            return yield this.critereRepository.save(critere);
         });
     }
 }

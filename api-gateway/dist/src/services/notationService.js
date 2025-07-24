@@ -16,6 +16,8 @@ exports.getGrillesCritere = getGrillesCritere;
 exports.createGrille = createGrille;
 exports.publishProjectGrades = publishProjectGrades;
 exports.updateGradingCriteria = updateGradingCriteria;
+exports.updateCritere = updateCritere;
+exports.deleteCriteria = deleteCriteria;
 exports.deleteGradingCriteria = deleteGradingCriteria;
 exports.validateGradingGrid = validateGradingGrid;
 exports.getGradingGridByProjectAndGroup = getGradingGridByProjectAndGroup;
@@ -67,6 +69,17 @@ function updateGradingCriteria(grilleId, data) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield apiClient_1.apiClient.put(`${URL_GRADING}/grilles/${grilleId}`, data);
         return response.data;
+    });
+}
+function updateCritere(grilleId, critereId, data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield apiClient_1.apiClient.put(`${URL_GRADING}/${grilleId}/criteres/${critereId}`, data);
+        return response.data;
+    });
+}
+function deleteCriteria(grilleId, critereId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield apiClient_1.apiClient.delete(`${URL_GRADING}/${grilleId}/criteres/${critereId}`);
     });
 }
 function deleteGradingCriteria(grilleId) {

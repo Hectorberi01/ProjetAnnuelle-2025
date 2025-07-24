@@ -97,13 +97,21 @@ class ProjectController {
     static deleteProject(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            // Ajoutez cette vérification pour déboguer
+            console.log('ID reçu:', id, 'Type:', typeof id);
+            const numericId = +id;
+            console.log('ID converti:', numericId, 'Type:', typeof numericId);
+            if (isNaN(numericId)) {
+                res.status(400).json({ message: 'Invalid project ID' });
+            }
             try {
-                const project = yield projetService.deleteProject(+id);
+                const project = yield projetService.deleteProject(numericId);
                 res.status(200).json(project);
             }
             catch (error) {
                 console.error('Error deleting project:', error);
-                res.status(500).json({ message: 'Failed to delete project' });
+                const errorMessage = (error instanceof Error) ? error.message : 'Failed to delete project';
+                res.status(500).json({ message: errorMessage });
             }
         });
     }

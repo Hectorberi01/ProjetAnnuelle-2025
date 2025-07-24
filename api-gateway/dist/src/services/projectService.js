@@ -136,9 +136,6 @@ function deleteProject(projectId) {
         let response = {};
         try {
             response = yield apiClient_1.apiClient.delete(`${URL_PROJECTS}/${projectId}`);
-            if (response.status !== 200) {
-                return response;
-            }
             return response;
         }
         catch (error) {

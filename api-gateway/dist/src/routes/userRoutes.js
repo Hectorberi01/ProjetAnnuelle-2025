@@ -51,10 +51,10 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 router.get('/students', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield (0, userService_1.getStudents)();
-        if (!response || response.length === 0) {
-            res.status(404).json({ message: 'No students found' });
-            return;
-        }
+        // if (!response || response.length === 0) {
+        //     res.status(404).json({ message: 'No students found' });
+        //     return;
+        // }
         res.status(200).json(response);
     }
     catch (error) {

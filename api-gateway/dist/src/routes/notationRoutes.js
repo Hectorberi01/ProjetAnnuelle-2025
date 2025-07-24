@@ -40,6 +40,16 @@ router.put('/grilles/:grilleId', (req, res) => __awaiter(void 0, void 0, void 0,
         res.status(500).json({ message: 'Erreur lors de la mise à jour de la grille.' });
     }
 }));
+router.put('/:grilleId/criteres/:critereId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { grilleId, critereId } = req.params;
+        const updated = yield (0, notationService_1.updateCritere)(grilleId, parseInt(critereId), req.body);
+        res.status(200).json(updated);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la mise à jour de la grille.' });
+    }
+}));
 router.get('/:projectId/groups/:groupId/grilles/criteres', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield (0, notationService_1.getGrillesCritere)(req.params.projectId, req.params.groupId);
@@ -56,6 +66,15 @@ router.post('/:projectId/groups/:groupId/criteres', (req, res) => __awaiter(void
     }
     catch (error) {
         res.status(500).json({ message: 'Erreur lors de la mise à jour de la grille.' });
+    }
+}));
+router.delete('/:grilleId/criteres/:critereId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield (0, notationService_1.deleteCriteria)(req.params.grilleId, req.params.critereId);
+        res.status(200).json({ message: 'Critère supprimé avec succès.' });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la suppression du critère.' });
     }
 }));
 router.delete('/grilles/:grilleId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

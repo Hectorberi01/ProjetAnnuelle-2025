@@ -27,7 +27,6 @@ export async function getAllUsers(): Promise<any[]> {
         if (response.status !== 200) {
             throw new Error('Failed to fetch users');
         }
-        console.log('Fetched users:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching users:', error);
@@ -90,7 +89,8 @@ export async function deleteUser(userId: number): Promise<any> {
 export async function getStudents(): Promise<any[]> {
     try {
         const allUsers = await getAllUsers();
-        const studentsList = allUsers.filter((user: any) => user.role.name === "student".toUpperCase);
+        const studentsList = allUsers.filter((user: any) => user.role.name === "STUDENT");
+        console.log('Fetched students:', studentsList);
         return studentsList;
     } catch (error) {
         console.error('Error fetching students:', error);

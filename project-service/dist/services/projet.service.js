@@ -196,9 +196,12 @@ class ProjetService {
     }
     deleteProject(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const project = yield projetRepo.findOneByOrFail({ id });
-            if (!project)
-                throw new Error('Project not found');
+            console.log('Recherche du projet avec ID:', id, 'Type:', typeof id);
+            const project = yield projetRepo.findOneBy({ id });
+            console.log('Projet trouvé:', project);
+            if (!project) {
+                throw new Error("Project not found");
+            }
             return yield projetRepo.remove(project);
         });
     }

@@ -44,7 +44,7 @@ class NotationService {
                 commentairesGlobaux,
                 commentaireProjet: notationFinalisee === null || notationFinalisee === void 0 ? void 0 : notationFinalisee.commentaireProjet,
                 grillesValidees,
-                notationFinalisee: !!notationFinalisee
+                notationFinalisee: notationFinalisee
             };
         });
     }
@@ -116,7 +116,7 @@ class NotationService {
                     projectId,
                     groupId,
                     commentaireProjet: data.commentaireProjet,
-                    noteFinale
+                    noteFinale,
                 });
             }
             return yield this.notationFinaliseeRepository.save(notation);
@@ -166,9 +166,26 @@ class NotationService {
         });
     }
     calculateNoteFinale(notes) {
-        // Logique de calcul de la note finale basée sur les pondérations
-        // À adapter selon vos besoins spécifiques
-        return 0;
+        var _a;
+        if (!notes || notes.length === 0)
+            return 0;
+        let totalPoids = 0;
+        let sommePonderee = 0;
+        for (const noteItem of notes) {
+            const poids = (_a = noteItem.poids) !== null && _a !== void 0 ? _a : 1; // défaut si poids non fourni
+            let moyenneCritere = 0;
+            const sousNotes = Object.values(noteItem).filter((val) => val !== null && typeof val === 'object' && 'note' in val);
+            if (sousNotes.length > 0) {
+                const total = sousNotes.reduce((sum, subNote) => sum + subNote.note, 0);
+                moyenneCritere = total / sousNotes.length;
+            }
+            else if ('note' in noteItem) {
+                moyenneCritere = noteItem.note;
+            }
+            totalPoids += poids;
+            sommePonderee += moyenneCritere * poids;
+        }
+        return totalPoids > 0 ? sommePonderee / totalPoids : 0;
     }
 }
 exports.NotationService = NotationService;

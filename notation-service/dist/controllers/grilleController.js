@@ -79,6 +79,17 @@ class GrilleController {
                 res.status(400).json({ error: errorMessage });
             }
         });
+        this.deleteCritere = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { grilleId } = req.params;
+                yield this.grilleService.deleteCritere(grilleId, req.params.critereId);
+                res.status(204).send();
+            }
+            catch (error) {
+                const errorMessage = error instanceof Error ? error.message : String(error);
+                res.status(400).json({ error: errorMessage });
+            }
+        });
         this.validateGrille = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const { grilleId } = req.params;
@@ -88,6 +99,16 @@ class GrilleController {
             catch (error) {
                 const errorMessage = error instanceof Error ? error.message : String(error);
                 res.status(400).json({ error: errorMessage });
+            }
+        });
+        this.updateCritere = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { grilleId, critereId } = req.params;
+                const updated = yield this.grilleService.updateCritere(grilleId, parseInt(critereId), req.body);
+                res.status(200).json(updated);
+            }
+            catch (err) {
+                res.status(400).json({ error: err.message });
             }
         });
         this.grilleService = new GrilleService_1.GrilleService();

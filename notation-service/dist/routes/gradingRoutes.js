@@ -11,6 +11,7 @@ router.get('/:projectId/grilles', grilleController.getGrilles);
 router.post('/:projectId/grilles', grilleController.createGrille);
 router.put('/grilles/:grilleId', grilleController.updateGrille);
 router.delete('/grilles/:grilleId', grilleController.deleteGrille);
+router.delete('/:grilleId/criteres/:critereId', grilleController.deleteCritere);
 router.post('/grilles/:grilleId/validate', grilleController.validateGrille);
 router.get('/:projectId/groups/:groupId/notation', notationController.getNotation);
 router.post('/:projectId/groups/:groupId/notation/critere', notationController.saveNoteCritere);
@@ -18,6 +19,7 @@ router.post('/:projectId/groups/:groupId/notation/commentaire-global', notationC
 router.post('/:projectId/groups/:groupId/notation/finalize', notationController.finalizeNotation);
 router.post('/:projectId/groups/:groupId/notation/grilles/:grilleId/validate', notationController.validateSpecificGrille);
 router.post('/:projectId/publish', notationController.publishProjectGrades);
+router.put('/:grilleId/criteres/:critereId', gradingController.updateCritere);
 // Dans votre controller
 router.post('/:projectId/groups/:groupId/criteres', grilleController.createCritere);
 router.get('/:projectId/groups/:groupId/grilles/criteres', grilleController.getGrillesCritere);

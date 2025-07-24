@@ -82,7 +82,6 @@ function getAllUsers() {
             if (response.status !== 200) {
                 throw new Error('Failed to fetch users');
             }
-            console.log('Fetched users:', response.data);
             return response.data;
         }
         catch (error) {
@@ -154,7 +153,8 @@ function getStudents() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const allUsers = yield getAllUsers();
-            const studentsList = allUsers.filter((user) => user.role.name === "student".toUpperCase);
+            const studentsList = allUsers.filter((user) => user.role.name === "STUDENT");
+            console.log('Fetched students:', studentsList);
             return studentsList;
         }
         catch (error) {

@@ -42,10 +42,10 @@ router.post('/', async (req, res) => {
 router.get('/students', async (req, res) => {
     try {
         const response = await getStudents();
-        if (!response || response.length === 0) {
-            res.status(404).json({ message: 'No students found' });
-            return;
-        }
+        // if (!response || response.length === 0) {
+        //     res.status(404).json({ message: 'No students found' });
+        //     return;
+        // }
         res.status(200).json(response);
     } catch (error) {
         console.error('Error in user service:', error);
