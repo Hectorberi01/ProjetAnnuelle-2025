@@ -1,9 +1,125 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Voir https://help.github.com/articles/ignoring-files/ pour plus d'informations.
 
-# dependencies
-/node_modules
+# ========================
+# Dépendances & Builds
+# ========================
+node_modules/
+*/node_modules/
+dist/
+build/
+.tmp/
+temp/
+.cache/
+.next/
+out/
+coverage/
 
-# env files
-.env*
+# ========================
+# Fichiers d'environnement
+# ========================
+.env
+.env.*
+!.env.example  # on garde un exemple pour les autres devs
 
-*/node_modules
+# ========================
+# Logs
+# ========================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+logs/
+*.log
+
+# ========================
+# OS / Éditeur
+# ========================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.swn
+.idea/
+.vscode/
+*.code-workspace
+
+# ========================
+# Docker
+# ========================
+docker-compose.override.yml
+*.local.yml
+docker.env
+.env.docker
+.env.local
+
+# ========================
+# Git
+# ========================
+.git/
+*.orig
+
+# ========================
+# Tests
+# ========================
+jest-html-reporters-*
+test-output/
+*.test.ts.snap
+
+# ========================
+# Autres
+# ========================
+*.tgz
+*.gz
+*.zip
+
+# IntelliJ / JetBrains
+*.iml
+*.ipr
+*.iws
+.idea/
+ # === Dépendances node ===
+**/node_modules/
+
+# === Builds TypeScript ou autres ===
+**/dist/
+**/build/
+**/.next/
+**/.turbo/
+**/.cache/
+
+# === Logs ===
+**/*.log
+**/logs/
+
+# === Environnements (.env + variantes) ===
+**/.env
+**/.env.*
+!**/.env.example
+
+# === OS/Éditeurs ===
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.code-workspace
+
+# === Docker files temporaires ===
+docker.env
+.env.docker
+.env.local
+docker-compose.override.yml
+
+# === Archives / fichiers compressés ===
+*.tgz
+*.zip
+*.tar.gz
+
+# === Tests ===
+**/coverage/
+**/*.test.ts.snap
+jest-html-reporters-*
+
+# === Git merge conflicts ===
+*.orig
