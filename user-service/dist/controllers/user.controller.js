@@ -95,7 +95,7 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(404).json({ message: "Utilisateur non trouvé" });
         return;
     }
-    res.json(updated);
+    res.status(200).json(updated);
 });
 exports.update = update;
 const updateLastLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

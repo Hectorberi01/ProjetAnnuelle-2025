@@ -89,7 +89,7 @@ export const update = async (req: Request, res: Response) => {
     res.status(404).json({ message: "Utilisateur non trouvé" });
     return;
   }
-  res.json(updated);
+  res.status(200).json(updated);
 };
 
 export const updateLastLogin = async (req: Request, res: Response) => {

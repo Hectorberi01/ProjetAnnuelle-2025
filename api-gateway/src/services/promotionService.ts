@@ -15,6 +15,7 @@ env.config();
 const URL_PROMOTIONS = SERVICES.promotions || "http://localhost:3007/promotions";
 const URL_PROJECTS = SERVICES.projects || "http://localhost:3002/projects";
 const URL_USERS = SERVICES.users || "http://localhost:3003/users";
+const URL_GROUPS = SERVICES.groups || "http://localhost:3004/groups";
 interface Project {
   id: number;
   name: string;

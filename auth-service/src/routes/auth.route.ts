@@ -39,14 +39,19 @@ router.get('/google/callback',
 
             const { token, user } = response.data;
             res.cookie("token", token, {
-                httpOnly: true,
-                secure: false, // ⚠️ mettre true en production (HTTPS)
-                maxAge: 3600000, // 1h
+              httpOnly: false, // Rendre visible pour JS (en dev)
+              secure: false,   // true si HTTPS
+              sameSite: 'lax', // ou 'none' si cross-domain
+              path: '/',
+              maxAge: 3600000,
             });
 
             res.cookie("user", JSON.stringify(user), {
-                httpOnly: false, // peut être lu en JS si besoin
-                maxAge: 3600000,
+              httpOnly: false,
+              secure: false,
+              sameSite: 'lax',
+              path: '/',
+              maxAge: 3600000,
             });
 
             // Redirigez vers votre application front-end

@@ -60,9 +60,13 @@ export async function createUser(userData: any): Promise<User> {
 }
 
 
-export async function updateUser(userId: string, userData: any): Promise<any> {
+export async function updateUser(userId: number, userData: any): Promise<any> {
     try {
-        const response = await apiClient.put(`${URL_USERS}/${userId}`, userData);
+        const response = await apiClient.put(`${URL_USERS}/${userId}`, userData, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         if (response.status !== 200) {
             throw new Error('Failed to update user');
         }
@@ -130,3 +134,4 @@ export async function getRoleIdByName(roleName: string): Promise<Role> {
         throw new Error('Failed to fetch role ID by name');
     }
 }
+

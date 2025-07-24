@@ -15,8 +15,9 @@ router.post("/",create);
 router.get("/", getAll);
 router.get("/:id", getById);
 router.get("/email/:email", getByEmail);
-router.put("/:id", validateBody(updateUserSchema), update);
-router.put("/last-login/:id", updateLastLogin)
+//router.put("/:id", validateBody(updateUserSchema), update);
+router.put("/:id", update);
+router.put("/last-login/:id", updateLastLogin);
 router.delete("/:id", deleteUser);
 
 // role routes

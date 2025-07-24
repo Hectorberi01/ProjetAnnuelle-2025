@@ -1,9 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-//import { userControllerInstance } from "../controllers/user.controller";
-const validate_middleware_1 = require("../middlewares/validate.middleware");
-const user_validator_1 = require("../validators/user.validator");
 const user_controller_1 = require("../controllers/user.controller");
 //import { createRoleSchema, updateRoleSchema } from "../validators/role.validator";
 //import { createRole, deleteRole, getAllRoles, getRoleByName, updateRole } from "../controllers/role.controller";
@@ -14,7 +11,8 @@ router.post("/", user_controller_1.create);
 router.get("/", user_controller_1.getAll);
 router.get("/:id", user_controller_1.getById);
 router.get("/email/:email", user_controller_1.getByEmail);
-router.put("/:id", (0, validate_middleware_1.validateBody)(user_validator_1.updateUserSchema), user_controller_1.update);
+//router.put("/:id", validateBody(updateUserSchema), update);
+router.put("/:id", user_controller_1.update);
 router.put("/last-login/:id", user_controller_1.updateLastLogin);
 router.delete("/:id", user_controller_1.deleteUser);
 // role routes

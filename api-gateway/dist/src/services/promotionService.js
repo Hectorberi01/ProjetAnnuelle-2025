@@ -68,6 +68,7 @@ env.config();
 const URL_PROMOTIONS = services_config_1.SERVICES.promotions || "http://localhost:3007/promotions";
 const URL_PROJECTS = services_config_1.SERVICES.projects || "http://localhost:3002/projects";
 const URL_USERS = services_config_1.SERVICES.users || "http://localhost:3003/users";
+const URL_GROUPS = services_config_1.SERVICES.groups || "http://localhost:3004/groups";
 function parseCSV(file) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
