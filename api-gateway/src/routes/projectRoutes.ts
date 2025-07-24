@@ -222,19 +222,16 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
     const projectId = parseInt(req.params.id);
     try {
-        const response = await getProjectById(projectId);
-        if (response.status !== 200) {
-            res.status(404).json({ message: "Project not found" });
-            return;
-        }
+      
         const deletedProject = await deleteProject(projectId);
         if (deletedProject.status !== 200) {
             res.status(400).json({ message: "Failed to delete project" });
             return;
         }
         res.status(200).json({ message: "Project deleted successfully" });
-    } catch (error) {  
-        res.status(500).json({ message: "Failed to delete project" });
+    } catch (error) {
+        const errorMessage = (error instanceof Error) ? error.message : 'Failed to delete project';
+        res.status(500).json({ message: errorMessage });
         return;
     }
 });

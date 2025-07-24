@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { addGradingCriteria, createGrille, deleteGradingCriteria, finalizeGroupNotation, getGradingCriteria, getGradingGridByProjectAndGroup, getGrillesCritere, publishProjectGrades, saveCritereNote, saveGlobalComment, updateGradingCriteria, validateGradingGrid, validateSpecificGrille } from '../services/notationService';
+import { addGradingCriteria, createGrille, deleteCriteria, deleteGradingCriteria, finalizeGroupNotation, getGradingCriteria, getGradingGridByProjectAndGroup, getGrillesCritere, publishProjectGrades, saveCritereNote, saveGlobalComment, updateCritere, updateGradingCriteria, validateGradingGrid, validateSpecificGrille } from '../services/notationService';
 
 const router = Router();
 
@@ -31,6 +31,16 @@ router.put('/grilles/:grilleId', async (req, res) => {
   }
 });
 
+router.put('/:grilleId/criteres/:critereId', async (req, res) => {
+  try {
+    const { grilleId, critereId } = req.params;
+    const updated = await updateCritere(grilleId, parseInt(critereId), req.body);
+    res.status(200).json(updated);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la mise à jour de la grille.' });
+  }
+});
+
 router.get('/:projectId/groups/:groupId/grilles/criteres', async (req, res) => {
   try {
     const result = await getGrillesCritere(req.params.projectId, req.params.groupId);
@@ -50,7 +60,14 @@ router.post('/:projectId/groups/:groupId/criteres', async (req, res) =>  {
 });
 
 
-
+router.delete('/:grilleId/criteres/:critereId', async (req, res) => {
+  try {
+    await deleteCriteria(req.params.grilleId, req.params.critereId);
+    res.status(200).json({ message: 'Critère supprimé avec succès.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la suppression du critère.' });
+  }
+});
 
 router.delete('/grilles/:grilleId', async (req, res) => {
   try {

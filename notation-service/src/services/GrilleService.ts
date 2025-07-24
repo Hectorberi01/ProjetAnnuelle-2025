@@ -19,10 +19,35 @@ export class GrilleService {
       order: { createdAt: 'DESC' }
     });
   }
-async createCritere(projectId: string, groupId: string, critereData: any): Promise<CritereNotation> {
-        try {
-            // 1. Vérifier que la grille existe
-            const grille = await this.grilleRepository.findOne({
+ async deleteCritere(grilleId: string, critereId: string): Promise<void> {
+  const grille = await this.grilleRepository.findOne({
+    where: { id: grilleId },
+    relations: ['criteres']
+  });
+
+  if (!grille) {
+    throw new Error(`La grille avec l'ID ${grilleId} n'existe pas`);
+  }
+
+  const critere = await this.critereRepository.findOne({
+   where: {
+      id: Number(critereId),
+      grilleId: grilleId  // si grilleId est un string dans l'entité, sinon mettre Number(grilleId)
+    }
+  });
+
+  if (!critere) {
+    throw new Error(`Le critère avec l'ID ${critereId} n'existe pas dans la grille ${grilleId}`);
+  }
+
+  await this.critereRepository.remove(critere);
+}
+
+
+  async createCritere(projectId: string, groupId: string, critereData: any): Promise<CritereNotation> {
+    try {
+      // 1. Vérifier que la grille existe
+      const grille = await this.grilleRepository.findOne({
                 where: { id: critereData.grille_id }
             });
 
@@ -118,9 +143,7 @@ async createCritere(projectId: string, groupId: string, critereData: any): Promi
       throw new Error('Grille non trouvée');
     }
 
-    if (grille.validee) {
-      throw new Error('Impossible de modifier une grille validée');
-    }
+  
 
     // Mise à jour des propriétés de la grille
     grille.titre = data.titre;
@@ -165,9 +188,7 @@ async createCritere(projectId: string, groupId: string, critereData: any): Promi
       throw new Error('Grille non trouvée');
     }
 
-    if (grille.validee) {
-      throw new Error('Impossible de supprimer une grille validée');
-    }
+  
 
     await this.grilleRepository.remove(grille);
   }
@@ -182,4 +203,23 @@ async createCritere(projectId: string, groupId: string, critereData: any): Promi
     grille.validee = true;
     return await this.grilleRepository.save(grille);
   }
+
+async updateCritere(grilleId: string, critereId: number, data: any): Promise<CritereNotation> {
+  const critere = await this.critereRepository.findOneBy({ id: critereId, grilleId });
+
+  if (!critere) {
+    throw new Error(`Le critère ${critereId} n'existe pas dans la grille ${grilleId}`);
+  }
+
+  // Mise à jour des champs autorisés
+  critere.nom = data.nom ?? critere.nom;
+  critere.poids = data.poids ?? critere.poids;
+  critere.description = data.description ?? critere.description;
+  critere.typeEvaluation = data.typeEvaluation ?? critere.typeEvaluation;
+
+  return await this.critereRepository.save(critere);
+}
+
+
+
 }

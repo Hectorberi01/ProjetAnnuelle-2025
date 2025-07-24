@@ -48,6 +48,14 @@ export async function updateGradingCriteria(grilleId: string, data: any): Promis
   return response.data;
 }
 
+export async function updateCritere(grilleId: string, critereId: number, data: any): Promise<any> {
+  const response = await apiClient.put(`${URL_GRADING}/${grilleId}/criteres/${critereId}`, data);
+  return response.data;
+}
+export async function deleteCriteria(grilleId: string, critereId: string): Promise<void> {
+  await apiClient.delete(`${URL_GRADING}/${grilleId}/criteres/${critereId}`);
+  
+}
 export async function deleteGradingCriteria( grilleId: string): Promise<void> {
   await apiClient.delete(`${URL_GRADING}/grilles/${grilleId}`);
 }
