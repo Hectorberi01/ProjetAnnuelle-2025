@@ -16,6 +16,7 @@ const express_1 = require("express");
 const deliverableService_1 = require("../services/deliverableService");
 const multer_1 = __importDefault(require("multer"));
 const cloudfareService_1 = require("../services/cloudfareService");
+const detectSimilarity_1 = require("../scripts/detectSimilarity");
 const router = (0, express_1.Router)();
 const upload = (0, multer_1.default)({
     limits: {
@@ -102,13 +103,20 @@ router.get('/groups/:groupId', (req, res) => __awaiter(void 0, void 0, void 0, f
 router.post('/internal/similarity-check/project/:projectId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const projectId = parseInt(req.params.projectId);
     try {
-        const result = yield (0, deliverableService_1.similarityCheck)(projectId);
+        const result = yield (0, detectSimilarity_1.detectSimilarityForDeliverable)(projectId);
         res.status(200).json(result);
     }
     catch (error) {
         console.error(`Error checking similarity for project ID ${projectId}:`, error);
         res.status(500).json({ message: `Failed to check similarity for project ID ${projectId}`, error: error });
     }
+    // try {
+    //     const result = await similarityCheck(projectId);
+    //     res.status(200).json(result);
+    // } catch (error) {
+    //     console.error(`Error checking similarity for project ID ${projectId}:`, error);
+    //     res.status(500).json({ message: `Failed to check similarity for project ID ${projectId}`, error: error });
+    // }
 }));
 router.get('/projects/:projectId/similarity-matrix', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const projectId = parseInt(req.params.projectId);

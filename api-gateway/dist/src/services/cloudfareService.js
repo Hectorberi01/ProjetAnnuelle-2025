@@ -21,10 +21,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadPDFToR2 = uploadPDFToR2;
 exports.downloadFromS3 = downloadFromS3;
+exports.downloadFromS3ForCheck = downloadFromS3ForCheck;
 exports.getSignedPdfUrl = getSignedPdfUrl;
 exports.extractKeyFromS3Url = extractKeyFromS3Url;
 const client_s3_1 = require("@aws-sdk/client-s3");
 const s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
+const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const s3 = new client_s3_1.S3Client({
@@ -61,11 +63,8 @@ function downloadFromS3(url) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, e_1, _b, _c;
         const parsedUrl = new URL(url);
-        console.log("Parsed URL:", parsedUrl);
         const bucketName = parsedUrl.hostname.split('.')[0];
-        console.log("Bucket Name:", bucketName);
         const key = decodeURIComponent(parsedUrl.pathname.slice(1));
-        console.log("Key:", key);
         const command = new client_s3_1.GetObjectCommand({
             Bucket: bucketName,
             Key: key,
@@ -73,7 +72,6 @@ function downloadFromS3(url) {
         try {
             const response = yield s3.send(command);
             const stream = response.Body;
-            console.log("Response Body Type:", typeof stream);
             const chunks = [];
             try {
                 for (var _d = true, stream_1 = __asyncValues(stream), stream_1_1; stream_1_1 = yield stream_1.next(), _a = stream_1_1.done, !_a; _d = true) {
@@ -91,6 +89,33 @@ function downloadFromS3(url) {
                 finally { if (e_1) throw e_1.error; }
             }
             return Buffer.concat(chunks);
+        }
+        catch (error) {
+            console.error("Erreur lors du téléchargement depuis S3:", error);
+            throw error;
+        }
+    });
+}
+function downloadFromS3ForCheck(url) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const parsedUrl = new URL(url);
+        console.log("Parsed URL:", parsedUrl);
+        const bucketName = parsedUrl.hostname.split('.')[0];
+        console.log("Bucket Name:", bucketName);
+        const key = parsedUrl.pathname.slice(1);
+        console.log("Key:", key);
+        const command = new client_s3_1.GetObjectCommand({
+            Bucket: bucketName,
+            Key: key,
+        });
+        try {
+            const response = yield s3.send(command);
+            if (!response.Body)
+                throw new Error('Le fichier n\'a pas pu être téléchargé depuis S3');
+            return {
+                fileName: path_1.default.basename(key),
+                fileStream: response.Body,
+            };
         }
         catch (error) {
             console.error("Erreur lors du téléchargement depuis S3:", error);

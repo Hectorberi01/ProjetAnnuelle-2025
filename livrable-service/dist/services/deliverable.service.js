@@ -15,10 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeliverableService = void 0;
 const database_1 = require("../config/database");
 const Deliverable_1 = require("../entities/Deliverable");
+const SimilarityComparison_1 = require("../entities/SimilarityComparison");
 const ValidationRule_1 = require("../entities/ValidationRule");
 const detectSimilarity_1 = require("../scripts/detectSimilarity");
 const node_cron_1 = __importDefault(require("node-cron"));
 const deliverableRepo = database_1.AppDataSource.getRepository(Deliverable_1.Deliverable);
+const similarityRepo = database_1.AppDataSource.getRepository(SimilarityComparison_1.SimilarityComparison);
 const ruleRepo = database_1.AppDataSource.getRepository(ValidationRule_1.ValidationRule);
 class DeliverableService {
     constructor() {
@@ -94,6 +96,31 @@ class DeliverableService {
                 return null;
             }
             return yield deliverableRepo.remove(deliverable);
+        });
+    }
+    // Assuming you have a Similarity entity, use its repository instead.
+    similarityCheck(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // Replace 'Similarity' with your actual Similarity entity
+                if (!data.deliverableId || !data.submissionAId || !data.submissionBId || !data.score) {
+                    throw new Error('Missing required fields for similarity check');
+                }
+                const similarity = similarityRepo.create({
+                    deliverableId: data.deliverableId,
+                    submissionAId: data.submissionAId,
+                    submissionBId: data.submissionBId,
+                    score: data.score,
+                });
+                if (!similarity) {
+                    throw new Error('Similarity not found');
+                }
+                return yield similarityRepo.save(similarity);
+            }
+            catch (error) {
+                console.error('Error during similarity check:', error);
+                throw new Error('Error during similarity check');
+            }
         });
     }
     startSimilarityCron() {

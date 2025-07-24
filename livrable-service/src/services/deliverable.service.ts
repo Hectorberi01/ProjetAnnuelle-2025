@@ -1,13 +1,20 @@
 import { AppDataSource } from '../config/database';
 import { Deliverable } from '../entities/Deliverable';
+import { SimilarityComparison } from '../entities/SimilarityComparison';
 import { ValidationRule } from '../entities/ValidationRule';
 import { detectSimilarityForDeliverable } from '../scripts/detectSimilarity';
 import cron from 'node-cron';
 
 
 const deliverableRepo = AppDataSource.getRepository(Deliverable);
+const similarityRepo = AppDataSource.getRepository(SimilarityComparison);
 const ruleRepo = AppDataSource.getRepository(ValidationRule);
-
+interface SimilarityCheckData {
+    deliverableId: number;
+    submissionAId: number;
+    submissionBId: number;
+    score: number;
+}
 export class DeliverableService {
     constructor() {}
 
@@ -79,6 +86,28 @@ export class DeliverableService {
         return await deliverableRepo.remove(deliverable);
     }
 
+    // Assuming you have a Similarity entity, use its repository instead.
+    public async similarityCheck(data: SimilarityCheckData) {
+        try {
+            // Replace 'Similarity' with your actual Similarity entity
+            if (!data.deliverableId || !data.submissionAId || !data.submissionBId || !data.score) {
+                throw new Error('Missing required fields for similarity check');
+            }
+            const similarity = similarityRepo.create({
+                deliverableId: data.deliverableId,
+                submissionAId: data.submissionAId,
+                submissionBId: data.submissionBId,
+                score: data.score,
+            });
+            if (!similarity) {
+                throw new Error('Similarity not found');
+            }
+            return await similarityRepo.save(similarity);
+        } catch (error) {
+            console.error('Error during similarity check:', error);
+            throw new Error('Error during similarity check');
+        }
+    }
 
     public async startSimilarityCron() {
         cron.schedule('0 * * * *', async () => {

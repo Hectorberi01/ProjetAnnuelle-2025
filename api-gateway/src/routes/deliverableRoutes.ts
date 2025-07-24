@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { downloadDeliverable, getAllDeliverables, getDeliverableById, getDeliverablesByGroup, similarityCheck, similarityMatrix, submitDeliverable } from '../services/deliverableService';
 import multer from 'multer';
 import { downloadFromS3, uploadPDFToR2 } from '../services/cloudfareService';
+import { detectSimilarityForDeliverable } from '../scripts/detectSimilarity';
 const router = Router();
 const upload = multer({
     limits: {
@@ -94,12 +95,19 @@ router.get('/groups/:groupId', async (req, res) => {
 router.post('/internal/similarity-check/project/:projectId', async (req, res) => {
     const projectId = parseInt(req.params.projectId);
     try {
-        const result = await similarityCheck(projectId);
+        const result = await detectSimilarityForDeliverable(projectId);
         res.status(200).json(result);
     } catch (error) {
         console.error(`Error checking similarity for project ID ${projectId}:`, error);
         res.status(500).json({ message: `Failed to check similarity for project ID ${projectId}`, error: error });
     }
+    // try {
+    //     const result = await similarityCheck(projectId);
+    //     res.status(200).json(result);
+    // } catch (error) {
+    //     console.error(`Error checking similarity for project ID ${projectId}:`, error);
+    //     res.status(500).json({ message: `Failed to check similarity for project ID ${projectId}`, error: error });
+    // }
 });
 
 router.get('/projects/:projectId/similarity-matrix', async (req, res) => {

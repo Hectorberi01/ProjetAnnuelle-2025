@@ -6,9 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const auth_controller_1 = require("../controllers/auth.controller");
 const auth_middleware_1 = require("../middlewares/auth.middleware");
-const passport_1 = __importDefault(require("passport"));
 require("../config/passport");
 const auth_service_1 = require("../services/auth.service");
+const passport_1 = __importDefault(require("passport"));
 const router = (0, express_1.Router)();
 router.post('/register', auth_controller_1.register);
 // Register admin
@@ -43,7 +43,7 @@ router.get('/google/callback', passport_1.default.authenticate('google', { failu
             }
             else {
                 console.log('Error logging in with Google:', response.data.error);
-                res.redirect('http://localhost:4000'); // Redirigez vers votre application front-end
+                res.redirect('http://localhost:4000/dashboard'); // Redirigez vers votre application front-end
             }
         })
             .catch((error) => {

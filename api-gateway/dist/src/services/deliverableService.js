@@ -101,10 +101,10 @@ function submitDeliverable(formData) {
                 method: 'POST',
                 body: form
             });
-            const text = yield response.text(); // pour voir le contenu brut
+            //const text = await response.text(); // pour voir le contenu brut
             console.log('Status:', response.status);
-            console.log('Response body:', text);
-            if (!response.ok) {
+            //console.log('Response body:', text);
+            if (response.status !== 201) {
                 throw new Error('Failed to submit deliverable');
             }
             return yield response.json();

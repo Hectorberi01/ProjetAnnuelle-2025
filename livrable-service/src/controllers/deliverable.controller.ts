@@ -86,57 +86,68 @@ export const getDeliverablesByGroupId = async (req: Request, res: Response) => {
   }
 };
 
-export const downloadDeliverable = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const repo = AppDataSource.getRepository(Deliverable);
-
-  const deliverable = await repo.findOneBy({ id: Number(id) });
-  if (!deliverable || !deliverable.fileUrl) {
-    res.status(404).json({ error: 'Fichier non trouvé' });
-    return;
-  }
-
-  const match = deliverable.fileUrl.match(/\/d\/([^/]+)\//);
-  const fileId = match?.[1];
-  if (!fileId) {
-    res.status(400).json({ error: 'ID de fichier invalide' });
-    return;
-  }
-
-  console.log(`Téléchargement du fichier avec ID: ${fileId}`);
-
-  const driveService = new GoogleDriveService();
+export const SimilarityCheck = async (req: Request, res: Response) => {
   try {
-    const fileStream = await driveService.downloadFile(fileId);
-    const fileName = await driveService.getFileMetadata(fileId);
+    const data = req.body;
 
-    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-    fileStream.pipe(res);
+    const response = await deliverableService.similarityCheck(data);
+    res.status(200).json({ message: 'Similarity check completed successfully', response });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors du téléchargement du fichier' });
-    return;
-  }
-}
-
-export const similarityCheck = async (req: Request, res: Response) => {
-  const { projectId } = req.params;
-  console.log("dans similarityCheck");
-  if (!projectId || isNaN(Number(projectId))) {
-    res.status(400).json({ error: 'Project ID invalide' });
-    return;
-  }
-
-  try {
-    await detectSimilarityForDeliverable(parseInt(projectId));
-    res.json({ message: `Analyse de similarité terminée pour le projet #${projectId}` });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors de l’analyse de similarité' });
-    return;
+    res.status(500).json({ message: 'Internal server error', error });
   }
 };
+
+// export const downloadDeliverable = async (req: Request, res: Response) => {
+//   const { id } = req.params;
+//   const repo = AppDataSource.getRepository(Deliverable);
+
+//   const deliverable = await repo.findOneBy({ id: Number(id) });
+//   if (!deliverable || !deliverable.fileUrl) {
+//     res.status(404).json({ error: 'Fichier non trouvé' });
+//     return;
+//   }
+
+//   const match = deliverable.fileUrl.match(/\/d\/([^/]+)\//);
+//   const fileId = match?.[1];
+//   if (!fileId) {
+//     res.status(400).json({ error: 'ID de fichier invalide' });
+//     return;
+//   }
+
+//   console.log(`Téléchargement du fichier avec ID: ${fileId}`);
+
+//   const driveService = new GoogleDriveService();
+//   try {
+//     const fileStream = await driveService.downloadFile(fileId);
+//     const fileName = await driveService.getFileMetadata(fileId);
+
+//     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+//     fileStream.pipe(res);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Erreur lors du téléchargement du fichier' });
+//     return;
+//   }
+// }
+
+// export const similarityCheck = async (req: Request, res: Response) => {
+//   const { projectId } = req.params;
+//   console.log("dans similarityCheck");
+//   if (!projectId || isNaN(Number(projectId))) {
+//     res.status(400).json({ error: 'Project ID invalide' });
+//     return;
+//   }
+
+//   try {
+//     await detectSimilarityForDeliverable(parseInt(projectId));
+//     res.json({ message: `Analyse de similarité terminée pour le projet #${projectId}` });
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Erreur lors de l’analyse de similarité' });
+//     return;
+//   }
+// };
 
 export const similarityMatrix = async (req: Request, res: Response) => {
   const { projectId } = req.params;

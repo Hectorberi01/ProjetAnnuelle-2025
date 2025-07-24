@@ -3,9 +3,9 @@ import { Router } from 'express';
 import {register,login,logout,forgotPassword,me, changePassword, registerAdmin,
 } from '../controllers/auth.controller';
 import { authMiddleware } from '../middlewares/auth.middleware';
-import passport from 'passport';
 import '../config/passport'
 import { loginWithGoogleOrAzure } from '../services/auth.service';
+import passport from 'passport';
 const router = Router();
 
 router.post('/register', register);
@@ -55,7 +55,7 @@ router.get('/google/callback',
           }
           else {
             console.log('Error logging in with Google:', response.data.error);
-            res.redirect('http://localhost:4000'); // Redirigez vers votre application front-end
+            res.redirect('http://localhost:4000/dashboard'); // Redirigez vers votre application front-end
           }
         })
         .catch((error) => {
