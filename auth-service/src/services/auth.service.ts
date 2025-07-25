@@ -170,8 +170,8 @@ export const loginWithGoogleOrAzure = async (email: string) => {
 
         // Supprimer le champ password
       delete user.password;
-      const encodedId = Buffer.from(user.id.toString()).toString('base64');
-      user.id = encodedId;
+      // const encodedId = Buffer.from(user.id.toString()).toString('base64');
+      // user.id = encodedId;
       const token = jwt.sign({ user: user }, JWT_SECRET, {expiresIn: '1h',});
   
       return { status: 200, data: { token, user } };

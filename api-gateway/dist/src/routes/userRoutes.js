@@ -114,4 +114,27 @@ router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(500).json({ message: 'Internal server error' });
     }
 }));
+// Update user
+router.put('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = Number(req.params.id);
+    const userData = req.body;
+    console.log("Body reçu pour update:", userData);
+    try {
+        const response = yield (0, userService_1.getUserById)(userId);
+        if (!response) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+        const updatedUser = yield (0, userService_1.updateUser)(userId, userData);
+        if (!updatedUser) {
+            res.status(500).json({ message: 'Failed to update user' });
+            return;
+        }
+        res.status(200).json(updatedUser);
+    }
+    catch (error) {
+        console.error('Error in user service:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}));
 exports.default = router;

@@ -44,8 +44,11 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 // Create a new promotion
 router.post("/", upload.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const promotion = req.body;
+        const promotion = req.body.promotion ? JSON.parse(req.body.promotion) : null;
         const file = req.file;
+        if (!promotion) {
+            return res.status(400).json({ message: "Promotion data is required" });
+        }
         if (!file) {
             res.status(400).json({ message: "File is required" });
         }

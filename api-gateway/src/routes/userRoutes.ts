@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createUser, deleteUser, getAllUsers, getStudents, getUserByEmail, getUserById } from '../services/userService';
+import { createUser, deleteUser, getAllUsers, getStudents, getUserByEmail, getUserById, updateUser } from '../services/userService';
 const router = Router();
 
 router.get('/', async (req, res) => {
@@ -101,6 +101,30 @@ router.delete('/:id', async (req, res) => {
             return;
         }
         res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error('Error in user service:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Update user
+router.put('/:id', async (req, res) => {
+    const userId = Number(req.params.id);
+    const userData = req.body;
+    console.log("Body reçu pour update:", userData);
+
+    try {
+        const response = await getUserById(userId);
+        if (!response) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+        const updatedUser = await updateUser(userId, userData);
+        if (!updatedUser) {
+            res.status(500).json({ message: 'Failed to update user' });
+            return;
+        }
+        res.status(200).json(updatedUser);
     } catch (error) {
         console.error('Error in user service:', error);
         res.status(500).json({ message: 'Internal server error' });

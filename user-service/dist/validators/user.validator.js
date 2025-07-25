@@ -23,4 +23,6 @@ exports.updateUserSchema = joi_1.default.object({
     email: joi_1.default.string().email().optional(),
     roleId: joi_1.default.number().integer().optional(),
     password: joi_1.default.string().optional(),
+    address: joi_1.default.string().allow(null, "").optional(),
+    phoneNumber: joi_1.default.string().allow(null, "").optional(),
 });

@@ -122,7 +122,11 @@ function createUser(userData) {
 function updateUser(userId, userData) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield apiClient_1.apiClient.put(`${URL_USERS}/${userId}`, userData);
+            const response = yield apiClient_1.apiClient.put(`${URL_USERS}/${userId}`, userData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             if (response.status !== 200) {
                 throw new Error('Failed to update user');
             }
