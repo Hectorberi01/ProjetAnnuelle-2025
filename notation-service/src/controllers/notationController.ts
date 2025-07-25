@@ -43,17 +43,41 @@ export class NotationController {
     }
   };
 
-  finalizeNotation = async (req: Request, res: Response) => {
-    try {
-      const { projectId, groupId } = req.params;
-      const userId = req.headers['user-id'] as string; // À adapter selon votre système d'auth
-      const notation = await this.notationService.finalizeNotation(projectId, groupId, req.body, userId);
-      res.json(notation);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      res.status(400).json({ error: errorMessage });
+// notation.controller.ts
+finalizeNotation = async (req: Request, res: Response) => {
+  try {
+    console.log("Reçu:", req.body); // Log du payload reçu
+
+    const { projectId, groupId } = req.params;
+    const userId = req.headers['user-id'] as string;
+    
+    // Validation des données
+    if (!req.body.notes || !Array.isArray(req.body.notes)) {
+      throw new Error("Le format des notes est invalide");
     }
-  };
+
+    const notation = await this.notationService.finalizeNotation(
+      projectId, 
+      groupId, 
+      {
+        notes: req.body.notes,
+        commentairesGlobaux: req.body.commentairesGlobaux || {},
+        commentaireProjet: req.body.commentaireProjet || ""
+      },
+      userId
+    );
+
+    res.json(notation);
+  } catch (error) {
+    console.error("Erreur complète:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    res.status(400).json({ 
+      error: errorMessage,
+      stack: process.env.NODE_ENV === 'development' ? errorStack : undefined
+    });
+  }
+};
 
 
 validateSpecificGrille = async (req: Request, res: Response) => {
@@ -89,9 +113,28 @@ validateSpecificGrille = async (req: Request, res: Response) => {
     }
   };
 
+  saveNotation = async (req: Request, res: Response) => {
+    const { projectId, groupId, studentId, noteFinale, commentaire } = req.body;
 
+    try {
+      if (!projectId || !groupId  || noteFinale === undefined) {
+        return res.status(400).json({ error: 'Données manquantes' });
+      }
 
+      const notation = await this.notationService.saveNotation(projectId, groupId, {
+        studentId,
+        noteFinale,
+        commentaire
+      });
 
+      res.status(201).json(notation);
+    } catch (e) {
+        
+
+   
+    }
+
+  };
 
 
 

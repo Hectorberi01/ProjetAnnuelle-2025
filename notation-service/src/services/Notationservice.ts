@@ -5,7 +5,23 @@ import { CommentaireGlobal } from '../entities/CommentaireGlobal';
 import { NotationFinalisee } from '../entities/NotationFinalisee';
 import { GrilleNotation } from '../entities/GrilleNotation';
 import { CritereNotation } from '../entities/CritereNotation';
-
+interface Critere {
+  id: number;
+  nom: string;
+  poids: number; // Ex: 50 pour 50%
+  description?: string;
+  typeEvaluation: 'groupe' | 'individuel';
+  grilleId: string;
+}
+interface Grille {
+  id: string;
+  titre: string;
+  type: 'livrable' | 'rapport' | 'soutenance';
+  criteres: Critere[];
+  ponderationGlobale: number; // Ex: 0.5 pour 50%
+  validee: boolean;
+  description?: string;
+}
 export class NotationService {
   private noteRepository: Repository<NoteGroupe>;
   private commentaireRepository: Repository<CommentaireGlobal>;
@@ -20,7 +36,7 @@ export class NotationService {
   }
 
   async getNotationGroupe(projectId: string, groupId: string) {
-    const [notes, commentairesGlobaux, notationFinalisee, grillesValidees] = await Promise.all([
+    const [notes, commentairesGlobaux, notationFinalisee] = await Promise.all([
       this.noteRepository.find({
         where: { projectId, groupId }
       }),
@@ -30,17 +46,14 @@ export class NotationService {
       this.notationFinaliseeRepository.findOne({
         where: { projectId, groupId }
       }),
-      this.grilleRepository.find({
-        where: { projectId, validee: true },
-        relations: ['criteres']
-      })
+      
     ]);
  
     return {
       notes,
       commentairesGlobaux,
       commentaireProjet: notationFinalisee?.commentaireProjet,
-      grillesValidees,
+      noteFinale: notationFinalisee?.noteFinale,
       notationFinalisee: notationFinalisee
     };
   }
@@ -97,28 +110,30 @@ export class NotationService {
     return await this.commentaireRepository.save(commentaire);
   }
 
-  async finalizeNotation(projectId: string, groupId: string, data: any, userId: string): Promise<NotationFinalisee> {
-    // Calculer la note finale
-    const noteFinale = this.calculateNoteFinale(data.notes);
+ async finalizeNotation(projectId: string, groupId: string, data: any, userId: string): Promise<NotationFinalisee> {
+  // Récupérer les grilles de notation (à implémenter selon votre système)
+  const grilles = await this.getGrillesForProject(projectId); 
+  
+  const noteFinale = this.calculateNoteFinale(data.notes, grilles);
 
-    let notation = await this.notationFinaliseeRepository.findOne({
-      where: { projectId, groupId }
+  let notation = await this.notationFinaliseeRepository.findOne({
+    where: { projectId, groupId }
+  });
+
+  if (notation) {
+    notation.commentaireProjet = data.commentaireProjet;
+    notation.noteFinale = noteFinale;
+  } else {
+    notation = this.notationFinaliseeRepository.create({
+      projectId,
+      groupId,
+      commentaireProjet: data.commentaireProjet,
+      noteFinale,
     });
-
-    if (notation) {
-      notation.commentaireProjet = data.commentaireProjet;
-      notation.noteFinale = noteFinale;
-    } else {
-      notation = this.notationFinaliseeRepository.create({
-        projectId,
-        groupId,
-        commentaireProjet: data.commentaireProjet,
-        noteFinale,
-      });
-    }
-
-    return await this.notationFinaliseeRepository.save(notation);
   }
+
+  return await this.notationFinaliseeRepository.save(notation);
+}
   async getGradingGridByProjectAndGroup (projectId: string, groupId: string): Promise<any>  {
     const notes = await this.noteRepository.find({
       where: { projectId, groupId }
@@ -161,33 +176,104 @@ export class NotationService {
     grille.validee = true;
     return await this.grilleRepository.save(grille);
   }
-private calculateNoteFinale(notes: any[]): number {
+private calculateNoteFinale(notes: any[], grilles: Grille[]): number {
   if (!notes || notes.length === 0) return 0;
 
-  let totalPoids = 0;
-  let sommePonderee = 0;
+  // Étape 1: Organiser les notes par critère
+  const notesParCritere: Record<string, {
+    notes: any[],
+    type: 'groupe' | 'individuel',
+    poids: number
+  }> = {};
 
-  for (const noteItem of notes) {
-    const poids = noteItem.poids ?? 1; // défaut si poids non fourni
+  notes.forEach(note => {
+    const grille = grilles.find(g => g.id === note.grilleId);
+    const critere = grille?.criteres.find(c => c.id === note.critereId);
+    
+    const key = `${note.grilleId}-${note.critereId}`;
+    
+    if (!notesParCritere[key]) {
+      notesParCritere[key] = {
+        notes: [],
+        type: critere?.typeEvaluation || 'groupe',
+        poids: critere?.poids || 1
+      };
+    }
+    
+    notesParCritere[key].notes.push(note);
+  });
+
+  // Étape 2: Calculer les moyennes par critère
+  let totalPonderation = 0;
+  let sommeNotesPonderees = 0;
+
+  Object.values(notesParCritere).forEach(({notes, type, poids}) => {
+    if (notes.length === 0) return;
+
     let moyenneCritere = 0;
 
-    const sousNotes = Object.values(noteItem).filter(
-      (val) => val !== null && typeof val === 'object' && 'note' in val
-    );
-
-    if (sousNotes.length > 0) {
-      const total = sousNotes.reduce((sum: number, subNote: any) => sum + subNote.note, 0);
-      moyenneCritere = total / sousNotes.length;
-    } else if ('note' in noteItem) {
-      moyenneCritere = noteItem.note;
+    if (type === 'individuel') {
+      // Calculer la moyenne des notes individuelles
+      const sum = notes.reduce((acc, n) => acc + parseFloat(n.note), 0);
+      moyenneCritere = sum / notes.length;
+    } else {
+      // Prendre directement la note de groupe (normalement une seule note)
+      moyenneCritere = parseFloat(notes[0].note);
     }
 
-    totalPoids += poids;
-    sommePonderee += moyenneCritere * poids;
+    sommeNotesPonderees += moyenneCritere * (poids / 100);
+    totalPonderation += poids / 100;
+  });
+
+  // Étape 3: Calculer la note finale pondérée
+  return totalPonderation > 0 ? (sommeNotesPonderees / totalPonderation) * 20 : 0;
+}
+async getGrillesForProject(projectId: string): Promise<Grille[]> {
+  try {
+    // 1. Récupérer les grilles associées au projet
+    const grilles = await this.grilleRepository.find({
+      where: { projectId },
+      relations: ['criteres']
+    });
+
+    // 2. Vérifier le format et compléter si nécessaire
+    return grilles.map(grille => ({
+      id: grille.id,
+      titre: grille.titre,
+      type: grille.type,
+      criteres: grille.criteres.map(critere => ({
+        id: critere.id,
+        nom: critere.nom,
+        poids: critere.poids || 100, // Valeur par défaut
+        description: critere.description,
+        typeEvaluation: critere.typeEvaluation || 'groupe', // Valeur par défaut
+        grilleId: critere.grilleId
+      })),
+      ponderationGlobale: grille.ponderationGlobale || 1, // Valeur par défaut
+      validee: grille.validee || false,
+      description: grille.description
+    }));
+    
+  } catch (error) {
+    console.error('Erreur lors de la récupération des grilles:', error);
+    throw new Error('Impossible de charger les grilles de notation');
   }
 
-  return totalPoids > 0 ? sommePonderee / totalPoids : 0;
-}
+
+
+  // POST /api/notation
+ 
 
 
 }
+
+async saveNotation(projectId: string, groupId: string, data: any): Promise<any> {
+    const repo = AppDataSource.getRepository(NotationFinalisee);
+    const notation = repo.create({ projectId, groupId, ...data });
+    await repo.save(notation);
+    return notation;
+  }
+
+
+}
+

@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import { GrilleService } from '../services/GrilleService';
 
 export class GrilleController {
+  getRecap(arg0: string, getRecap: any) {
+    throw new Error('Method not implemented.');
+  }
   private grilleService: GrilleService;
 
   constructor() {

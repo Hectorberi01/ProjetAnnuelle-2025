@@ -6,9 +6,9 @@ import { getPromotionById } from "../services/promotionService";
 import multer from "multer";
 import { GoogleDriveService } from "../services/GoogleDriveService";
 import { extractKeyFromS3Url, getSignedPdfUrl, uploadPDFToR2 } from "../services/cloudfareService";
-import { URL } from 'url';
+// import { URL } from 'url';
 import { createGroup, getGroupById, getGroupByIdWitoutEnriching, JoinToGroup } from "../services/groupService";
-import { group } from "console";
+// import { group } from "console";
 
 
 const router = Router();

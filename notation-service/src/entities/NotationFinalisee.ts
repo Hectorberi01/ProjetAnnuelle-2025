@@ -8,7 +8,7 @@ export class NotationFinalisee {
   @Column({ name: 'project_id', type: 'uuid' })
     projectId!: string;
 
-  @Column({ name: 'group_id', type: 'uuid' })
+  @Column({ name: 'group_id' })
     groupId!: string;
 
   @Column({ name: 'commentaire_projet', type: 'text', nullable: true })
@@ -17,8 +17,10 @@ export class NotationFinalisee {
   @Column({ name: 'note_finale', type: 'decimal', precision: 4, scale: 2 })
     noteFinale!: number;
 
-  @CreateDateColumn({ name: 'finalisee_at' })
-    finaliseeAt!: Date;
+  @Column({ name: 'student_id',  nullable: true }) // null = note de groupe
+  studentId?: string;
+
+
 
  
 }

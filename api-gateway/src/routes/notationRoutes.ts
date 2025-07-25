@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { addGradingCriteria, createGrille, deleteCriteria, deleteGradingCriteria, finalizeGroupNotation, getGradingCriteria, getGradingGridByProjectAndGroup, getGrillesCritere, publishProjectGrades, saveCritereNote, saveGlobalComment, updateCritere, updateGradingCriteria, validateGradingGrid, validateSpecificGrille } from '../services/notationService';
+import { addGradingCriteria, createGrille, deleteCriteria, deleteGradingCriteria, finalizeGroupNotation, getGradingCriteria, getGradingGridByProjectAndGroup, getGrillesCritere, publishProjectGrades, saveCritereNote, saveGlobalComment, saveNotation, updateCritere, updateGradingCriteria, validateGradingGrid, validateSpecificGrille } from '../services/notationService';
 
 const router = Router();
 
@@ -155,6 +155,15 @@ router.post('/:projectId/publish', async (req, res) => {
   }
 });
 
+router.post('/', async (req, res) => {
+  try {
+    
+    const recap = await saveNotation(req.body);
+    res.status(200).json(recap);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la récupération du récapif.' });
+  }
+});
 
 
 

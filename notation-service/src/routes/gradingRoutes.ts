@@ -24,7 +24,7 @@ router.post('/:projectId/publish', notationController.publishProjectGrades);
 router.put('/:grilleId/criteres/:critereId', gradingController.updateCritere);
 
 // Dans votre controller
-
+router.post('/',notationController.saveNotation)
 router.post('/:projectId/groups/:groupId/criteres', grilleController.createCritere);
 
 router.get('/:projectId/groups/:groupId/grilles/criteres', grilleController.getGrillesCritere);

@@ -89,4 +89,17 @@ export async function getGradingGridById(grilleId: string): Promise<any> {
   return response.data;
 }
 
+export async function getRecap(projectId: string, groupId: string): Promise<any> {
+  const response = await apiClient.get(`${URL_GRADING}/projects/${projectId}/groups/${groupId}/recap`);
+  return response.data;
+}
 
+export async function saveNotation(data: any): Promise<any>  {
+  try {
+    const response = await apiClient.post(`${URL_GRADING}/`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la sauvegarde de la notation:", error);
+    throw error;
+  }
+}
