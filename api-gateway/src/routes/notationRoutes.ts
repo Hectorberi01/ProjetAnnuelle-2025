@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { addGradingCriteria, createGrille, deleteCriteria, deleteGradingCriteria, finalizeGroupNotation, getGradingCriteria, getGradingGridByProjectAndGroup, getGrillesCritere, publishProjectGrades, saveCritereNote, saveGlobalComment, saveNotation, updateCritere, updateGradingCriteria, validateGradingGrid, validateSpecificGrille } from '../services/notationService';
+import { addGradingCriteria, createGrille, deleteCriteria, deleteGradingCriteria, finalizeGroupNotation, getGradingCriteria, getGradingGridByProjectAndGroup, getGrillesCritere, publishProjectGrades, saveCritereNote, saveGlobalComment, saveNotation, updateCritere, updateCritereNote, updateGradingCriteria, validateGradingGrid, validateSpecificGrille } from '../services/notationService';
 
 const router = Router();
 
@@ -105,6 +105,15 @@ router.post('/:projectId/groups/:groupId/notation/critere', async (req, res) => 
     res.status(500).json({ message: 'Erreur lors de la sauvegarde de la note de critère.' });
   }
 });
+router.put('/:projectId/groups/:groupId/notes/critere', async (req, res) => {
+  try {
+    const result = await updateCritereNote(req.params.projectId, req.params.groupId, req.body);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la sauvegarde de la note de critère.' });
+  }
+});
+
 
 router.post('/:projectId/groups/:groupId/notation/commentaire-global', async (req, res) => {
   try {

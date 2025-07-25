@@ -19,6 +19,10 @@ router.post('/:projectId/groups/:groupId/notation/critere', notationController.s
 router.post('/:projectId/groups/:groupId/notation/commentaire-global', notationController.saveCommentaireGlobal);
 router.post('/:projectId/groups/:groupId/notation/finalize', notationController.finalizeNotation);
 
+router.put('/:projectId/groups/:groupId/notation/critere', notationController.updateNoteCritere);
+
+
+
 router.post('/:projectId/groups/:groupId/notation/grilles/:grilleId/validate', notationController.validateSpecificGrille);
 router.post('/:projectId/publish', notationController.publishProjectGrades);
 router.put('/:grilleId/criteres/:critereId', gradingController.updateCritere);

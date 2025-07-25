@@ -60,7 +60,10 @@ export async function deleteGradingCriteria( grilleId: string): Promise<void> {
   await apiClient.delete(`${URL_GRADING}/grilles/${grilleId}`);
 }
 
-
+export async function updateCritereNote(projectId: string, groupId: string, data: any): Promise<any> {
+  const response = await apiClient.put(`${URL_GRADING}/${projectId}/groups/${groupId}/notation/critere`, data);
+  return response.data;
+}
 
 export async function validateGradingGrid(grilleId: string): Promise<any> {
   const response = await apiClient.post(`${URL_GRADING}/grilles/${grilleId}/validate`);

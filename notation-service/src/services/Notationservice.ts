@@ -274,6 +274,36 @@ async saveNotation(projectId: string, groupId: string, data: any): Promise<any> 
     return notation;
   }
 
+  async updateNoteCritere(projectId: string, groupId: string, data: any): Promise<NoteGroupe> {
+    let note = await this.noteRepository.findOne({
+      where: {
+        projectId,
+        groupId,
+        grilleId: data.grilleId,
+        critereId: data.critereId,
+        studentId: data.studentId || null
+      }
+    });
+
+    if (note) {
+      // Mise à jour de la note existante
+      note.note = data.note;
+      note.commentaire = data.commentaire;
+      note.updatedAt = new Date(); // Si vous avez un champ updatedAt
+    } else {
+      // Création d'une nouvelle note
+      note = this.noteRepository.create({
+        projectId,
+        groupId,
+        grilleId: data.grilleId,
+        critereId: data.critereId,
+        studentId: data.studentId || null, // Assurer la cohérence avec null
+        note: data.note,
+        commentaire: data.commentaire
+      });
+    }
+
+    return await this.noteRepository.save(note);
+  }
 
 }
-

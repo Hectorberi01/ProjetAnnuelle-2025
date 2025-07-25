@@ -30,7 +30,16 @@ export class NotationController {
       res.status(400).json({ error: errorMessage });
     }
   };
-
+updateNoteCritere = async (req: Request, res: Response) => {
+    try {
+      const { projectId, groupId } = req.params;
+     const note = await this.notationService.updateNoteCritere(projectId, groupId, req.body);
+      res.json(note);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);  
+      res.status(400).json({ error: errorMessage });
+    }
+  }
 
   saveCommentaireGlobal = async (req: Request, res: Response) => {
     try {
